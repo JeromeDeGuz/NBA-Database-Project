@@ -171,6 +171,118 @@ class MyDatabase{
             e.printStackTrace(System.out);
         }
     }
+
+    //7
+    public void rankCoaches(String limit){
+        try{
+            int lim = Integer.parseInt(limit);
+            String sql = "with coachGamesWon as ( select coachID, firstName, lastName, count(gameID) as gamesWon from RegularGame natural join GameTeamStats natural join GameTeamInfo natural join Team natural join Manage natural join Coach where winner = teamName group by coachID, firstName, lastName), coachGamesPlayed as (select coachID, firstName, lastName, count(gameID) as gamesPlayed from RegularGame natural join GameTeamStats natural join Team natural join Manage natural join Coach group by coachID, firstName, lastName) select c.coachID, c.firstName, c.lastName, 100.0*(cgw.gamesWon/cgp.gamesPlayed) as winPercentage from Coach c join coachGamesWon cgw on c.coachID = cgw.coachID join coachGamesPlayed cgp on c.coachID = cgp.coachID order by winPercentage desc limit ?;";
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, lim);
+            ResultSet resultSet = statement.executeQuery();
+
+            System.out.println("Showing top "+lim+" coaches based on regular season win percentage: ");
+
+            while(resultSet.next()){
+                System.out.println(resultSet.getString("coachID")+" "+resultSet.getString("firstName")+" "+resultSet.getString("lastName")+" "+resultSet.getInt("winPercentage"));
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+    }
+
+    //8
+    public void leagueAvg(String stat, String season, String limit){
+        try{
+            int seas = Integer.parseInt(season);
+            int lim = Integer.parseInt(limit);
+
+            String sql = "select p.firstname,p.lastName, avg(gps.?) as avg from GamePlayerStats gps join Player p on gps.playerID = p.playerID join RegularGame rg on gps.gameID = rg.gameID where rg.seasonYear = ? group by p.firstname,p.lastName, order by avg desc limit ?;";
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, stat);
+            statement.setInt(2, seas);
+            statement.setInt(3, lim);
+            ResultSet resultSet = statement.executeQuery();
+
+            System.out.println("Showing top "+lim+" players based on regular season averages for "+stat+" for the "+seas+" season: ");
+
+            while(resultSet.next()){
+                System.out.println(resultSet.getString("firstname")+" "+resultSet.getString("lastName")+" "+resultSet.getInt("avg"));
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+    }
+
+    //9
+    public void compareAvg(String stat, String id){
+        try{
+            int playerID = Integer.parseInt(id);
+            String sql = "select p.firstName, p.lastName, (select avg(gps1.?) from GamePlayerStats gps1 join RegularGame rg1 on gps1.playerID = rg1.playerID) as regAvg, (select avg(gps2.?) from GamePlayerStats gps2 join RegularGame rg2 on gps2.playerID = rg2.playerID) as playoffAvg from Player p where p.playerID = ?";
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, stat);
+            statement.setString(2, stat);
+            statement.setInt(3, playerID);
+            ResultSet resultSet = statement.executeQuery();
+
+            System.out.println("Showing a comparison of player: "+playerID+"'s "+stat+" in the regular season vs playoffs: ");
+
+            while(resultSet.next()){
+                System.out.println(resultSet.getString("firstname")+" "+resultSet.getString("lastName")+" "+resultSet.getInt("regAvg")+" "+resultSet.getInt("playoffAvg"));
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+    }
+
+    //10
+    public void playerStatsPerTeam(String id){
+        try{
+            int playerID = Integer.parseInt(id);
+            String sql = "select p.firstName, p.lastName, avg(gps.pts) as points, avg(gps.rbs) as rebounds, avg(gps.ast) as assists, avg(gps.blk) as blocks, avg(gps.stl) as steals from Player p join Play on p.playerID = Play.playerID join GamePlayerStats gps on p.playerID = gps.playerID join Team on Play.teamName = Team.teamName where p.playerID = ? group by p.playerID, p.firstName, p.lastName, Play.teamName order by Play.teamName;";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, playerID);
+            ResultSet resultSet = statement.executeQuery();
+
+            System.out.println("Showing Major stat averages for player: "+playerID+" for all teams they have played for: ");
+            while(resultSet.next()){
+                System.out.println(resultSet.getString("firstname")+" "+resultSet.getString("lastName")+" "+resultSet.getInt("points")+" "+resultSet.getInt("rebounds")+" "+resultSet.getInt("assists")+" "+resultSet.getInt("blocks")+" "+resultSet.getInt("steals"));
+            }
+        } catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+    }
+
+    //11
+    public void champs(){
+        try{
+            String sql = "select seasonYear, champion from Season order by seasonYear;";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+
+            System.out.println("Showing the Champions in chronological order: ");
+            while(resultSet.next()){
+                System.out.println(resultSet.getInt("seasonYear")+" "+resultSet.getString("champion"));
+            }
+        } catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+    }
+
+    //12
+    
     private void createTables(){
         String conf = "create table conference( "+
                       " confName text, "+
@@ -389,6 +501,14 @@ class MyDatabase{
                             " playerID integer, "+
                             " firstName text, "+
                             " lastName text, "+
+                            " birthdate text, "+
+                            " school text, "+
+                            " seasonExp real, "+
+                            " position text, "+
+                            " teamName text, "+
+                            " teamCity text, "+
+                            " fromYear integer, "+
+                            " toYear integer, "+
                             " height real, "+
                             " weight real, "+
                             " birthLocation integer, "+
@@ -399,11 +519,11 @@ class MyDatabase{
 
             String draftInfo = "create table DraftInfo( "+
                                " draftYear integer, "+
-                               " round integer, "+
-                               " pick integer, "+
+                               " draftRound integer, "+
+                               " draftPick integer, "+
                                " playerID integer, "+
                                " teamDrafted text, "+
-                               " primary key(draftYear, round, pick), "+
+                               " primary key(draftYear, draftRound, draftPick), "+
                                " foreign key(playerID) referenes Player, "+
                                " foreign key(teamDrafted) references Team(teamName));";
 
