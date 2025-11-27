@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.jdbc;
 
 public class populate {
     static Connection connection;
@@ -18,15 +19,10 @@ class MyDatabase{
     //this constructor has just been copied from the Unit 10 transaction.java (Rob's notes)
     public MyDatabase(){
 		try {
-			Class.forName("org.hsqldb.jdbcDriver");
-			// creates an in-memory database
-			connection = DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", "");
-			createTables();
-		}
-		catch (ClassNotFoundException e) {
-			e.printStackTrace(System.out);
-		}
-		catch (SQLException e) {
+			String url = "jdbc:sqlite:project.db";
+
+            connection = DriverManager.getConnection(url);
+		} catch (SQLException e) {
 			e.printStackTrace(System.out);
 		}
     }
@@ -282,6 +278,7 @@ class MyDatabase{
     }
 
     //12
+
     
     private void createTables(){
         String conf = "create table conference( "+
