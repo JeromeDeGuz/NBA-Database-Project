@@ -1,22 +1,157 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.jdbc;
+import java.sql.Statement;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.util.Scanner;
 
 public class populate {
     static Connection connection;
     public static void main(String[] args) {
         MyDatabase db = new MyDatabase();
+
+        runConsole(db);
+        System.out.println("Exiting...");
+    }
+
+    public static void runConsole(MyDatabase db) {
+
+		Scanner console = new Scanner(System.in);
+		System.out.print("Welcome to the NBA Database! Type h for help. ");
+		System.out.print("db > ");
+		String line = console.nextLine();
+		String[] parts;
+
+		while (line != null && !line.equals("quit")) {
+			parts = line.split("\\s+");
+			if(parts[0].equals("h")){
+                printHelp();
+            } else if(parts[0].equals("r")) {
+                if(parts.length == 3){
+                    db.roster(parts[1], parts[2]);
+                } else {
+                    System.out.println("This command requires appropriate arguments. Please type h for help!");
+                }
+            } else if(parts[0].equals("gap")) {
+                if(parts.length == 2){
+                    db.gameAppear(parts[1]);
+                } else {
+                    System.out.println("This command requires appropriate arguments. Please type h for help!");
+                }
+            } else if(parts[0].equals("mates")) {
+                if(parts.length == 4){
+                    db.teammates(parts[1], parts[2], parts[3]);
+                } else {
+                    System.out.println("This command requires appropriate arguments. Please type h for help!");
+                }
+            } else if(parts[0].equals("ro")) {
+                db.rankOfficials();
+            } else if(parts[0].equals("si")) {
+                db.stadiumInfo();
+            } else if(parts[0].equals("pc")) {
+                if(parts.length == 2){
+                    db.playerCountry(parts[1]);
+                } else {
+                    System.out.println("This command requires appropriate arguments. Please type h for help!");
+                }
+            } else if(parts[0].equals("rc")) {
+                if(parts.length == 2){
+                    db.rankCoaches(parts[1]);
+                } else {
+                    System.out.println("This command requires appropriate arguments. Please type h for help!");
+                }
+            } else if(parts[0].equals("ll")) {
+                if(parts.length == 4){
+                    db.leagueAvg(parts[1], parts[2], parts[3]);
+                } else {
+                    System.out.println("This command requires appropriate arguments. Please type h for help!");
+                }
+            } else if(parts[0].equals("crp")) {
+                if(parts.length == 4){
+                    db.compareAvg(parts[1], parts[2], parts[3]);
+                } else {
+                    System.out.println("This command requires appropriate arguments. Please type h for help!");
+                }
+            } else if(parts[0].equals("spt")) {
+                if(parts.length == 3){
+                    db.playerStatsPerTeam(parts[1], parts[2]);
+                } else {
+                    System.out.println("This command requires appropriate arguments. Please type h for help!");
+                }
+            } else if(parts[0].equals("cc")) {
+                db.champs();
+            } else if(parts[0].equals("per")) {
+                if(parts.length == 3){
+                    db.per(parts[1], parts[2]);
+                } else {
+                    System.out.println("This command requires appropriate arguments. Please type h for help!");
+                }
+            } else if(parts[0].equals("mr")) {
+                if(parts.length == 3){
+                    db.draftComm(parts[1], parts[2]);
+                } else {
+                    System.out.println("This command requires appropriate arguments. Please type h for help!");
+                }
+            } else if(parts[0].equals("ts")) {
+                if(parts.length == 2){
+                    db.totalStat(parts[1]);
+                } else {
+                    System.out.println("This command requires appropriate arguments. Please type h for help!");
+                }
+            } 
+            System.out.print("db > ");
+			line = console.nextLine();
+	    }
+        console.close();
+    }
+
+    private static void printHelp(){
+        System.out.println("NBA Database");
+        System.out.println("Commands:");
+        
+        //1
+        System.out.println("r <team> <season> - Output roster for a team in a particular season\n                    NOTE: <season> must be of the form YYYY\n");
+        //2
+        System.out.println("gap <limit> - Get game appearance percentage of each player in each season\n              NOTE: <limit> must be a positive integer which represents how many records you want to see\n");
+        //3
+        System.out.println("mates <first> <last> <team> - Show all the teammates for a particular player\n");
+        //4
+        System.out.println("ro - Rank the officials based on number of games officiated\n");
+        //5
+        System.out.println("si - Show all the teams and their arena name and capacity\n");
+        //6
+        System.out.println("pc <season> - Show the total number of players from each country in a particular season\n              NOTE: <season> must be of the form YYYY");
+        //7
+        System.out.println("rc <limit> - Rank coaches with highest win percentage in the regular season\n             NOTE: <limit> must be a positive integer which represents how many records you want to see");
+        //8
+        System.out.println("ll <statType> <season> <limit> - League leaders in a major stat category based on averages for players in a particular season\n                                 NOTE: <season> must be of the form YYYY\n                                 NOTE: <limit> must be a positive integer which represents the limit\n                                 NOTE: <statType> must be from the following:\n                                 pts, rbs, ast, blk, stl, tov, mins, fgm, fga, 3pm, 3pa, ftm, fta, oreb, dreb, pf\n");
+        //9
+        System.out.println("crp <statType> <first> <last> - Compare a player's regular season career averages against their playoff averages\n                                NOTE: <statType> must be from the following:\n                                pts, rbs, ast, blk, stl, tov, mins, fgm, fga, 3pm, 3pa, ftm, fta, oreb, dreb, pf\n");
+        //10
+        System.out.println("spt <first> <last> - Major stat averages for a player for all the teams he played for in his career\n");
+        //11
+        System.out.println("cc - List all championship winning teams in chronological order\n");
+        //12
+        System.out.println("per <team> <season> - Highest player efficiency rating (PER) on a team in a particular season\n                      NOTE: <season> must be of the form YYYY\n");
+        //13
+        System.out.println("mr <year> <round> - Given a specific draft round of players, measure their performance through their careeer\n                    NOTE: <year> must be of the form YYYY\n                    NOTE: <round> must be either 1 or 2\n");
+        //14
+        System.out.println("ts <statType> - Get the career totals for a specific stat for all players\n                NOTE: <statType> must be from the following:\n                pts, rbs, ast, blk, stl, tov, mins, fgm, fga, 3pm, 3pa, ftm, fta, oreb, dreb, pf\n");
+
+        System.out.println("quit - To exit program");
+
+        System.out.println("-----------------End of Help-----------------");
     }
 }
 
 class MyDatabase{
     private Connection connection;
 
-    //this constructor has just been copied from the Unit 10 transaction.java (Rob's notes)
     public MyDatabase(){
 		try {
 			String url = "jdbc:sqlite:project.db";
@@ -31,7 +166,7 @@ class MyDatabase{
     public void roster(String teamName, String season){
         try{
             int seas = Integer.parseInt(season);
-            String sql = "Select firstName, lastName, jerseyNumber from Player natural join Play Natural join Team where seasonID=? AND teamName = ?;";
+            String sql = "Select firstName, lastName, jerseyNumber from Player natural join Play Natural join Team where seasonID = ? AND lower(teamName) like lower(?);";
 
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, seas);
@@ -77,14 +212,17 @@ class MyDatabase{
     }
 
     //3
-    public void teammates(String first, last, team){
+    public void teammates(String first, String last, String team){
         try{
-            String sql = "with seasonTeamsPlayed as( select seasonID, teamName from Play natural join Player where firstName = ? and lastName = ? and teamName = ?), xroster as ( select playerID, firstName, lastName from Player natural join Play where (seasonID, teamName) in seasonsTeamsPlayed) select playerID, firstName, lastName from Player where (playerID, firstName, lastName) in xroster and playerID not in (select playerID from Player natural join Play where firstName = ? and lastName = ? and teamName = ?);";
+            String sql = "with seasonTeamsPlayed as( select seasonID, teamName from Play natural join Player where lower(firstName) = lower(?) and lower(lastName) = lower(?) and lower(teamName) = lower(?)), xroster as ( select playerID, firstName, lastName from Player natural join Play where (seasonID, teamName) in seasonsTeamsPlayed) select playerID, firstName, lastName from Player where (playerID, firstName, lastName) in xroster and playerID not in (select playerID from Player natural join Play where lower(firstName) = lower(?) and lower(lastName) = lower(?) and lower(teamName) = lower(?));";
 
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1,"%"+first+"%");
             statement.setString(2,"%"+last+"%");
             statement.setString(3,"%"+team+"%");
+            statement.setString(4,"%"+first+"%");
+            statement.setString(5,"%"+last+"%");
+            statement.setString(6,"%"+team+"%");
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -219,18 +357,18 @@ class MyDatabase{
     }
 
     //9
-    public void compareAvg(String stat, String id){
+    public void compareAvg(String stat, String first, String last){
         try{
-            int playerID = Integer.parseInt(id);
-            String sql = "select p.firstName, p.lastName, (select avg(gps1.?) from GamePlayerStats gps1 join RegularGame rg1 on gps1.playerID = rg1.playerID) as regAvg, (select avg(gps2.?) from GamePlayerStats gps2 join RegularGame rg2 on gps2.playerID = rg2.playerID) as playoffAvg from Player p where p.playerID = ?";
+            String sql = "select p.firstName, p.lastName, (select avg(gps1.?) from GamePlayerStats gps1 join RegularGame rg1 on gps1.playerID = rg1.playerID) as regAvg, (select avg(gps2.?) from GamePlayerStats gps2 join RegularGame rg2 on gps2.playerID = rg2.playerID) as playoffAvg from Player p where lower(p.firstName) like lower(?) and lower(p.lastName) like lower(?);";
 
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, stat);
             statement.setString(2, stat);
-            statement.setInt(3, playerID);
+            statement.setString(3, "%"+first+"%");
+            statement.setString(3, "%"+last+"%");
             ResultSet resultSet = statement.executeQuery();
 
-            System.out.println("Showing a comparison of player: "+playerID+"'s "+stat+" in the regular season vs playoffs: ");
+            System.out.println("Showing a comparison of player: "+first+" "+last+" and his "+stat+" in the regular season vs playoffs: ");
 
             while(resultSet.next()){
                 System.out.println(resultSet.getString("firstname")+" "+resultSet.getString("lastName")+" "+resultSet.getInt("regAvg")+" "+resultSet.getInt("playoffAvg"));
@@ -244,15 +382,15 @@ class MyDatabase{
     }
 
     //10
-    public void playerStatsPerTeam(String id){
+    public void playerStatsPerTeam(String first, String last){
         try{
-            int playerID = Integer.parseInt(id);
-            String sql = "select p.firstName, p.lastName, avg(gps.pts) as points, avg(gps.rbs) as rebounds, avg(gps.ast) as assists, avg(gps.blk) as blocks, avg(gps.stl) as steals from Player p join Play on p.playerID = Play.playerID join GamePlayerStats gps on p.playerID = gps.playerID join Team on Play.teamName = Team.teamName where p.playerID = ? group by p.playerID, p.firstName, p.lastName, Play.teamName order by Play.teamName;";
+            String sql = "select p.firstName, p.lastName, avg(gps.pts) as points, avg(gps.rbs) as rebounds, avg(gps.ast) as assists, avg(gps.blk) as blocks, avg(gps.stl) as steals from Player p join Play on p.playerID = Play.playerID join GamePlayerStats gps on p.playerID = gps.playerID join Team on Play.teamName = Team.teamName where lower(p.firstName) = lower(?) AND lower(p.lastName) = lower(?) group by p.playerID, p.firstName, p.lastName, Play.teamName order by Play.teamName;";
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, playerID);
+            statement.setString(1, "%"+first+"%");
+            statement.setString(2, "%"+last+"%");
             ResultSet resultSet = statement.executeQuery();
 
-            System.out.println("Showing Major stat averages for player: "+playerID+" for all teams they have played for: ");
+            System.out.println("Showing Major stat averages for player: "+first+" "+last+" for all teams they have played for: ");
             while(resultSet.next()){
                 System.out.println(resultSet.getString("firstname")+" "+resultSet.getString("lastName")+" "+resultSet.getInt("points")+" "+resultSet.getInt("rebounds")+" "+resultSet.getInt("assists")+" "+resultSet.getInt("blocks")+" "+resultSet.getInt("steals"));
             }
@@ -279,7 +417,61 @@ class MyDatabase{
 
     //12
 
-    
+    public void per(String team, String season){
+        try{
+            int seas = Integer.parseInt(season);
+            String sql = "select p.playerID, p.firstName, p.lastName, AVG((gps.pts+gps.rbs+gps.ast+gps.stl+gps.blk)-(gps.tov+gps.pf+(gps.fga-gps.fgm))) as avgPer from Play join Player p on Play.playerID = p.playerID join GamePlayerStats gps on gps.playerID = Play.playerID left join RegularGame rg on rg.gameID = gps.gameID left join PlayoffGame pg on pg.gameID = gps.gameID where lower(Play.teamName) like lower(?) AND (rg.seasonYear = ? OR pg.seasonYear = ?) group by p.playerID, p.firstName, p.lastName order by avgPer desc limit 10;";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1,"%"+team+"%");
+            statement.setInt(2,seas);
+            statement.setInt(3,seas);
+            ResultSet resultSet = statement.executeQuery();
+
+            System.out.println("Showing the highest player efficiency rating from "+team+" for the "+seas+" season: ");
+            while(resultSet.next()){
+                System.out.println(resultSet.getInt("playerID")+" "+resultSet.getString("firstName")+" "+resultSet.getString("lastName")+" "+resultSet.getInt("avgPer"));
+            }
+        } catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+    }
+
+    //13
+    public void draftComm(String year, String round){
+        try{
+            int y = Integer.parseInt(year);
+            int r = Integer.parseInt(round);
+            String sql = "with DraftYrRound as(select di.draftYear, di.round, di.pick, di.playerID from DraftInfo di where di.round = ? AND di.draftYear = ?) Select dyr.draftYear, dyr.draftRound, dyr.draftPick, p.firstName, p.lastName, Play.seasonID, AVG((gps.pts+gps.rbs+gps.ast+gps.stl+gps.blk)-(gps.tov+gps.pf+(gps.fga-gps.fgm))) as avgPer from DraftYrRound dyr join Play on Play.playerID = dyr.playerID join Player p on p.playerID = Play.playerID join GamePlayerStats gps on gps.playerID = p.playerID left join RegularGame rg on rg.gameID = gps.gameID left join PlayoffGame pg on pg.gameID where Play.seasonID >= ? group by fyr.draftYear, dyr.round, p.firstName, p.lastName, dyr.draftPick, Play.seasonID order by p.firstName, p.lastName, Play.seasonID;";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1,r);
+            statement.setInt(2,y);
+            ResultSet resultSet = statement.executeQuery();
+
+            System.out.println("Showing the player efficiency rating for players drafted in round "+r+" of the "+y+" draft:");
+            while(resultSet.next()){
+                System.out.println(resultSet.getInt("draftYear")+" "+resultSet.getInt("draftRound")+" "+resultSet.getInt("draftPick")+" "+resultSet.getInt("seasonID")+" "+resultSet.getString("firstName")+" "+resultSet.getString("lastName")+" "+resultSet.getInt("avgPer"));
+            }
+        } catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+    }
+
+    //14
+    public void totalStat(String stat){
+        try{
+            String sql = "select p.firstName, p.lastName, sum(gps.?) as total from Player p join GamePlayerStats gps on gps.playerID = p.playerID group by p.playerID, p.firstName, p.lastName;";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1,stat);
+            ResultSet resultSet = statement.executeQuery();
+
+            System.out.println("Showing the total "+stat+" of all players all time");
+            while(resultSet.next()){
+                System.out.println(resultSet.getInt("draftYear")+" "+resultSet.getInt("draftRound")+" "+resultSet.getInt("draftPick")+" "+resultSet.getInt("seasonID")+" "+resultSet.getString("firstName")+" "+resultSet.getString("lastName")+" "+resultSet.getInt("avgPer"));
+            }
+        } catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+    }
     private void createTables(){
         String conf = "create table conference( "+
                       " confName text, "+
@@ -471,12 +663,12 @@ class MyDatabase{
             // connection.createStatement().executeUpdate(gts);
 
             String play = "create table Play( "+
-                          " SeasonID integer, "+
+                          " seasonID integer, "+
                           " playerID integer, "+
                           " teamName text, "+
                           " jersey integer, "+
-                          " primary key(SeasonID, playerID), "+
-                          " foreign key(SeasonID) references Season(seasonYear), "+
+                          " primary key(seasonID, playerID), "+
+                          " foreign key(seasonID) references Season(seasonYear), "+
                           " foreign key(playerID) references Player, "+
                           " foreign key(teamName) references Team);";
 
@@ -529,7 +721,6 @@ class MyDatabase{
 
 
         } catch (SQLException e) {
-            // TODO: handle exception
             e.printStackTrace(System.out);
         }
     }
