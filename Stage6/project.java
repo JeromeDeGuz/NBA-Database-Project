@@ -103,7 +103,9 @@ public class populate {
                 } else {
                     System.out.println("This command requires appropriate arguments. Please type h for help!");
                 }
-            } 
+            } else {
+                System.out.println("The entered command does not exist, please type h for help!");
+            }
             System.out.print("db > ");
 			line = console.nextLine();
 	    }
@@ -244,7 +246,7 @@ class MyDatabase{
         try{
             String sql = "select officialID, firstName, lastName, count(gameID) as numGames from Officials natural join Officiate group by officialID, firstName, lastName order by numGames desc;";
 
-            PreparedStatement statement = connection.prepareStatement(sql);
+            Statement statement = connection.prepareStatement(sql);
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -334,8 +336,20 @@ class MyDatabase{
         try{
             int seas = Integer.parseInt(season);
             int lim = Integer.parseInt(limit);
-
-            String sql = "select p.firstname,p.lastName, avg(gps.?) as avg from GamePlayerStats gps join Player p on gps.playerID = p.playerID join RegularGame rg on gps.gameID = rg.gameID where rg.seasonYear = ? group by p.firstname,p.lastName, order by avg desc limit ?;";
+            String[] validStats = {"pts", "rbs", "ast", "blk", "stl", "tov", "mins", "fgm", "fga", "3pm", "3pa", "ftm", "fta", "oreb", "dreb", "pf"};
+            boolean check = false;
+            for(String x:validStats){
+                if(stat.equals(x)){
+                    check = true;
+                }
+            }
+            if(check){
+                String sql = "select p.firstname,p.lastName, avg(gps."+stat+") as avg from GamePlayerStats gps join Player p on gps.playerID = p.playerID join RegularGame rg on gps.gameID = rg.gameID where rg.seasonYear = ? group by p.firstname,p.lastName, order by avg desc limit ?;";
+            } else{
+                System.out.println("You have entered unexpected paramters. Type h for help")
+                return;
+            }
+            
 
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, stat);
@@ -522,7 +536,7 @@ class MyDatabase{
 
             connection.createStatement().executeUpdate(loc);
 
-            String regGame = "create table RegularGame( "+
+            String Game = "create table Game( "+
                              " gameID integer, "+
                              " date text, "+
                              " seasonYear integer, "+
@@ -531,17 +545,12 @@ class MyDatabase{
                              " foreign key(seasonYear) references Season, "+
                              " foreign key(stadiumName) references Stadium);";
 
-            connection.createStatement().executeUpdate(regGame);
+            connection.createStatement().executeUpdate(Game);
 
             String pGame = "create table PlayoffGame( "+
                              " gameID integer, "+
-                             " date text, "+
                              " round text, "+
-                             " seasonYear integer, "+
-                             " stadiumName text, "+
-                             " primary key(gameID), "+
-                             " foreign key(seasonYear) references Season, "+
-                             " foreign key(stadiumName) references Stadium);";
+                             " primary key(gameID));";
 
             connection.createStatement().executeUpdate(pGame);
 
@@ -581,86 +590,86 @@ class MyDatabase{
 
             connection.createStatement().executeUpdate(teach);
 
-            // We didnt have a Game relation in our normalization word doc. Only PlayoffGame/RegularGame
-            // How do we go about this?
-            // Also, couldnt homeTeam, awayTeam and winner reference Team?
-            // String GTI = "create table GameTeamInfo( "+
-            //              " gameID integer, "+
-            //              " homeTeam text, "+
-            //              " awayTeam text, "+
-            //              " winner text, "+
-            //              " primary key(gameID), "+
-            //              " foreign key(gameID) references Game(gameID));";
+            We didnt have a Game relation in our normalization word doc. Only PlayoffGame/RegularGame
+            How do we go about this?
+            Also, couldnt homeTeam, awayTeam and winner reference Team?
+            String GTI = "create table GameTeamInfo( "+
+                         " gameID integer, "+
+                         " homeTeam text, "+
+                         " awayTeam text, "+
+                         " winner text, "+
+                         " primary key(gameID), "+
+                         " foreign key(gameID) references Game(gameID));";
 
-            // connection.createStatement().executeUpdate(GTI);
+            connection.createStatement().executeUpdate(GTI);
 
-            // String GPS = "create table GamePlayerStats( "+
-            //              " playerID integer, "+
-            //              " gameID integer, "+
-            //              " mins integer, "+
-            //              " pts integer, "+
-            //              " fgm integer, "+
-            //              " fga integer, "+
-            //              " fg% real, "+
-            //              " 3pm integer, "+
-            //              " 3pa integer, "+
-            //              " 3p% real, "+
-            //              " ftm integer, "+
-            //              " fta integer, "+
-            //              " ft% real, "+
-            //              " oreb integer, "+
-            //              " dreb integer, "+
-            //              " reb integer, "+
-            //              " ast integer, "+
-            //              " stl integer, "+
-            //              " blk integer, "+
-            //              " tov integer, "+
-            //              " pf integer, "+
-            //              " +/- integer, "+
-            //              " primary key(gameID, playerID), "+
-            //              " foreign key(gameID) referenes Game(gameID), "+
-            //              " foreign key(playerID) references Player);";
+            String GPS = "create table GamePlayerStats( "+
+                         " playerID integer, "+
+                         " gameID integer, "+
+                         " mins integer, "+
+                         " pts integer, "+
+                         " fgm integer, "+
+                         " fga integer, "+
+                         " fg% real, "+
+                         " 3pm integer, "+
+                         " 3pa integer, "+
+                         " 3p% real, "+
+                         " ftm integer, "+
+                         " fta integer, "+
+                         " ft% real, "+
+                         " oreb integer, "+
+                         " dreb integer, "+
+                         " reb integer, "+
+                         " ast integer, "+
+                         " stl integer, "+
+                         " blk integer, "+
+                         " tov integer, "+
+                         " pf integer, "+
+                         " +/- integer, "+
+                         " primary key(gameID, playerID), "+
+                         " foreign key(gameID) referenes Game(gameID), "+
+                         " foreign key(playerID) references Player);";
 
-            // // connection.createStatement().executeUpdate(GPS);
+            // connection.createStatement().executeUpdate(GPS);
 
-            // String gti = "create table GameTeamInfo( "+
-            //              " gameID integer, "+
-            //              " homeTeam text, "+
-            //              " awayTeam text, "+
-            //              " winner text, "+
-            //              " primary key(gameID), "+
-            //              " foreign key(gameID) reference Game(gameID));";
+            String gti = "create table GameTeamInfo( "+
+                         " gameID integer, "+
+                         " homeTeam text, "+
+                         " awayTeam text, "+
+                         " winner text, "+
+                         " primary key(gameID), "+
+                         " foreign key(gameID) reference Game(gameID));";
 
-            // connection.createStatement().executeUpdate(gti);
+            connection.createStatement().executeUpdate(gti);
 
-            // String gts = "create table GameTeamStats( "+
-            //              " teamName text, "+
-            //              " gameID integer, "+
-            //              " mins integer, "+
-            //              " pts integer, "+
-            //              " fgm integer, "+
-            //              " fga integer, "+
-            //              " fg% real, "+
-            //              " 3pm integer, "+
-            //              " 3pa integer, "+
-            //              " 3p% real, "+
-            //              " ftm integer, "+
-            //              " fta integer, "+
-            //              " ft% real, "+
-            //              " oreb integer, "+
-            //              " dreb integer, "+
-            //              " reb integer, "+
-            //              " ast integer, "+
-            //              " stl integer, "+
-            //              " blk integer, "+
-            //              " tov integer, "+
-            //              " pf integer, "+
-            //              " +/- integer, "+
-            //              " primary key(teamName, gameID), "+
-            //              " foreign key(teamName) references Team, "+
-            //              " foreign key(gameID) references Game(gameID));";
+            String gts = "create table GameTeamStats( "+
+                         " teamName text, "+
+                         " gameID integer, "+
+                         " mins integer, "+
+                         " pts integer, "+
+                         " fgm integer, "+
+                         " fga integer, "+
+                         " fg% real, "+
+                         " 3pm integer, "+
+                         " 3pa integer, "+
+                         " 3p% real, "+
+                         " ftm integer, "+
+                         " fta integer, "+
+                         " ft% real, "+
+                         " oreb integer, "+
+                         " dreb integer, "+
+                         " reb integer, "+
+                         " ast integer, "+
+                         " stl integer, "+
+                         " blk integer, "+
+                         " tov integer, "+
+                         " pf integer, "+
+                         " +/- integer, "+
+                         " primary key(teamName, gameID), "+
+                         " foreign key(teamName) references Team, "+
+                         " foreign key(gameID) references Game(gameID));";
 
-            // connection.createStatement().executeUpdate(gts);
+            connection.createStatement().executeUpdate(gts);
 
             String play = "create table Play( "+
                           " seasonID integer, "+
@@ -675,14 +684,14 @@ class MyDatabase{
             connection.createStatement().executeUpdate(play);
 
             // The foreign key reference to the Game table is an issue here too
-            // String officiate = "create table Officiate( "+
-            //                    " gameID integer, "+
-            //                    " officialID integer, "+
-            //                    " primary key(gameID, officialID), "+
-            //                    " foreign key(gameID) references Game(gameID), "+
-            //                    " foreign key(officialID) references Officials);";
+            String officiate = "create table Officiate( "+
+                               " gameID integer, "+
+                               " officialID integer, "+
+                               " primary key(gameID, officialID), "+
+                               " foreign key(gameID) references Game(gameID), "+
+                               " foreign key(officialID) references Officials);";
 
-            // connection.createStatement().executeUpdate(officiate);
+            connection.createStatement().executeUpdate(officiate);
             
             //In the normalization doc, we have a set B that is other attributes in the Player table. What are those attributes?
             //
@@ -691,15 +700,11 @@ class MyDatabase{
                             " firstName text, "+
                             " lastName text, "+
                             " birthdate text, "+
-                            " school text, "+
-                            " seasonExp real, "+
-                            " position text, "+
-                            " teamName text, "+
-                            " teamCity text, "+
-                            " fromYear integer, "+
-                            " toYear integer, "+
                             " height real, "+
                             " weight real, "+
+                            " position text, "+
+                            " fromYear integer, "+
+                            " toYear integer, "+
                             " birthLocation integer, "+
                             " primary key(playerID), "+
                             " foreign key(birthLocation) references Location(locationID));";
