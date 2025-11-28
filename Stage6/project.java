@@ -115,6 +115,16 @@ public class project {
     private static void printHelp(){
         System.out.println("NBA Database");
         System.out.println("Commands:");
+
+        String formatString = "| %-15s | %10s | %10s | %10s | %10s | %10s | %10s |%n";
+
+        System.out.printf("+-----------------+-----------------+-----------------+");
+        System.out.printf("+-----------------+-----------------+-----------------+%n");
+        System.out.printf(formatString, "Jerome", "Gurwinder", "3", "4", "5", "6", "7");
+        System.out.printf("+-----------------+-----------------+-----------------+");
+        System.out.printf("+-----------------+-----------------+-----------------+%n");
+        System.out.printf(formatString, "Jerome", "Gurwinder", "3", "4", "5", "6", "7");
+        System.out.printf(formatString, "Alice", "25", "3", "4", "5", "6", "7");
         
         //1
         System.out.println("r <team> <season> - Output roster for a team in a particular season\n                    NOTE: <season> must be of the form YYYY\n");
