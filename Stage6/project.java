@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.util.Scanner;
 
-public class populate {
+public class project {
     static Connection connection;
     public static void main(String[] args) {
         MyDatabase db = new MyDatabase();
@@ -158,6 +158,7 @@ class MyDatabase{
 		try {
 			String url = "jdbc:sqlite:project.db";
 
+            //createTables();
             connection = DriverManager.getConnection(url);
 		} catch (SQLException e) {
 			e.printStackTrace(System.out);
@@ -246,9 +247,9 @@ class MyDatabase{
         try{
             String sql = "select officialID, firstName, lastName, count(gameID) as numGames from Officials natural join Officiate group by officialID, firstName, lastName order by numGames desc;";
 
-            Statement statement = connection.prepareStatement(sql);
+            Statement statement = connection.createStatement();
 
-            ResultSet resultSet = statement.executeQuery();
+            ResultSet resultSet = statement.executeQuery(sql);
 
             System.out.println("Showing the officials who have officiated the most games:");
 
@@ -268,9 +269,9 @@ class MyDatabase{
         try{
             String sql = "select teamName, capacity from Team natural join Stadium order by teamName;";
 
-            PreparedStatement statement = connection.prepareStatement(sql);
+            Statement statement = connection.createStatement();
 
-            ResultSet resultSet = statement.executeQuery();
+            ResultSet resultSet = statement.executeQuery(sql);
 
             System.out.println("Showing all the teams and their stadium info:");
 
@@ -336,6 +337,7 @@ class MyDatabase{
         try{
             int seas = Integer.parseInt(season);
             int lim = Integer.parseInt(limit);
+            String sql;
             String[] validStats = {"pts", "rbs", "ast", "blk", "stl", "tov", "mins", "fgm", "fga", "3pm", "3pa", "ftm", "fta", "oreb", "dreb", "pf"};
             boolean check = false;
             for(String x:validStats){
@@ -344,17 +346,16 @@ class MyDatabase{
                 }
             }
             if(check){
-                String sql = "select p.firstname,p.lastName, avg(gps."+stat+") as avg from GamePlayerStats gps join Player p on gps.playerID = p.playerID join RegularGame rg on gps.gameID = rg.gameID where rg.seasonYear = ? group by p.firstname,p.lastName, order by avg desc limit ?;";
+                sql = "select p.firstname,p.lastName, avg(gps."+stat+") as avg from GamePlayerStats gps join Player p on gps.playerID = p.playerID join RegularGame rg on gps.gameID = rg.gameID where rg.seasonYear = ? group by p.firstname,p.lastName, order by avg desc limit ?;";
             } else{
-                System.out.println("You have entered unexpected paramters. Type h for help")
+                System.out.println("You have entered unexpected paramters. Type h for help");
                 return;
             }
             
 
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, stat);
-            statement.setInt(2, seas);
-            statement.setInt(3, lim);
+            statement.setInt(1, seas);
+            statement.setInt(2, lim);
             ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing top "+lim+" players based on regular season averages for "+stat+" for the "+seas+" season: ");
@@ -373,13 +374,24 @@ class MyDatabase{
     //9
     public void compareAvg(String stat, String first, String last){
         try{
-            String sql = "select p.firstName, p.lastName, (select avg(gps1.?) from GamePlayerStats gps1 join RegularGame rg1 on gps1.playerID = rg1.playerID) as regAvg, (select avg(gps2.?) from GamePlayerStats gps2 join RegularGame rg2 on gps2.playerID = rg2.playerID) as playoffAvg from Player p where lower(p.firstName) like lower(?) and lower(p.lastName) like lower(?);";
-
+            String sql;
+            String[] validStats = {"pts", "rbs", "ast", "blk", "stl", "tov", "mins", "fgm", "fga", "3pm", "3pa", "ftm", "fta", "oreb", "dreb", "pf"};
+            boolean check = false;
+            for(String x:validStats){
+                if(stat.equals(x)){
+                    check = true;
+                }
+            }
+            if(check){
+                sql = "select p.firstName, p.lastName, (select avg(gps1."+stat+") from GamePlayerStats gps1 join RegularGame rg1 on gps1.playerID = rg1.playerID) as regAvg, (select avg(gps2."+stat+") from GamePlayerStats gps2 join RegularGame rg2 on gps2.playerID = rg2.playerID) as playoffAvg from Player p where lower(p.firstName) like lower(?) and lower(p.lastName) like lower(?);";
+            } else{
+                System.out.println("You have entered unexpected paramters. Type h for help");
+                return;
+            }
+            
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, stat);
-            statement.setString(2, stat);
-            statement.setString(3, "%"+first+"%");
-            statement.setString(3, "%"+last+"%");
+            statement.setString(1, "%"+first+"%");
+            statement.setString(2, "%"+last+"%");
             ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing a comparison of player: "+first+" "+last+" and his "+stat+" in the regular season vs playoffs: ");
@@ -417,8 +429,9 @@ class MyDatabase{
     public void champs(){
         try{
             String sql = "select seasonYear, champion from Season order by seasonYear;";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            ResultSet resultSet = statement.executeQuery();
+            Statement statement = connection.createStatement();
+
+            ResultSet resultSet = statement.executeQuery(sql);
 
             System.out.println("Showing the Champions in chronological order: ");
             while(resultSet.next()){
@@ -473,7 +486,21 @@ class MyDatabase{
     //14
     public void totalStat(String stat){
         try{
-            String sql = "select p.firstName, p.lastName, sum(gps.?) as total from Player p join GamePlayerStats gps on gps.playerID = p.playerID group by p.playerID, p.firstName, p.lastName;";
+            String sql;
+            String[] validStats = {"pts", "rbs", "ast", "blk", "stl", "tov", "mins", "fgm", "fga", "3pm", "3pa", "ftm", "fta", "oreb", "dreb", "pf"};
+            boolean check = false;
+            for(String x:validStats){
+                if(stat.equals(x)){
+                    check = true;
+                }
+            }
+            if(check){
+                sql = "select p.firstName, p.lastName, sum(gps."+stat+") as total from Player p join GamePlayerStats gps on gps.playerID = p.playerID group by p.playerID, p.firstName, p.lastName;";
+            } else{
+                System.out.println("You have entered unexpected paramters. Type h for help");
+                return;
+            }
+
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1,stat);
             ResultSet resultSet = statement.executeQuery();
@@ -590,9 +617,9 @@ class MyDatabase{
 
             connection.createStatement().executeUpdate(teach);
 
-            We didnt have a Game relation in our normalization word doc. Only PlayoffGame/RegularGame
-            How do we go about this?
-            Also, couldnt homeTeam, awayTeam and winner reference Team?
+            // We didnt have a Game relation in our normalization word doc. Only PlayoffGame/RegularGame
+            // How do we go about this?
+            // Also, couldnt homeTeam, awayTeam and winner reference Team?
             String GTI = "create table GameTeamInfo( "+
                          " gameID integer, "+
                          " homeTeam text, "+
@@ -630,7 +657,7 @@ class MyDatabase{
                          " foreign key(gameID) referenes Game(gameID), "+
                          " foreign key(playerID) references Player);";
 
-            // connection.createStatement().executeUpdate(GPS);
+            connection.createStatement().executeUpdate(GPS);
 
             String gti = "create table GameTeamInfo( "+
                          " gameID integer, "+
@@ -730,4 +757,3 @@ class MyDatabase{
         }
     }
 }
-
