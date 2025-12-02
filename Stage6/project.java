@@ -481,7 +481,7 @@ class MyDatabase {
         }
     }
 
-    // 8
+    // 8 DONE
     public void leagueAvg(String stat, String season, String limit) {
         try {
             int seas = Integer.parseInt(season);
@@ -509,20 +509,22 @@ class MyDatabase {
 
             System.out.println("Showing top " + lim + " players based on regular season averages for " + stat
                     + " for the " + seas + " season: ");
+            String formatString = "%n| %-15s | %-15s | %-10s |%n";      // Format Structure
+            System.out.printf(formatString, "FirstName", "LastName", "AVG"+stat);       // Column Labels
+            System.out.printf("+-----------------+-----------------+------------+%n");   //Top Bar
 
             while (resultSet.next()) {
-                System.out.println(resultSet.getString("firstname") + " " + resultSet.getString("lastName") + " "
-                        + resultSet.getInt("avg"));
+                System.out.printf(formatString, resultSet.getString("firstname"), resultSet.getString("lastName"), resultSet.getInt("avgStat"));
             }
-
+            System.out.printf("+-----------------+-----------------+------------+%n");
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            System.out.println("You have entered unexpected parameters. Type h for help!");
         }
     }
 
-    // 9
+    // 9 DONE
     public void compareAvg(String stat, String first, String last) {
         try {
             String sql;
@@ -548,23 +550,24 @@ class MyDatabase {
 
             System.out.println("Showing a comparison of player: " + first + " " + last + " and his " + stat
                     + " in the regular season vs playoffs: ");
-
+            String formatString = "%n| %-15s | %-15s | %-10s | %-10s |%n";      // Format Structure
+            System.out.printf(formatString, "FirstName", "LastName", "Regular AVG"+stat, "Playoff AVG"+stat);       // Column Labels
+            System.out.printf("+-----------------+-----------------+------------+------------+%n");   //Top Bar
             while (resultSet.next()) {
-                System.out.println(resultSet.getString("firstname") + " " + resultSet.getString("lastName") + " "
-                        + resultSet.getInt("regAvg") + " " + resultSet.getInt("playoffAvg"));
+                System.out.printf(formatString, resultSet.getString("firstname"), resultSet.getString("lastName"), resultSet.getInt("regAvg"), resultSet.getInt("playoffAvg"));
             }
-
+            System.out.printf("+-----------------+-----------------+------------+------------+%n");
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            System.out.println("You have entered unexpected parameters. Type h for help!");
         }
     }
 
-    // 10
+    // 10 DONE
     public void playerStatsPerTeam(String first, String last) {
         try {
-            String sql = "select p.firstName, p.lastName, avg(gps.pts) as points, avg(gps.rbs) as rebounds, avg(gps.ast) as assists, avg(gps.blk) as blocks, avg(gps.stl) as steals from Player p join Play on p.playerID = Play.playerID join GamePlayerStats gps on p.playerID = gps.playerID join Team on Play.teamName = Team.teamName where lower(p.firstName) = lower(?) AND lower(p.lastName) = lower(?) group by p.playerID, p.firstName, p.lastName, Play.teamName order by Play.teamName;";
+            String sql = "select p.playerID, p.firstName, p.lastName, play.teamName, avg(gps.pts) as points, avg(gps.reb) as rebounds, avg(gps.ast) as assists, avg(gps.blk) as blocks, avg(gps.stl) as steals from Players p natural join Play  join GamePlayerStats gps on play.playerID = gps.playerID natural join Games where lower(p.firstName) = lower(?) AND lower(p.lastName) = lower(?) group by p.playerID, p.firstName, p.lastName, Play.teamName order by Play.teamName;";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, "%" + first + "%");
             statement.setString(2, "%" + last + "%");
@@ -572,18 +575,19 @@ class MyDatabase {
 
             System.out.println("Showing Major stat averages for player: " + first + " " + last
                     + " for all teams they have played for: ");
+            String formatString = "%n| %-15s | %-15s | %-10s | %-10s | %-10s | %-10s | %-10s |%n";      // Format Structure
+            System.out.printf(formatString, "FirstName", "LastName", "Points", "Rebounds", "Assists", "Blocks", "Steals");       // Column Labels
+            System.out.printf("+-----------------+-----------------+------------+------------+------------+------------+------------+%n");   //Top Bar
             while (resultSet.next()) {
-                System.out.println(resultSet.getString("firstname") + " " + resultSet.getString("lastName") + " "
-                        + resultSet.getInt("points") + " " + resultSet.getInt("rebounds") + " "
-                        + resultSet.getInt("assists") + " " + resultSet.getInt("blocks") + " "
-                        + resultSet.getInt("steals"));
+                System.out.printf(formatString, resultSet.getString("firstname"), resultSet.getString("lastName"), resultSet.getInt("points"), resultSet.getInt("rebounds"), resultSet.getInt("assists") + " " + resultSet.getInt("blocks"), resultSet.getInt("steals"));
             }
+            System.out.printf("+-----------------+-----------------+------------+------------+------------+------------+------------+%n");
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            System.out.println("You have entered unexpected parameters. Type h for help!");
         }
     }
 
-    // 11 
+    // 11 DONE
     // NO INPUT NEEDED
     public void champs() {
         try {
@@ -593,11 +597,15 @@ class MyDatabase {
             ResultSet resultSet = statement.executeQuery(sql);
 
             System.out.println("Showing the Champions in chronological order: ");
+            String formatString = "%n| %-10s | %-15s |%n";      // Format Structure
+            System.out.printf(formatString, "Year", "Champion");       // Column Labels
+            System.out.printf("+------------+-----------------+%n");   //Top Bar
             while (resultSet.next()) {
-                System.out.println(resultSet.getInt("seasonYear") + " " + resultSet.getString("champion"));
+                System.out.printf(formatString, resultSet.getInt("years"), resultSet.getString("champion"));
             }
+            System.out.printf("+------------+-----------------+%n"); 
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            System.out.println("You have entered unexpected parameters. Type h for help!");
         }
     }
 
