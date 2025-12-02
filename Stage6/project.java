@@ -271,15 +271,16 @@ class MyDatabase {
     }
 
 
-    // 1
+     // 1 
     public void roster(String teamName, String season) {
         try {
-            int seas = Integer.parseInt(season);
-            String sql = "Select firstName, lastName, jerseyNumber from Player natural join Play Natural join Team where seasonID = ? AND lower(teamName) like lower(?);";
+            String sql = "select firstname, lastname,  jersey\n" + //
+                                "from players join play on players.playerID = play.playerID join teams on play.teamName = teams.teamName\n" + //
+                                "where season = ? and teams.teamName like ?";
 
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, seas);
-            statement.setString(2, "%" + teamName + "%");
+            statement.setString(1, season);
+            statement.setString(2, "%" +teamName + "%");
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -287,7 +288,7 @@ class MyDatabase {
 
             while (resultSet.next()) {
                 System.out.println(resultSet.getString("firstName") + " " + resultSet.getString("lastName") + " "
-                        + resultSet.getInt("jerseyNumber"));
+                        + resultSet.getInt("jersey"));
             }
 
             resultSet.close();
@@ -302,6 +303,10 @@ class MyDatabase {
     public void gameAppear(String lim) {
         try {
             int num = Integer.parseInt(lim);
+            if (num <= 0) {
+                printError();
+                return;
+            }
             String sql = "with gamesPlayedPlayer as ( select playerID, firstName, lastName, seasonID, count(gps.gameID) as playerGP from Player natural join GamePlayerStats gps left join RegularGame rg on gps.gameID = rg.gameID left join PlayoffGame pg on gps.gameID = pg.gameID group by playerID, firstName, lastName, seasonID), GamesPlayedTeam as (select teamName, seasonID, count(gts.gameID) as teamGP from GameTeamStats gts left join RegularGame rg on gts.gameID = rg.gameID left join PlayoffGame pg on gts.gameID = pg.gameID group by teamName, seasonID) select seasonID, teamName, firstName, lastName, 100.0*(gpp.playerGP/gpt.teamGP) as appearancePercentage from GamesPlayedPlayer gpp join Play on gpp.seasonID = Play.seasonID join GamesPlayedTeam gpt on Play.teamName = gpt.teamName order by appearancePercentage desc limit ?;";
 
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -321,6 +326,8 @@ class MyDatabase {
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace(System.out);
+        } catch (NumberFormatException nfe) {
+            printError();
         }
     }
 
@@ -362,19 +369,14 @@ class MyDatabase {
 
             ResultSet resultSet = statement.executeQuery(sql);
 
-            System.out.println("Showing the officials who have officiated the most games:");
+            System.out.println("Showing the officials who have officiated the most games:\n");
             System.out.printf("%-15s %-20s %-20s %s%n", "officialID", "First Name", "Last Name", "Number of Games"); // Header
             System.out.println("-------------------------------------------------------------------------------");
             while (resultSet.next()) {
-                System.out.printf("%-15d %-20s %-20s %s%n", resultSet.getInt("officialID"), resultSet.getString("firstname"),
+                System.out.printf("%-15d %-20s %-20s %d%n", resultSet.getInt("officialID"),
+                        resultSet.getString("firstname"),
                         resultSet.getString("lastname"), resultSet.getInt("numGames"));
             }
-
-            // while (resultSet.next()) {
-            // System.out.println(resultSet.getString("firstName") + " " +
-            // resultSet.getString("lastName") + " "
-            // + resultSet.getInt("officialID") + " " + resultSet.getInt("numGames"));
-            // }
 
             resultSet.close();
             statement.close();
