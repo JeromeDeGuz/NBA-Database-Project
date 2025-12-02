@@ -504,10 +504,7 @@ class MyDatabase {
                 }
             }
             if (check) {
-                sql = "select p.firstName, p.lastName, (select avg(gps1." + stat
-                        + ") from GamePlayerStats gps1 join RegularGame rg1 on gps1.playerID = rg1.playerID) as regAvg, (select avg(gps2."
-                        + stat
-                        + ") from GamePlayerStats gps2 join RegularGame rg2 on gps2.playerID = rg2.playerID) as playoffAvg from Player p where lower(p.firstName) like lower(?) and lower(p.lastName) like lower(?);";
+                sql = "with reg as (SELECT players.playerID, players.firstname, players.lastname, avg(gps."+stat+") as regAvg FROM players natural join gamePlayerStats gps NATURAL JOIN games WHERE games.gameID not in(SELECT gameID from playoffGames) group by players.playerID, players.firstname, players.lastname), playoff as (SELECT players.playerID, players.firstname, players.lastname, avg(gps."+stat+") as pfAvg FROM players natural join gamePlayerStats gps NATURAL JOIN games NATURAL JOIN playoffGames group by players.playerID, players.firstname, players.lastname) SELECT playerID, firstname, lastname, reg.regAvg, playoff.pfAvg FROM reg NATURAL join playoff WHERE lower(firstname) like lower(?) and  lower(lastname) like lower(?);";
             } else {
                 System.out.println("You have entered unexpected paramters. Type h for help");
                 return;
