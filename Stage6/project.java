@@ -630,8 +630,9 @@ class MyDatabase {
                 }
             }
             if (check) {
-                sql = "select p.firstName, p.lastName, sum(gps." + stat
-                        + ") as total from Player p join GamePlayerStats gps on gps.playerID = p.playerID group by p.playerID, p.firstName, p.lastName;";
+                sql = "SELECT p.firstname, p.lastname, sum(gps." + stat
+                + ") AS totalxStatistic FROM Players p JOIN GamePlayerStats gps ON p.playerID = gps.playerID JOIN games g ON gps.gameID = g.gameID GROUP BY p.firstname, p.lastname ORDER BY totalxStatistic DESC";
+
             } else {
                 System.out.println("You have entered unexpected paramters. Type h for help");
                 return;
