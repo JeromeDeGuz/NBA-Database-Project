@@ -556,7 +556,7 @@ class MyDatabase {
     // NO INPUT NEEDED
     public void champs() {
         try {
-            String sql = "select seasonYear, champion from Season order by seasonYear;";
+            String sql = "select years, champion from Seasons order by years;";
             Statement statement = connection.createStatement();
 
             ResultSet resultSet = statement.executeQuery(sql);
