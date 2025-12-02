@@ -265,6 +265,10 @@ class MyDatabase {
         }
     }
 
+    public void printError() {
+        System.out.println("You have entered unexpected paramters. Type h for help");
+    }
+
 
     // 1
     public void roster(String teamName, String season) {
