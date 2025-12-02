@@ -429,28 +429,53 @@ class MyDatabase {
         }
     }
 
-    // 7
-    // NO INPUT NEEDED
+    // 7 DONE
     public void rankCoaches(String limit) {
         try {
             int lim = Integer.parseInt(limit);
-            String sql = "with coachGamesWon as ( select coachID, firstName, lastName, count(gameID) as gamesWon from RegularGame natural join GameTeamStats natural join GameTeamInfo natural join Team natural join Manage natural join Coach where winner = teamName group by coachID, firstName, lastName), coachGamesPlayed as (select coachID, firstName, lastName, count(gameID) as gamesPlayed from RegularGame natural join GameTeamStats natural join Team natural join Manage natural join Coach group by coachID, firstName, lastName) select c.coachID, c.firstName, c.lastName, 100.0*(cgw.gamesWon/cgp.gamesPlayed) as winPercentage from Coach c join coachGamesWon cgw on c.coachID = cgw.coachID join coachGamesPlayed cgp on c.coachID = cgp.coachID order by winPercentage desc limit ?;";
 
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, lim);
-            ResultSet resultSet = statement.executeQuery();
+            if (lim <= 0) {
+                printError();
+                return;
+            }
+            int counter = 1;
+            String sql = "with coachGamesWon as (\n" + //
+                    "\tselect c.coachID, c.firstname, c.lastname, count(distinct g.gameID) as gamesWon \n" + //
+                    "\tfrom games g join gameTeamInfo gti on g.gameID = gti.gameID join gameTeamStats gts on g.gameID = gts.gameID join manage m on m.season = g.season and m.teamName = gts.teamName join coaches c on m.coachID = c.coachID\n"
+                    + //
+                    "\twhere winner = m.teamName and g.gameID not in (select gameID from playoffGames)\n" + //
+                    "\tgroup by c.coachID, c.firstname, c.lastname),\n" + //
+                    "coachGamesPlayed as (\n" + //
+                    "\tselect c.coachID, c.firstname, c.lastname, count(distinct g.gameID) as gamesPlayed \n" + //
+                    "\tfrom games g join gameTeamStats gts on g.gameID = gts.gameID join manage m on m.season = g.season and gts.teamName = m.teamName  join coaches c on m.coachID = c.coachID\n"
+                    + //
+                    "\twhere g.gameID not in (select gameID from playoffGames)\n" + //
+                    "\tgroup by c.coachID, c.firstname, c.lastname)\n" + //
+                    "select cgw.firstname, cgw.lastname, 100.0* cgw.gamesWon/cgp.gamesPlayed as winPercentage\n" + //
+                    "from coaches c join coachGamesWon cgw on c.coachID = cgw.coachID join coachGamesPlayed cgp on c.coachID = cgp.coachID\n"
+                    + //
+                    "order by winPercentage desc limit " + lim + ";";
 
-            System.out.println("Showing top " + lim + " coaches based on regular season win percentage: ");
+            Statement statement = connection.createStatement();
+            // statement.setInt(1, lim);
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            System.out.println("Showing coaches and their win percentages over the regular season:\n");
+            System.out.printf("%5s %-28s %s%n", "", "Coach", "Win Percentage"); // Header
+            System.out.println("-------------------------------------------------------------------------------");
 
             while (resultSet.next()) {
-                System.out.println(resultSet.getString("coachID") + " " + resultSet.getString("firstName") + " "
-                        + resultSet.getString("lastName") + " " + resultSet.getInt("winPercentage"));
+                String coach = resultSet.getString("firstname") + " " + resultSet.getString("lastname");
+                System.out.printf("%2d. %-30s %.1f%n",counter, coach, resultSet.getFloat("winPercentage"));
+                counter++;
             }
 
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace(System.out);
+        } catch(NumberFormatException nfe) {
+            printError();
         }
     }
 
