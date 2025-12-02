@@ -382,21 +382,23 @@ class MyDatabase {
         }
     }
 
-    // 5
+    // 5 DONE
     public void stadiumInfo() {
         try {
             String sql = "select basedIn, teamName, stadiumName, capacity from teams natural join stadiums order by teamName;";
-            
+
             Statement statement = connection.createStatement();
-            
+
             ResultSet resultSet = statement.executeQuery(sql);
-            
-            System.out.println("Showing all the teams and their stadium info:");
-            System.out.printf("%-15s %-20s %-20s %s%n", "Team", "Last Name", "Number of Games"); // Header
+
+            System.out.println("Showing all the teams and their stadium info:\n");
+            System.out.printf("%-40s %-30s %s%n", "Team", "Stadium", "Capacity"); // Header
             System.out.println("-------------------------------------------------------------------------------");
-            
+
             while (resultSet.next()) {
-                System.out.printf("%s %-30s %-30s %d%n", resultSet.getString("basedIn"), resultSet.getString("teamName"), resultSet.getString("stadiumName"), resultSet.getInt("capacity")); // Header
+                String team = resultSet.getString("basedIn") + " " + resultSet.getString("teamName");
+                System.out.printf("%-40s %-30s %d%n", team, resultSet.getString("stadiumName"),
+                        resultSet.getInt("capacity"));
             }
 
             resultSet.close();
