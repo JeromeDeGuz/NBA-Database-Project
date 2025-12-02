@@ -495,7 +495,7 @@ class MyDatabase {
                 }
             }
             if (check) {
-                sql = "select p.firstname,p.lastName, avg(gps."+stat+") as avgStat from GamePlayerStats gps join players p on gps.playerID = p.playerID join games g on gps.gameID = g.gameID where g.season = ? group by p.firstname,p.lastName order by avgStat desc limit ?;";
+                sql = "select p.firstname,p.lastName, avg(gps."+stat+") as avgStat from GamePlayerStats gps join players p on gps.playerID = p.playerID join games g on gps.gameID = g.gameID where g.season like (?) group by p.firstname,p.lastName order by avgStat desc limit ?;";
             } else {
                 System.out.println("You have entered unexpected paramters. Type h for help");
                 return;
