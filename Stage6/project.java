@@ -265,16 +265,21 @@ class MyDatabase {
         }
     }
 
+    public void printError() {
+        System.out.println("You have entered unexpected paramters. Type h for help");
+    }
 
-    // 1
+
+     // 1 
     public void roster(String teamName, String season) {
         try {
-            int seas = Integer.parseInt(season);
-            String sql = "Select firstName, lastName, jerseyNumber from Player natural join Play Natural join Team where seasonID = ? AND lower(teamName) like lower(?);";
+            String sql = "select firstname, lastname,  jersey\n" + //
+                                "from players join play on players.playerID = play.playerID join teams on play.teamName = teams.teamName\n" + //
+                                "where season = ? and teams.teamName like ?";
 
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, seas);
-            statement.setString(2, "%" + teamName + "%");
+            statement.setString(1, season);
+            statement.setString(2, "%" +teamName + "%");
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -282,7 +287,7 @@ class MyDatabase {
 
             while (resultSet.next()) {
                 System.out.println(resultSet.getString("firstName") + " " + resultSet.getString("lastName") + " "
-                        + resultSet.getInt("jerseyNumber"));
+                        + resultSet.getInt("jersey"));
             }
 
             resultSet.close();
@@ -297,6 +302,10 @@ class MyDatabase {
     public void gameAppear(String lim) {
         try {
             int num = Integer.parseInt(lim);
+            if (num <= 0) {
+                printError();
+                return;
+            }
             String sql = "with gamesPlayedPlayer as ( select playerID, firstName, lastName, seasonID, count(gps.gameID) as playerGP from Player natural join GamePlayerStats gps left join RegularGame rg on gps.gameID = rg.gameID left join PlayoffGame pg on gps.gameID = pg.gameID group by playerID, firstName, lastName, seasonID), GamesPlayedTeam as (select teamName, seasonID, count(gts.gameID) as teamGP from GameTeamStats gts left join RegularGame rg on gts.gameID = rg.gameID left join PlayoffGame pg on gts.gameID = pg.gameID group by teamName, seasonID) select seasonID, teamName, firstName, lastName, 100.0*(gpp.playerGP/gpt.teamGP) as appearancePercentage from GamesPlayedPlayer gpp join Play on gpp.seasonID = Play.seasonID join GamesPlayedTeam gpt on Play.teamName = gpt.teamName order by appearancePercentage desc limit ?;";
 
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -316,6 +325,8 @@ class MyDatabase {
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace(System.out);
+        } catch (NumberFormatException nfe) {
+            printError();
         }
     }
 
@@ -357,19 +368,14 @@ class MyDatabase {
 
             ResultSet resultSet = statement.executeQuery(sql);
 
-            System.out.println("Showing the officials who have officiated the most games:");
+            System.out.println("Showing the officials who have officiated the most games:\n");
             System.out.printf("%-15s %-20s %-20s %s%n", "officialID", "First Name", "Last Name", "Number of Games"); // Header
             System.out.println("-------------------------------------------------------------------------------");
             while (resultSet.next()) {
-                System.out.printf("%-15d %-20s %-20s %s%n", resultSet.getInt("officialID"), resultSet.getString("firstname"),
+                System.out.printf("%-15d %-20s %-20s %d%n", resultSet.getInt("officialID"),
+                        resultSet.getString("firstname"),
                         resultSet.getString("lastname"), resultSet.getInt("numGames"));
             }
-
-            // while (resultSet.next()) {
-            // System.out.println(resultSet.getString("firstName") + " " +
-            // resultSet.getString("lastName") + " "
-            // + resultSet.getInt("officialID") + " " + resultSet.getInt("numGames"));
-            // }
 
             resultSet.close();
             statement.close();
@@ -378,21 +384,23 @@ class MyDatabase {
         }
     }
 
-    // 5
+    // 5 DONE
     public void stadiumInfo() {
         try {
             String sql = "select basedIn, teamName, stadiumName, capacity from teams natural join stadiums order by teamName;";
-            
+
             Statement statement = connection.createStatement();
-            
+
             ResultSet resultSet = statement.executeQuery(sql);
-            
-            System.out.println("Showing all the teams and their stadium info:");
-            System.out.printf("%-15s %-20s %-20s %s%n", "Team", "Last Name", "Number of Games"); // Header
+
+            System.out.println("Showing all the teams and their stadium info:\n");
+            System.out.printf("%-40s %-30s %s%n", "Team", "Stadium", "Capacity"); // Header
             System.out.println("-------------------------------------------------------------------------------");
-            
+
             while (resultSet.next()) {
-                System.out.printf("%s %-30s %-30s %d%n", resultSet.getString("basedIn"), resultSet.getString("teamName"), resultSet.getString("stadiumName"), resultSet.getInt("capacity")); // Header
+                String team = resultSet.getString("basedIn") + " " + resultSet.getString("teamName");
+                System.out.printf("%-40s %-30s %d%n", team, resultSet.getString("stadiumName"),
+                        resultSet.getInt("capacity"));
             }
 
             resultSet.close();
@@ -425,35 +433,59 @@ class MyDatabase {
         }
     }
 
-    // 7
-    // NO INPUT NEEDED
+    // 7 DONE
     public void rankCoaches(String limit) {
         try {
             int lim = Integer.parseInt(limit);
-            String sql = "with coachGamesWon as ( select coachID, firstName, lastName, count(gameID) as gamesWon from RegularGame natural join GameTeamStats natural join GameTeamInfo natural join Team natural join Manage natural join Coach where winner = teamName group by coachID, firstName, lastName), coachGamesPlayed as (select coachID, firstName, lastName, count(gameID) as gamesPlayed from RegularGame natural join GameTeamStats natural join Team natural join Manage natural join Coach group by coachID, firstName, lastName) select c.coachID, c.firstName, c.lastName, 100.0*(cgw.gamesWon/cgp.gamesPlayed) as winPercentage from Coach c join coachGamesWon cgw on c.coachID = cgw.coachID join coachGamesPlayed cgp on c.coachID = cgp.coachID order by winPercentage desc limit ?;";
 
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, lim);
-            ResultSet resultSet = statement.executeQuery();
+            if (lim <= 0) {
+                printError();
+                return;
+            }
+            int counter = 1;
+            String sql = "with coachGamesWon as (\n" + //
+                    "\tselect c.coachID, c.firstname, c.lastname, count(distinct g.gameID) as gamesWon \n" + //
+                    "\tfrom games g join gameTeamInfo gti on g.gameID = gti.gameID join gameTeamStats gts on g.gameID = gts.gameID join manage m on m.season = g.season and m.teamName = gts.teamName join coaches c on m.coachID = c.coachID\n"
+                    + //
+                    "\twhere winner = m.teamName and g.gameID not in (select gameID from playoffGames)\n" + //
+                    "\tgroup by c.coachID, c.firstname, c.lastname),\n" + //
+                    "coachGamesPlayed as (\n" + //
+                    "\tselect c.coachID, c.firstname, c.lastname, count(distinct g.gameID) as gamesPlayed \n" + //
+                    "\tfrom games g join gameTeamStats gts on g.gameID = gts.gameID join manage m on m.season = g.season and gts.teamName = m.teamName  join coaches c on m.coachID = c.coachID\n"
+                    + //
+                    "\twhere g.gameID not in (select gameID from playoffGames)\n" + //
+                    "\tgroup by c.coachID, c.firstname, c.lastname)\n" + //
+                    "select cgw.firstname, cgw.lastname, 100.0* cgw.gamesWon/cgp.gamesPlayed as winPercentage\n" + //
+                    "from coaches c join coachGamesWon cgw on c.coachID = cgw.coachID join coachGamesPlayed cgp on c.coachID = cgp.coachID\n"
+                    + //
+                    "order by winPercentage desc limit " + lim + ";";
 
-            System.out.println("Showing top " + lim + " coaches based on regular season win percentage: ");
+            Statement statement = connection.createStatement();
+            // statement.setInt(1, lim);
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            System.out.println("Showing coaches and their win percentages over the regular season:\n");
+            System.out.printf("%5s %-28s %s%n", "", "Coach", "Win Percentage"); // Header
+            System.out.println("-------------------------------------------------------------------------------");
 
             while (resultSet.next()) {
-                System.out.println(resultSet.getString("coachID") + " " + resultSet.getString("firstName") + " "
-                        + resultSet.getString("lastName") + " " + resultSet.getInt("winPercentage"));
+                String coach = resultSet.getString("firstname") + " " + resultSet.getString("lastname");
+                System.out.printf("%2d. %-30s %.1f%n",counter, coach, resultSet.getFloat("winPercentage"));
+                counter++;
             }
 
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace(System.out);
+        } catch(NumberFormatException nfe) {
+            printError();
         }
     }
 
-    // 8
+    // 8 DONE
     public void leagueAvg(String stat, String season, String limit) {
         try {
-            int seas = Integer.parseInt(season);
             int lim = Integer.parseInt(limit);
             String sql;
             String[] validStats = { "pts", "rbs", "ast", "blk", "stl", "tov", "mins", "fgm", "fga", "3pm", "3pa", "ftm",
@@ -465,33 +497,35 @@ class MyDatabase {
                 }
             }
             if (check) {
-                sql = "select p.firstname,p.lastName, avg(gps."+stat+") as avgStat from GamePlayerStats gps join players p on gps.playerID = p.playerID join games g on gps.gameID = g.gameID where g.season = ? group by p.firstname,p.lastName order by avgStat desc limit ?;";
+                sql = "select p.firstname,p.lastName, avg(gps."+stat+") as avgStat from GamePlayerStats gps join players p on gps.playerID = p.playerID join games g on gps.gameID = g.gameID where g.season like (?) group by p.firstname,p.lastName order by avgStat desc limit ?;";
             } else {
                 System.out.println("You have entered unexpected paramters. Type h for help");
                 return;
             }
 
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, seas);
+            statement.setString(1,"%"+season+"%");
             statement.setInt(2, lim);
             ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing top " + lim + " players based on regular season averages for " + stat
-                    + " for the " + seas + " season: ");
+                    + " for the " + season + " season: ");
+            String formatString = "%n| %-15s | %-15s | %-10s |%n";      // Format Structure
+            System.out.printf(formatString, "FirstName", "LastName", "AVG"+stat);       // Column Labels
+            System.out.printf("+-----------------+-----------------+------------+%n");   //Top Bar
 
             while (resultSet.next()) {
-                System.out.println(resultSet.getString("firstname") + " " + resultSet.getString("lastName") + " "
-                        + resultSet.getInt("avg"));
+                System.out.printf(formatString, resultSet.getString("firstname"), resultSet.getString("lastName"), resultSet.getInt("avgStat"));
             }
-
+            System.out.printf("+-----------------+-----------------+------------+%n");
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            System.out.println("You have entered unexpected parameters. Type h for help!");
         }
     }
 
-    // 9
+    // 9 DONE
     public void compareAvg(String stat, String first, String last) {
         try {
             String sql;
@@ -517,23 +551,24 @@ class MyDatabase {
 
             System.out.println("Showing a comparison of player: " + first + " " + last + " and his " + stat
                     + " in the regular season vs playoffs: ");
-
+            String formatString = "%n| %-15s | %-15s | %-10s | %-10s |%n";      // Format Structure
+            System.out.printf(formatString, "FirstName", "LastName", "Regular AVG"+stat, "Playoff AVG"+stat);       // Column Labels
+            System.out.printf("+-----------------+-----------------+------------+------------+%n");   //Top Bar
             while (resultSet.next()) {
-                System.out.println(resultSet.getString("firstname") + " " + resultSet.getString("lastName") + " "
-                        + resultSet.getInt("regAvg") + " " + resultSet.getInt("playoffAvg"));
+                System.out.printf(formatString, resultSet.getString("firstname"), resultSet.getString("lastName"), resultSet.getInt("regAvg"), resultSet.getInt("playoffAvg"));
             }
-
+            System.out.printf("+-----------------+-----------------+------------+------------+%n");
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            System.out.println("You have entered unexpected parameters. Type h for help!");
         }
     }
 
-    // 10
+    // 10 DONE
     public void playerStatsPerTeam(String first, String last) {
         try {
-            String sql = "select p.firstName, p.lastName, avg(gps.pts) as points, avg(gps.rbs) as rebounds, avg(gps.ast) as assists, avg(gps.blk) as blocks, avg(gps.stl) as steals from Player p join Play on p.playerID = Play.playerID join GamePlayerStats gps on p.playerID = gps.playerID join Team on Play.teamName = Team.teamName where lower(p.firstName) = lower(?) AND lower(p.lastName) = lower(?) group by p.playerID, p.firstName, p.lastName, Play.teamName order by Play.teamName;";
+            String sql = "select p.playerID, p.firstName, p.lastName, play.teamName, avg(gps.pts) as points, avg(gps.reb) as rebounds, avg(gps.ast) as assists, avg(gps.blk) as blocks, avg(gps.stl) as steals from Players p natural join Play  join GamePlayerStats gps on play.playerID = gps.playerID natural join Games where lower(p.firstName) = lower(?) AND lower(p.lastName) = lower(?) group by p.playerID, p.firstName, p.lastName, Play.teamName order by Play.teamName;";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, "%" + first + "%");
             statement.setString(2, "%" + last + "%");
@@ -541,18 +576,19 @@ class MyDatabase {
 
             System.out.println("Showing Major stat averages for player: " + first + " " + last
                     + " for all teams they have played for: ");
+            String formatString = "%n| %-15s | %-15s | %-10s | %-10s | %-10s | %-10s | %-10s |%n";      // Format Structure
+            System.out.printf(formatString, "FirstName", "LastName", "Points", "Rebounds", "Assists", "Blocks", "Steals");       // Column Labels
+            System.out.printf("+-----------------+-----------------+------------+------------+------------+------------+------------+%n");   //Top Bar
             while (resultSet.next()) {
-                System.out.println(resultSet.getString("firstname") + " " + resultSet.getString("lastName") + " "
-                        + resultSet.getInt("points") + " " + resultSet.getInt("rebounds") + " "
-                        + resultSet.getInt("assists") + " " + resultSet.getInt("blocks") + " "
-                        + resultSet.getInt("steals"));
+                System.out.printf(formatString, resultSet.getString("firstname"), resultSet.getString("lastName"), resultSet.getInt("points"), resultSet.getInt("rebounds"), resultSet.getInt("assists") + " " + resultSet.getInt("blocks"), resultSet.getInt("steals"));
             }
+            System.out.printf("+-----------------+-----------------+------------+------------+------------+------------+------------+%n");
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            System.out.println("You have entered unexpected parameters. Type h for help!");
         }
     }
 
-    // 11 
+    // 11 DONE
     // NO INPUT NEEDED
     public void champs() {
         try {
@@ -574,7 +610,7 @@ class MyDatabase {
             }
             System.out.printf("+-----------------+-----------------+%n");  //Lower Bar 
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            System.out.println("You have entered unexpected parameters. Type h for help!");
         }
     }
 
