@@ -484,7 +484,6 @@ class MyDatabase {
     // 8 DONE
     public void leagueAvg(String stat, String season, String limit) {
         try {
-            int seas = Integer.parseInt(season);
             int lim = Integer.parseInt(limit);
             String sql;
             String[] validStats = { "pts", "rbs", "ast", "blk", "stl", "tov", "mins", "fgm", "fga", "3pm", "3pa", "ftm",
@@ -503,7 +502,7 @@ class MyDatabase {
             }
 
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, seas);
+            statement.setString(1,"%"+seas+"%");
             statement.setInt(2, lim);
             ResultSet resultSet = statement.executeQuery();
 
