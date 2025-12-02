@@ -17,6 +17,7 @@ public class project {
 
         runConsole(db);
         System.out.println("Exiting...");
+        fsfsfssfjs
     }
 
     public static void runConsole(MyDatabase db) {
