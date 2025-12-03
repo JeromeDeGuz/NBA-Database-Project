@@ -283,6 +283,8 @@ class MyDatabase {
                 this.connection.createStatement().execute(line);
                 line = reader.readLine();
             }
+
+            reader.close();
         } catch (SQLException e) {
             e.printStackTrace(); // Don't swallow DB errors
         }
