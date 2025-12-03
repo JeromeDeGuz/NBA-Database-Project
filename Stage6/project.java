@@ -8,6 +8,10 @@ javac -cp mssql-jdbc-11.2.0.jre18.jar project.java
 java -cp .:mssql-jdbc-11.2.0.jre18.jar project
 */
 
+
+//asd
+
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
