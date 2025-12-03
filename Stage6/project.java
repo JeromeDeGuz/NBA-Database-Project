@@ -618,12 +618,12 @@ class MyDatabase {
         }
     }
 
-    // 12
+    // 12 DONE
 
     public void per(String team, String season) {
         try {
             String sql = "SELECT  p.firstname, p.lastname,"
-                                + " SUM(gps.ftm * 85.910 + gps.stl * 53.897 + gps.'3pm' * 51.757 + gps.ftm * 46.845 + gps.blk * 39.190 + gps.oreb * 39.190 + gps.ast * 34.677 + gps.dreb * 14.707"
+                                + " SUM(gps.fgm * 85.910 + gps.stl * 53.897 + gps.'3pm' * 51.757 + gps.ftm * 46.845 + gps.blk * 39.190 + gps.oreb * 39.190 + gps.ast * 34.677 + gps.dreb * 14.707"
                                 + " - gps.pf * 17.174 - (gps.fta - gps.ftm) * 20.091 - (gps.fga - gps.fgm) *39.190 - gps.tov * 53.897)/SUM(gps.min) AS avgPER "
                                 + " FROM Players p "
                                 + " LEFT JOIN Play szn ON p.playerID = szn.playerID"
@@ -641,14 +641,15 @@ class MyDatabase {
 
             System.out.println("Showing the highest player efficiency rating from " + team + " for the " + season + " season: /n");
 
-            String formatString = "| %-15s | %-15s | %-15s |%n";      // Format Structure
+            String formatString = "%n| %-15s | %-15s | %-15s |%n";      // Format Structure
+            String printFormat = "%n| %-15s | %-15s | %-15.1f |%n";
             System.out.printf(formatString, "First Name", "Last Name", "PER");       // Column Labels
             System.out.printf("+-----------------+-----------------+-----------------+%n");   //Top Bar
 
 
 
             while (resultSet.next()) {
-                System.out.printf(formatString, resultSet.getString("firstname"), resultSet.getString("lastname"), resultSet.getInt("avgPer"));
+                System.out.printf(printFormat, resultSet.getString("firstname"), resultSet.getString("lastname"), resultSet.getDouble("avgPer"));
             }
             System.out.printf("+-----------------+-----------------+-----------------+%n");   //Lower Bar
         } catch (SQLException e) {
@@ -656,31 +657,46 @@ class MyDatabase {
         }
     }
 
-    // 13
+    // 13 DONE REMOVE LIMIT!!!!!!!!!!!!!!
     public void draftComm(String year, String round) {
         try {
             int y = Integer.parseInt(year);
             int r = Integer.parseInt(round);
-            String sql = "with DraftYrRound as(select di.draftYear, di.round, di.pick, di.playerID from DraftInfo di where di.round = ? AND di.draftYear = ?) Select dyr.draftYear, dyr.draftRound, dyr.draftPick, p.firstName, p.lastName, Play.seasonID, AVG((gps.pts+gps.rbs+gps.ast+gps.stl+gps.blk)-(gps.tov+gps.pf+(gps.fga-gps.fgm))) as avgPer from DraftYrRound dyr join Play on Play.playerID = dyr.playerID join Player p on p.playerID = Play.playerID join GamePlayerStats gps on gps.playerID = p.playerID left join RegularGame rg on rg.gameID = gps.gameID left join PlayoffGame pg on pg.gameID where Play.seasonID >= ? group by fyr.draftYear, dyr.round, p.firstName, p.lastName, dyr.draftPick, Play.seasonID order by p.firstName, p.lastName, Play.seasonID;";
+            String sql = "SELECT dyr.draftYear, dyr.round, dyr.pick, p.firstname, p.lastname, szn.season, "
+                + " SUM(gps.fgm * 85.910 + gps.stl * 53.897 + gps.'3pm' * 51.757 + gps.ftm * 46.845"
+                + " + gps.blk * 39.190 + gps.oreb * 39.190 + gps.ast * 34.677 + gps.dreb * 14.707"
+                + " - gps.pf * 17.174 - (gps.fta - gps.ftm) * 20.091 - (gps.fga - gps.fgm) *39.190 - gps.tov * 53.897)/SUM(gps.min) AS avgPER "
+                + " FROM DraftInfo dyr "
+                + " JOIN Play szn ON szn.playerID = dyr.playerID "
+                + " JOIN Players p ON p.playerID = szn.playerID "
+                + " JOIN GamePlayerStats gps ON gps.playerID = p.playerID "
+                + " JOIN Games rg ON rg.gameID = gps.gameID AND rg.season = szn.season "
+                + " WHERE szn.season >= dyr.draftYear AND dyr.draftYear = ? AND dyr.round = ?"
+                + " GROUP BY dyr.draftYear, dyr.round, dyr.pick, p.firstname, p.lastname, szn.season" 
+                + " ORDER BY dyr.pick, szn.season"
+                + " LIMIT 10";
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, r);
-            statement.setInt(2, y);
+            statement.setInt(1, y);
+            statement.setInt(2, r);
             ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing the player efficiency rating for players drafted in round " + r + " of the " + y
                     + " draft:");
+            String formatString = "| %-15s | %-15s | %-15s | %-15s |%n";      // Format Structure
+            String formatPrint = "%n| %-15s | %-15s | %-15s | %-15.1f |%n";      // Print Structure w/ avgPer double value rounded to .1 
+            System.out.printf(formatString, "First Name", "Last Name", "Season Year", "PER");
+            System.out.printf("+-----------------+-----------------+-----------------+-----------------+%n"); // Top Bar
+            
             while (resultSet.next()) {
-                System.out.println(resultSet.getInt("draftYear") + " " + resultSet.getInt("draftRound") + " "
-                        + resultSet.getInt("draftPick") + " " + resultSet.getInt("seasonID") + " "
-                        + resultSet.getString("firstName") + " " + resultSet.getString("lastName") + " "
-                        + resultSet.getInt("avgPer"));
+                System.out.printf(formatPrint, resultSet.getString("firstname"),  resultSet.getString("lastname"),  resultSet.getString("season"), resultSet.getDouble("avgPER")); // Column Labels
             }
+            System.out.printf("+-----------------+-----------------+-----------------+-----------------+%n"); // Lower Bar
         } catch (SQLException e) {
             e.printStackTrace(System.out);
         }
     }
 
-    // 14
+    // 14 DONE
     public void totalStat(String stat) {
         try {
             String sql;
@@ -707,9 +723,9 @@ class MyDatabase {
 
             System.out.println("Showing the total " + stat + " of all players all time");
 
-            String formatString = "%n| %-10s | %-15s | %-15s |%n";
+            String formatString = "%n| %-15s | %-15s | %-15s |%n";
             System.out.printf(formatString, "First Name", "Last Name", "Total " + stat);
-            System.out.printf("+------------+-----------------+-----------------+%n");
+            System.out.printf("+-----------------+-----------------+-----------------+%n");
             while (resultSet.next()) {
                 // System.out.println(resultSet.getInt("draftYear") + " " +
                 // resultSet.getInt("draftRound") + " "
@@ -720,7 +736,7 @@ class MyDatabase {
                 System.out.printf(formatString, resultSet.getString("firstname"), resultSet.getString("lastname"), resultSet.getInt("totalxStatistic"));
 
             }
-            System.out.printf("+------------+-----------------+-----------------+%n");
+            System.out.printf("+-----------------+-----------------+-----------------+%n");
         } catch (SQLException e) {
             e.printStackTrace(System.out);
         }
