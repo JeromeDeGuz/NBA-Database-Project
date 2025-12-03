@@ -31,6 +31,7 @@ public class project {
     public static void main(String[] args) {
         // uraniumconnect();
         // MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
+        MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
         // YOU'RE USING MSSQL
         MyDatabase db = new MyDatabase("NBAdatabaseServer.sql"); // COMMENT THIS OUT
         // IF YOU'RE USING SQLITE
@@ -38,6 +39,9 @@ public class project {
         runConsole(db);
         System.out.println("Exiting...");
     }
+
+    // handles connecting to uranium
+
 
     // the general console loop
     // the general console loop
