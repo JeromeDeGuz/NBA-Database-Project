@@ -302,14 +302,13 @@ class MyDatabase {
         System.out.println("You have entered unexpected paramters. Type h for help");
     }
 
-
-     // 1 DONE
+      // 1 DONE
     public void roster(String teamName, String season) {
         try {
             String sql = "select firstname, lastname,  jersey\n" + //
                     "from players join play on players.playerID = play.playerID join teams on play.teamName = teams.teamName\n"
                     + //
-                    "where season = ? and teams.teamName like ?";
+                    "where season = ? and teams.teamName like ? order by lastname asc;";
 
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, season);
@@ -362,15 +361,14 @@ class MyDatabase {
                     "\tselect gts.teamName, g.season, count(gts.gameID) as teamGP\n" + //
                     "\tfrom gameTeamStats gts join games g on gts.gameID = g.gameID\n" + //
                     "\tgroup by gts.teamName, g.season)\n" + //
-                    "select gpp.season, gpt.teamName, gpp.firstname, gpp.lastname, ((1.0*gpp.playerGP)/gpt.teamGP)*100.0 as appearancePercentage\n"
+                    "select top " + num + " gpp.season, gpt.teamName, gpp.firstname, gpp.lastname, ((1.0*gpp.playerGP)/gpt.teamGP)*100.0 as appearancePercentage\n"
                     + //
                     "from gamesPlayedPlayer gpp join play on gpp.season = play.season and gpp.playerID = play.playerID join gamesPlayedTeam gpt on play.teamName = gpt.teamName and gpt.season = play.season\n"
                     + //
-                    "order by appearancePercentage desc limit ?;";
+                    "order by appearancePercentage desc, gpp.season desc, gpp.lastname asc;";
 
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, num);
-            ResultSet resultSet = statement.executeQuery();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
 
             System.out.println("Showing the game appearance percentage for each player for each season:\n");
             String formatString = "| %-10s | %-15s | %-30s | %-40s | %-30s |%n"; // Format Structure
@@ -415,7 +413,7 @@ class MyDatabase {
                     "    SELECT DISTINCT st.season, st.teamName, p.playerID\n" + //
                     "    FROM players p JOIN play ON p.playerID = play.playerID JOIN seasonsTeamsPlayed st ON play.season = st.season AND play.teamName = st.teamName)\n"
                     + //
-                    "SELECT xr.season, xr.teamName, p.playerID, p.firstname, p.lastname\n" + //
+                    "SELECT top " + num + " xr.season, xr.teamName, p.playerID, p.firstname, p.lastname\n" + //
                     "FROM players p\n" + //
                     "JOIN xroster xr ON p.playerID = xr.playerID\n" + //
                     "WHERE p.playerID NOT IN (\n" + //
@@ -423,14 +421,13 @@ class MyDatabase {
                     "    FROM players\n" + //
                     "    WHERE firstname LIKE ? and lastname LIKE ?\n" + //
                     ")\n" + //
-                    "order by xr.season, p.firstname limit ?;";
+                    "order by xr.season, p.lastname asc;";
 
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, "%" + first + "%");
             statement.setString(2, "%" + last + "%");
             statement.setString(3, "%" + first + "%");
             statement.setString(4, "%" + last + "%");
-            statement.setInt(5, num);
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -474,12 +471,11 @@ class MyDatabase {
                 printError();
                 return;
             }
-            String sql = "select o.officialID, o.firstName, o.lastName, count(officiate.gameID) as numGames from officials o join officiate on o.officialID = officiate.officialID group by o.officialID, o.firstName, o.lastName order by numGames desc limit ?;";
+            String sql = "select top " + num + " o.officialID, o.firstName, o.lastName, count(officiate.gameID) as numGames from officials o join officiate on o.officialID = officiate.officialID group by o.officialID, o.firstName, o.lastName order by numGames desc, o.lastname asc;";
 
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, num);
+            Statement statement = connection.createStatement();
 
-            ResultSet resultSet = statement.executeQuery();
+            ResultSet resultSet = statement.executeQuery(sql);
 
             System.out.println("Showing the officials who have officiated the most games:\n");
             System.out.printf("| %-10s | %-20s | %-30s | %-15s |%n", "officialID", "First Name", "Last Name",
@@ -509,7 +505,6 @@ class MyDatabase {
             String sql = "select teams.basedIn,teams.teamName, stadiums.stadiumName, stadiums.capacity from teams join stadiums on teams.stadiumName = stadiums.stadiumName order by teams.teamName;";
 
             Statement statement = connection.createStatement();
-
             ResultSet resultSet = statement.executeQuery(sql);
 
             System.out.println("Showing all the teams and their stadium info:\n");
@@ -592,14 +587,13 @@ class MyDatabase {
                     + //
                     "\twhere g.gameID not in (select gameID from playoffGames)\n" + //
                     "\tgroup by c.coachID, c.firstname, c.lastname)\n" + //
-                    "select cgw.firstname, cgw.lastname, 100.0* cgw.gamesWon/cgp.gamesPlayed as winPercentage\n" + //
+                    "select top " + lim + " cgw.firstname, cgw.lastname, 100.0* cgw.gamesWon/cgp.gamesPlayed as winPercentage\n" + //
                     "from coaches c join coachGamesWon cgw on c.coachID = cgw.coachID join coachGamesPlayed cgp on c.coachID = cgp.coachID\n"
                     + //
-                    "order by winPercentage desc limit ?;";
+                    "order by winPercentage desc;";
 
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, lim);
-            ResultSet resultSet = statement.executeQuery();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
 
             System.out.println("Showing coaches and their win percentages over the regular season:\n");
             System.out.printf("| %5s %-28s | %-15s |%n", "", "Coach", "Win Percentage"); // Header
