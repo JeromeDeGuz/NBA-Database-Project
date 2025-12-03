@@ -74,15 +74,16 @@ public class project {
     }
 
     // the general console loop
+    // the general console loop
     public static void runConsole(MyDatabase db) {
-    
+
         Scanner console = new Scanner(System.in);
-        System.out.print("Welcome to the NBA Database! Type h for help. ");
         System.out.print("db > ");
         String line = console.nextLine();
         String[] parts;
-    
+
         while (line != null && !line.equals("quit")) {
+            sanitize(line); // SANITIZE USER INPUT HERE
             parts = line.split("\\s+");
             if (parts[0].equals("h")) {
                 printHelp();
@@ -162,6 +163,17 @@ public class project {
                 } else {
                     System.out.println("This command requires appropriate arguments. Please type h for help!");
                 }
+            } else if (parts[0].equals("deleteAll")) {
+                db.deleteData("deleteData.sql");
+
+            } else if (parts[0].equals("repopulate")) {
+                try {
+                    db.loadData("NBAdatabaseServer.sql");
+                } catch (IOException ioe) {
+                    System.out.println("Error repopulating database: " + ioe.getMessage());
+                } catch (SQLException sqle) {
+                    System.out.println("SQL Error repopulating database: " + sqle.getMessage());
+                }
             } else {
                 System.out.println("The entered command does not exist, please type h for help!");
             }
@@ -170,6 +182,7 @@ public class project {
         }
         console.close();
     }
+
     
     private static void printHelp() {
         System.out.println("NBA Database");
