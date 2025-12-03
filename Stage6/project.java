@@ -32,9 +32,9 @@ public class project {
 
     public static void main(String[] args) {
         // uraniumconnect();
-        MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
+        // MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
         // YOU'RE USING MSSQL
-        // MyDatabase db = new MyDatabase("NBAdatabaseServer.sql"); // COMMENT THIS OUT
+        MyDatabase db = new MyDatabase("NBAdatabaseServer.sql"); // COMMENT THIS OUT
         // IF YOU'RE USING SQLITE
 
         runConsole(db);
@@ -162,6 +162,8 @@ public class project {
                 } else {
                     System.out.println("This command requires appropriate arguments. Please type h for help!");
                 }
+            } else if (parts[0].equals("deleteAll")){
+                db.deleteData("deleteData.sql");
             } else {
                 System.out.println("The entered command does not exist, please type h for help!");
             }
@@ -225,7 +227,7 @@ class MyDatabase {
 
     public MyDatabase(String initscript) {
         try {
-            String connectionUrl = "jdbc:sqlite::memory:"; // COMMENT THIS OUT IF YOU'RE
+            // String connectionUrl = "jdbc:sqlite::memory:"; // COMMENT THIS OUT IF YOU'RE
             // USING MSSQL
             Properties prop = new Properties();
             String fileName = "auth.cfg";
@@ -249,13 +251,13 @@ class MyDatabase {
             }
 
             // COMMENT THIS OUT IF YOU'RE USING SQLITE
-            // String connectionUrl = "jdbc:sqlserver://uranium.cs.umanitoba.ca:1433;"
-            // + "database=cs3380;"
-            // + "user=" + username + ";"
-            // + "password=" + password + ";"
-            // + "encrypt=false;"
-            // + "trustServerCertificate=false;"
-            // + "loginTimeout=30;";
+            String connectionUrl = "jdbc:sqlserver://uranium.cs.umanitoba.ca:1433;"
+            + "database=cs3380;"
+            + "user=" + username + ";"
+            + "password=" + password + ";"
+            + "encrypt=false;"
+            + "trustServerCertificate=false;"
+            + "loginTimeout=30;";
 
             connection = DriverManager.getConnection(connectionUrl);
 
