@@ -79,7 +79,6 @@ public class project {
         String[] parts;
     
         while (line != null && !line.equals("quit")) {
-            sanitize(line); // SANITIZE USER INPUT HERE
             parts = line.split("\\s+");
             if (parts[0].equals("h")) {
                 printHelp();
@@ -209,16 +208,12 @@ public class project {
                 "mr <year> <round> - Given a specific draft round of players, measure their performance through their careeer\n                    NOTE: <year> must be of the form YYYY/YYYY\n                    NOTE: <round> must be either 1 or 2\n");
         // 14
         System.out.println(
-                "ts <statType> - Get the career totals for a specific stat for all players\n                NOTE: <statType> must be from the following:\n                pts, rbs, ast, blk, stl, tov, mins, fgm, fga, 3pm, 3pa, ftm, fta, oreb, dreb, pf\n");
-    
+                "ts <statType> - Get the career totals for a specific stat for all players\n                NOTE: <statType> must be from the following:\n                pts, reb, ast, blk, stl, tov, mins, fgm, fga, 3pm, 3pa, ftm, fta, oreb, dreb, pf\n");
         System.out.println("quit - To exit program");
     
         System.out.println("-----------------End of Help-----------------");
     }
 
-    public static void sanitize(String input) {
-
-    }
 }
 
 class MyDatabase {
@@ -271,6 +266,20 @@ class MyDatabase {
             System.out.println(fnf.getMessage());
             System.exit(2);
         }
+    }
+
+    public static boolean sanitize(String input) {
+        String[] validStats = { "pts", "reb", "ast", "blk", "stl", "tov", "min", "fgm", "fga", "3pm", "3pa", "ftm", "fta",
+                "oreb", "dreb", "pf" };
+
+        boolean check = false;
+        for (String x : validStats) {
+            if (x.toLowerCase().equals(input.toLowerCase())) {
+                check = true;
+            }
+        }
+
+        return check;
     }
 
     public void loadData(String script) throws IOException, SQLException {
@@ -868,17 +877,10 @@ class MyDatabase {
     public void totalStat(String stat) {
         try {
             String sql;
-            String[] validStats = { "pts", "rbs", "ast", "blk", "stl", "tov", "mins", "fgm", "fga", "3pm", "3pa", "ftm",
-                    "fta", "oreb", "dreb", "pf" };
-            boolean check = false;
-            for (String x : validStats) {
-                if (stat.equals(x)) {
-                    check = true;
-                }
-            }
-            if (check) {
-                sql = "SELECT p.firstname, p.lastname, sum(gps." + stat
-                        + ") AS totalxStatistic FROM Players p JOIN GamePlayerStats gps ON p.playerID = gps.playerID JOIN games g ON gps.gameID = g.gameID GROUP BY p.firstname, p.lastname ORDER BY totalxStatistic DESC LIMIT 10;";
+
+            if (sanitize(stat)) {
+                sql = "SELECT p.firstname, p.lastname, sum(gps.'" + stat
+                        + "') AS totalxStatistic FROM Players p JOIN GamePlayerStats gps ON p.playerID = gps.playerID JOIN games g ON gps.gameID = g.gameID GROUP BY p.firstname, p.lastname ORDER BY totalxStatistic DESC LIMIT 10;";
 
             } else {
                 System.out.println("You have entered unexpected paramters. Type h for help");
