@@ -375,7 +375,8 @@ class MyDatabase {
                     "\tselect gts.teamName, g.season, count(gts.gameID) as teamGP\n" + //
                     "\tfrom gameTeamStats gts join games g on gts.gameID = g.gameID\n" + //
                     "\tgroup by gts.teamName, g.season)\n" + //
-                    "select top " + num + " gpp.season, gpt.teamName, gpp.firstname, gpp.lastname, ((1.0*gpp.playerGP)/gpt.teamGP)*100.0 as appearancePercentage\n"
+                    "select top " + num
+                    + " gpp.season, gpt.teamName, gpp.firstname, gpp.lastname, ((1.0*gpp.playerGP)/gpt.teamGP)*100.0 as appearancePercentage\n"
                     + //
                     "from gamesPlayedPlayer gpp join play on gpp.season = play.season and gpp.playerID = play.playerID join gamesPlayedTeam gpt on play.teamName = gpt.teamName and gpt.season = play.season\n"
                     + //
@@ -485,28 +486,32 @@ class MyDatabase {
                 printError();
                 return;
             }
-            String sql = "select top " + num + " o.officialID, o.firstName, o.lastName, count(officiate.gameID) as numGames from officials o join officiate on o.officialID = officiate.officialID group by o.officialID, o.firstName, o.lastName order by numGames desc, o.lastname asc;";
+            String sql = "select top (?) o.officialID, o.firstName, o.lastName, count(officiate.gameID) as numGames from officials o join officiate on o.officialID = officiate.officialID group by o.officialID, o.firstName, o.lastName order by numGames desc, o.lastname asc;";
 
-            Statement statement = connection.createStatement();
-
-            ResultSet resultSet = statement.executeQuery(sql);
+            // Statement statement = connection.createStatement();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            // ResultSet resultSet = statement.executeQuery(sql);
+            statement.setInt(1, num);
+            ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing the officials who have officiated the most games:\n");
             System.out.printf("| %-10s | %-20s | %-30s | %-15s |%n", "officialID", "First Name", "Last Name",
                     "Number of Games"); // Header
-            System.out.println("+--------------------------------------------------------------------------------------+");
+            System.out.println(
+                    "+--------------------------------------------------------------------------------------+");
             while (resultSet.next()) {
                 System.out.printf("| %-10d | %-20s | %-30s | %-15d |%n%n", resultSet.getInt("officialID"),
                         resultSet.getString("firstname"),
                         resultSet.getString("lastname"), resultSet.getInt("numGames"));
             }
-            System.out.println("+--------------------------------------------------------------------------------------+");
+            System.out.println(
+                    "+--------------------------------------------------------------------------------------+");
 
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace(System.out);
-        }catch (NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             printError();
         }
     }
@@ -523,14 +528,16 @@ class MyDatabase {
 
             System.out.println("Showing all the teams and their stadium info:\n");
             System.out.printf("| %-40s | %-30s | %-10s |%n", "Team", "Stadium", "Capacity"); // Header
-            System.out.println("+----------------------------------------------------------------------------------------+");
+            System.out.println(
+                    "+----------------------------------------------------------------------------------------+");
 
             while (resultSet.next()) {
                 String team = resultSet.getString("basedIn") + " " + resultSet.getString("teamName");
-                System.out.printf("| %-40s | %-30s | %-10d |%n", team, resultSet.getString("stadiumName"),
+                System.out.printf("| %-40s | %-30s | %-10d |%n%n", team, resultSet.getString("stadiumName"),
                         resultSet.getInt("capacity"));
             }
-            System.out.println("+----------------------------------------------------------------------------------------+");
+            System.out.println(
+                    "+----------------------------------------------------------------------------------------+");
 
             resultSet.close();
             statement.close();
@@ -556,7 +563,7 @@ class MyDatabase {
             if (initial) {
                 System.out.println("Showing number of players from each country for the " + season + " season:\n");
 
-                String formatString = "| %-30s | %-20s |%n"; // Format Structure
+                String formatString = "| %-30s | %-20s |%n%n"; // Format Structure
                 System.out.printf(formatString, "Country", "Number of Players"); // Column Labels
                 System.out.printf(
                         "+-------------------------------------------------------+%n"); // Top
@@ -601,7 +608,8 @@ class MyDatabase {
                     + //
                     "\twhere g.gameID not in (select gameID from playoffGames)\n" + //
                     "\tgroup by c.coachID, c.firstname, c.lastname)\n" + //
-                    "select top " + lim + " cgw.firstname, cgw.lastname, 100.0* cgw.gamesWon/cgp.gamesPlayed as winPercentage\n" + //
+                    "select top " + lim
+                    + " cgw.firstname, cgw.lastname, 100.0* cgw.gamesWon/cgp.gamesPlayed as winPercentage\n" + //
                     "from coaches c join coachGamesWon cgw on c.coachID = cgw.coachID join coachGamesPlayed cgp on c.coachID = cgp.coachID\n"
                     + //
                     "order by winPercentage desc;";
@@ -628,6 +636,7 @@ class MyDatabase {
             printError();
         }
     }
+    
     // 8 DONE
     public void leagueAvg(String stat, String season, String limit) {
         try {
