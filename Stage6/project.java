@@ -303,6 +303,26 @@ class MyDatabase {
         }
     }
 
+    public void deleteData(String script) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(script));
+            String line = reader.readLine();
+            // assumes each query is its own line
+            while (line != null) {
+                // System.out.println(line);
+                this.connection.createStatement().execute(line);
+                line = reader.readLine();
+            }
+            reader.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException fnf) {
+            System.out.println(fnf.getMessage());
+        } catch (IOException io) {
+            System.out.println(io.getMessage());
+        }
+    }
+
     public void shutdown() {
         try {
             connection.close();
