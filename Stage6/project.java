@@ -724,7 +724,7 @@ class MyDatabase {
                         + "JOIN playoffGames on games.gameID = playoffGames.gameID "
                         + "group by players.playerID, players.firstname, players.lastname) "
                         + "SELECT playerID, firstname, lastname, reg.regAvg, playoff.pfAvg "
-                        + "FROM reg join playoff on reg.playerID = pfAvg.playerID AND reg.firstname = pfAvg.firstname AND reg.lastname = pfAvg.lastname"
+                        + "FROM reg join playoff on reg.playerID = pfAvg.playerID AND reg.firstname = pfAvg.firstname AND reg.lastname = pfAvg.lastname "
                         + "WHERE lower(firstname) like lower(?) and lower(lastname) like lower(?);";
             } else {
                 System.out.println("You have entered unexpected paramters. Type h for help");
@@ -765,7 +765,7 @@ class MyDatabase {
                     + "avg(gps.pts) as points, avg(gps.reb) as rebounds, avg(gps.ast) as assists, avg(gps.blk) as blocks, avg(gps.stl) as steals "
                     + "from Players p join Play on p.playerID = play.playerID "
                     + "join GamePlayerStats gps on play.playerID = gps.playerID "
-                    + "join Games on gps.gameID = Games.gameID"
+                    + "join Games on gps.gameID = Games.gameID "
                     + "where lower(p.firstName) like lower(?) AND lower(p.lastName) like lower(?) "
                     + "group by p.playerID, p.firstName, p.lastName, Play.teamName "
                     + "order by Play.teamName;";
@@ -778,15 +778,15 @@ class MyDatabase {
             System.out.println("Showing Major stat averages for player: " + first + " " + last
                     + " for all teams they have played for: ");
 
-            String formatString = "%n| %-30s | %-30s | %-15s | %-15s | %-15s | %-15s | %-15s | %-15s |%n"; // Format
+            String formatString = "%n| %-20s | %-20s | %-15s | %-15s | %-15s | %-15s | %-15s | %-15s |%n"; // Format
                                                                                                            // Structure
 
             System.out.printf(
-                    "|----------------------------------|----------------------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|%n");
+                    "|------------------------|------------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|%n");
             System.out.printf(formatString, "FirstName", "LastName", "Team", "Points", "Rebounds", "Assists", "Blocks",
                     "Steals"); // Column Labels
             System.out.printf(
-                    "|----------------------------------|----------------------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|%n"); // Top
+                    "|------------------------|------------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|%n"); // Top
                                                                                                                                                                             // Bar
             String avgs = "%n| %-15s | %-15s | %-15s | %-15.1f | %-15.1f | %-15.1f | %-15.1f | %-15.1f |%n";
 
@@ -796,7 +796,7 @@ class MyDatabase {
                         resultSet.getDouble("rebounds"), resultSet.getDouble("assists"),
                         resultSet.getDouble("blocks"), resultSet.getDouble("steals"));
                 System.out.printf(
-                        "|----------------------------------|----------------------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|%n");
+                        "|------------------------|------------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|%n");
             }
 
         } catch (SQLException e) {
