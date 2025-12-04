@@ -48,11 +48,11 @@ public class project {
                 case "r":
                     if (parts.length == 3) {
                         db.roster(parts[1], parts[2]);
-                    } 
+                    }
                     break;
                 case "gap":
-                    if (parts.length == 2) {
-                        db.gameAppear(parts[1]);
+                    if (parts.length == 4) {
+                        db.gameAppear(parts[1],parts[2], parts[3]);
                     }
                     break;
                 case "mates":
@@ -61,7 +61,7 @@ public class project {
                     }
                     break;
                 case "ro":
-                    if (parts.length == 2){
+                    if (parts.length == 2) {
                         db.rankOfficials(parts[1]);
                     }
                     break;
@@ -71,7 +71,7 @@ public class project {
                 case "pc":
                     if (parts.length == 2) {
                         db.playerCountry(parts[1]);
-                    } 
+                    }
                     break;
                 case "rc":
                     if (parts.length == 2) {
@@ -127,107 +127,114 @@ public class project {
                     break;
                 default:
                     System.out.println("Invalid command inputs. Please type h for help!");
-                    
+
             }
 
+            // if (parts[0].equals("h")) {
+            // printHelp();
+            // } else if (parts[0].equals("r")) {
+            // if (parts.length == 3) {
+            // db.roster(parts[1], parts[2]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
+            // } else if (parts[0].equals("gap")) {
+            // if (parts.length == 2) {
+            // db.gameAppear(parts[1]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
+            // } else if (parts[0].equals("mates")) {
+            // if (parts.length == 4) {
+            // db.teammates(parts[1], parts[2], parts[3]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
+            // } else if (parts[0].equals("ro")) {
+            // if (parts.length == 2)
+            // db.rankOfficials(parts[1]);
+            // else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
+            // } else if (parts[0].equals("si")) {
+            // db.stadiumInfo();
+            // } else if (parts[0].equals("pc")) {
+            // if (parts.length == 2) {
+            // db.playerCountry(parts[1]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
+            // } else if (parts[0].equals("rc")) {
+            // if (parts.length == 2) {
+            // db.rankCoaches(parts[1]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
+            // } else if (parts[0].equals("ll")) {
+            // if (parts.length == 4) {
+            // db.leagueAvg(parts[1], parts[2], parts[3]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
+            // } else if (parts[0].equals("crp")) {
+            // if (parts.length == 4) {
+            // db.compareAvg(parts[1], parts[2], parts[3]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
+            // } else if (parts[0].equals("spt")) {
+            // if (parts.length == 3) {
+            // db.playerStatsPerTeam(parts[1], parts[2]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
+            // } else if (parts[0].equals("cc")) {
+            // db.champs();
+            // } else if (parts[0].equals("per")) {
+            // if (parts.length == 3) {
+            // db.per(parts[1], parts[2]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
+            // } else if (parts[0].equals("mr")) {
+            // if (parts.length == 3) {
+            // db.draftComm(parts[1], parts[2]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
+            // } else if (parts[0].equals("ts")) {
+            // if (parts.length == 2) {
+            // db.totalStat(parts[1]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
+            // } else if (parts[0].equals("deleteAll")) {
+            // db.deleteData("deleteData.sql");
 
-
-
-
-
-        //     if (parts[0].equals("h")) {
-        //         printHelp();
-        //     } else if (parts[0].equals("r")) {
-        //         if (parts.length == 3) {
-        //             db.roster(parts[1], parts[2]);
-        //         } else {
-        //             System.out.println("This command requires appropriate arguments. Please type h for help!");
-        //         }
-        //     } else if (parts[0].equals("gap")) {
-        //         if (parts.length == 2) {
-        //             db.gameAppear(parts[1]);
-        //         } else {
-        //             System.out.println("This command requires appropriate arguments. Please type h for help!");
-        //         }
-        //     } else if (parts[0].equals("mates")) {
-        //         if (parts.length == 4) {
-        //             db.teammates(parts[1], parts[2], parts[3]);
-        //         } else {
-        //             System.out.println("This command requires appropriate arguments. Please type h for help!");
-        //         }
-        //     } else if (parts[0].equals("ro")) {
-        //         if (parts.length == 2)
-        //             db.rankOfficials(parts[1]);
-        //         else {
-        //             System.out.println("This command requires appropriate arguments. Please type h for help!");
-        //         }
-        //     } else if (parts[0].equals("si")) {
-        //         db.stadiumInfo();
-        //     } else if (parts[0].equals("pc")) {
-        //         if (parts.length == 2) {
-        //             db.playerCountry(parts[1]);
-        //         } else {
-        //             System.out.println("This command requires appropriate arguments. Please type h for help!");
-        //         }
-        //     } else if (parts[0].equals("rc")) {
-        //         if (parts.length == 2) {
-        //             db.rankCoaches(parts[1]);
-        //         } else {
-        //             System.out.println("This command requires appropriate arguments. Please type h for help!");
-        //         }
-        //     } else if (parts[0].equals("ll")) {
-        //         if (parts.length == 4) {
-        //             db.leagueAvg(parts[1], parts[2], parts[3]);
-        //         } else {
-        //             System.out.println("This command requires appropriate arguments. Please type h for help!");
-        //         }
-        //     } else if (parts[0].equals("crp")) {
-        //         if (parts.length == 4) {
-        //             db.compareAvg(parts[1], parts[2], parts[3]);
-        //         } else {
-        //             System.out.println("This command requires appropriate arguments. Please type h for help!");
-        //         }
-        //     } else if (parts[0].equals("spt")) {
-        //         if (parts.length == 3) {
-        //             db.playerStatsPerTeam(parts[1], parts[2]);
-        //         } else {
-        //             System.out.println("This command requires appropriate arguments. Please type h for help!");
-        //         }
-        //     } else if (parts[0].equals("cc")) {
-        //         db.champs();
-        //     } else if (parts[0].equals("per")) {
-        //         if (parts.length == 3) {
-        //             db.per(parts[1], parts[2]);
-        //         } else {
-        //             System.out.println("This command requires appropriate arguments. Please type h for help!");
-        //         }
-        //     } else if (parts[0].equals("mr")) {
-        //         if (parts.length == 3) {
-        //             db.draftComm(parts[1], parts[2]);
-        //         } else {
-        //             System.out.println("This command requires appropriate arguments. Please type h for help!");
-        //         }
-        //     } else if (parts[0].equals("ts")) {
-        //         if (parts.length == 2) {
-        //             db.totalStat(parts[1]);
-        //         } else {
-        //             System.out.println("This command requires appropriate arguments. Please type h for help!");
-        //         }
-        //     } else if (parts[0].equals("deleteAll")) {
-        //         db.deleteData("deleteData.sql");
-
-        //     } else if (parts[0].equals("repopulate")) {
-        //         try {
-        //             db.loadData("NBAdatabaseServer.sql");
-        //         } catch (IOException ioe) {
-        //             System.out.println("Error repopulating database: " + ioe.getMessage());
-        //         } catch (SQLException sqle) {
-        //             System.out.println("SQL Error repopulating database: " + sqle.getMessage());
-        //         }
-        //     } else {
-        //         System.out.println("The entered command does not exist, please type h for help!");
-        //     }
-
+            // } else if (parts[0].equals("repopulate")) {
+            // try {
+            // db.loadData("NBAdatabaseServer.sql");
+            // } catch (IOException ioe) {
+            // System.out.println("Error repopulating database: " + ioe.getMessage());
+            // } catch (SQLException sqle) {
+            // System.out.println("SQL Error repopulating database: " + sqle.getMessage());
+            // }
+            // } else {
+            // System.out.println("The entered command does not exist, please type h for
+            // help!");
+            // }
 
             System.out.print("db > ");
             line = console.nextLine();
@@ -238,59 +245,60 @@ public class project {
 
     private static void printHelp() {
 
-                    String help = """
-                                --------------------------------------------------------Start of Help-------------------------------------------------------
-                                | NBA DataBase                                                                                                              |
-                                | Commands:                                                                                                                 |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | r [team] [season]                -Output roster for a team (Season Format: YYYY/YYYY)                                     |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | gap [limit]                      -Get game appearance percentage of each player in each season (limit = # of records)     |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | mates [first] [last] [limit]     -Show all the teammates for a particular player                                          |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | ro [limit]                       -Rank the officials based on number of games officiated                                  |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | si                               -how all the teams and their arena name and capacity                                     |
-                                ----------------------------------------------------------------------------------------------------------------------------     
-                                | pc [season]                      -Number of players by country (Season Format: YYYY/YYYY)                                 |
-                                ----------------------------------------------------------------------------------------------------------------------------     
-                                | rc [limit]                       -Top coaches by win percentage in Regular Season (limit = # of records)                  |
-                                ----------------------------------------------------------------------------------------------------------------------------     
-                                | ll [statType] [season] [limit]   -League Leaders per season (by avg) (Season Format: YYYY/YYYY) (limit = # of records)    |
-                                ----------------------------------------------------------------------------------------------------------------------------     
-                                | crp [statType] [first] [last]*****Compare Regular Season vs Playoff career averages                                       |
-                                | *                                 statType] must be one of the following:                                                 |
-                                | *                                 pts, rbs, ast, blk,                                                                     |
-                                | *                                 stl, tov, mins, fgm,                                                                    |
-                                | *                                 fga, 3pm, 3pa, ftm,                                                                     |
-                                | *                                 fta, oreb, dreb, pf                                                                     |
-                                ----------------------------------------------------------------------------------------------------------------------------     
-                                | spt [first] [last]               -Major stat averages for a player per team                                               |
-                                ----------------------------------------------------------------------------------------------------------------------------     
-                                | cc                               -List all championship winning teams in chronological order                              |
-                                ----------------------------------------------------------------------------------------------------------------------------     
-                                | per [team] [season]              -Highest player efficiency rating (PER) on a team (Season Format: YYYY/YYYY)             |
-                                ----------------------------------------------------------------------------------------------------------------------------    
-                                | mr [year] [round]                -Given a specific draft round of players, measure their performance through their career |
-                                | *                                 (Year Format: YYYY)                                                                     |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | ts [statType]                    -Get the career totals for a specific stat for all players                               |
-                                | *                                 [statType] must be one of the following:                                                |
-                                | *                                 pts, rbs, ast, blk,                                                                     |
-                                | *                                 stl, tov, mins, fgm,                                                                    |
-                                | *                                 fga, 3pm, 3pa, ftm,                                                                     |
-                                | *                                 fta, oreb, dreb, pf                                                                     |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | deleteAll                        -Deletes all data from the database                                                      |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | repopulate                       -Repopulates the database with initial data                                              |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | quit                             -To exit program                                                                         |
-                                ---------------------------------------------------------End of Help--------------------------------------------------------                 
-                                """;
+        String help = """
+                --------------------------------------------------------Start of Help-------------------------------------------------------
+                | NBA DataBase                                                                                                              |
+                | Commands:                                                                                                                 |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | r [team] [season]                -Output roster for a team (Season Format: YYYY/YYYY)                                     |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | gap [lower] [upper] [limit]      -Get game appearance percentage of each player in each season (limit = # of records,     |
+                | *                                 lower and upper are float values between 0-100 representing percentage range)           |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | mates [first] [last] [limit]     -Show all the teammates for a particular player                                          |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | ro [limit]                       -Rank the officials based on number of games officiated                                  |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | si                               -how all the teams and their arena name and capacity                                     |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | pc [season]                      -Number of players by country (Season Format: YYYY/YYYY)                                 |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | rc [limit]                       -Top coaches by win percentage in Regular Season (limit = # of records)                  |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | ll [statType] [season] [limit]   -League Leaders per season (by avg) (Season Format: YYYY/YYYY) (limit = # of records)    |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | crp [statType] [first] [last].   -Compare Regular Season vs Playoff career averages                                       |
+                | *                                 statType] must be one of the following:                                                 |
+                | *                                 pts, rbs, ast, blk,                                                                     |
+                | *                                 stl, tov, mins, fgm,                                                                    |
+                | *                                 fga, 3pm, 3pa, ftm,                                                                     |
+                | *                                 fta, oreb, dreb, pf                                                                     |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | spt [first] [last]               -Major stat averages for a player per team                                               |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | cc                               -List all championship winning teams in chronological order                              |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | per [team] [season]              -Highest player efficiency rating (PER) on a team (Season Format: YYYY/YYYY)             |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | mr [year] [round]                -Given a specific draft round of players, measure their performance through their career |
+                | *                                 (Year Format: YYYY)                                                                     |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | ts [statType]                    -Get the career totals for a specific stat for all players                               |
+                | *                                 [statType] must be one of the following:                                                |
+                | *                                 pts, rbs, ast, blk,                                                                     |
+                | *                                 stl, tov, mins, fgm,                                                                    |
+                | *                                 fga, 3pm, 3pa, ftm,                                                                     |
+                | *                                 fta, oreb, dreb, pf                                                                     |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | deleteAll                        -Deletes all data from the database                                                      |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | repopulate                       -Repopulates the database with initial data                                              |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | quit                             -To exit program                                                                         |
+                ---------------------------------------------------------End of Help--------------------------------------------------------
+                """;
         System.out.println(help);
-        
+
     }
 
 }
@@ -346,7 +354,8 @@ class MyDatabase {
     }
 
     public void introduction() {
-        System.out.println("****************************************************************************************************************************");
+        System.out.println(
+                "****************************************************************************************************************************");
         System.out.println(
                 "Welcome to the NBA database! This database contains information relating to the National Basketball Association (NBA)");
         System.out.println(
@@ -356,7 +365,8 @@ class MyDatabase {
         System.out.println(
                 "for various types of analysis. This includes things like highest player averages for specific statistics, seeing the spread");
         System.out.println("of players from different countries, ranking coaches and officials, and more!");
-        System.out.println("****************************************************************************************************************************");
+        System.out.println(
+                "****************************************************************************************************************************");
     }
 
     public static boolean sanitize(String input) {
@@ -484,13 +494,16 @@ class MyDatabase {
     }
 
     // 2 DONE
-    public void gameAppear(String lim) {
+    public void gameAppear(String lower, String upper, String lim) {
         try {
             int num = Integer.parseInt(lim);
-            if (num <= 0) {
+            float fLower = Float.parseFloat(lower);
+            float fUpper = Float.parseFloat(upper);
+            if (num <= 0 || fLower < 0 || fUpper > 100 || fLower > fUpper) {
                 printError();
                 return;
             }
+
             String sql = "with gamesPlayedPlayer as (\n" + //
                     "\tselect p.playerID, p.firstname, p.lastname, g.season, count(distinct gps.gameID) as playerGP\n" + //
                     "\tfrom players p join gamePlayerStats gps on p.playerID = gps.playerID join games g on gps.gameID = g.gameID join gameTeamStats gts on gts.gameID = gps.gameID\n"
@@ -504,10 +517,12 @@ class MyDatabase {
                     + //
                     "from gamesPlayedPlayer gpp join play on gpp.season = play.season and gpp.playerID = play.playerID join gamesPlayedTeam gpt on play.teamName = gpt.teamName and gpt.season = play.season\n"
                     + //
-                    "order by appearancePercentage desc, gpp.season desc, gpp.lastname asc;";
+                    "where ((1.0*gpp.playerGP)/gpt.teamGP)*100.0 between ? and ? order by appearancePercentage desc, gpp.season desc, gpp.lastname asc;";
 
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, num);
+            statement.setFloat(2, fLower);
+            statement.setFloat(3, fUpper);
             ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing the game appearance percentage for each player for each season:\n");
@@ -1008,15 +1023,19 @@ class MyDatabase {
                     + " draft:");
 
             String formatString = "| %-20s | %-20s | %-10s | %-15s | %-15s |%n"; // Format Structure
-            String formatPrint = "| %-20s | %-20s | %-10s | %-15s | %-15.1f |%n"; // Print Structure w/ avgPer double value
-                                                                          // rounded to .1
-            System.out.printf("|----------------------|----------------------|------------|-----------------|-----------------|%n");
-            System.out.printf(formatString, "First Name", "Last Name","Pick", "Season Year", "PER");
-            System.out.printf("|----------------------|----------------------|------------|-----------------|-----------------|%n");
+            String formatPrint = "| %-20s | %-20s | %-10s | %-15s | %-15.1f |%n"; // Print Structure w/ avgPer double
+                                                                                  // value
+            // rounded to .1
+            System.out.printf(
+                    "|----------------------|----------------------|------------|-----------------|-----------------|%n");
+            System.out.printf(formatString, "First Name", "Last Name", "Pick", "Season Year", "PER");
+            System.out.printf(
+                    "|----------------------|----------------------|------------|-----------------|-----------------|%n");
             ;
 
             while (resultSet.next()) {
-                System.out.printf(formatPrint, resultSet.getString("firstname"), resultSet.getString("lastname"), resultSet.getString("pick"),
+                System.out.printf(formatPrint, resultSet.getString("firstname"), resultSet.getString("lastname"),
+                        resultSet.getString("pick"),
                         resultSet.getString("season"), resultSet.getDouble("avgPER")); // Column Labels
                 System.out.printf(
                         "|----------------------|----------------------|------------|-----------------|-----------------|%n");
