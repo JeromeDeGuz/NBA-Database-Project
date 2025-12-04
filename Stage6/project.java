@@ -303,26 +303,6 @@ class MyDatabase {
         }
     }
 
-    // efficient load data method -> testing for this
-    // public void loadData2(String script) throws IOException, SQLException {
-    //     try {
-    //         BufferedReader reader = new BufferedReader(new FileReader(script));
-    //         String line = reader.readLine();
-    //         String query = "";
-    //         // assumes each query is its own line
-    //         while (line != null) {
-    //             String parts[] = line.split("\\s+");
-    //             if (parts[0].equals("BEGIN") || parts[0].equals("CREATE")) {
-    //                 this.connection.createStatement().execute(line);
-    //             }
-    //             query += line + " ";
-    //             line = reader.readLine();
-    //         }
-    //         reader.close();
-    //     } catch (SQLException e) {
-    //         e.printStackTrace(); // commented since loading database without deleting first wil throw exceptions
-    //     }
-    // }
 
     public void deleteData(String script) {
         try {
