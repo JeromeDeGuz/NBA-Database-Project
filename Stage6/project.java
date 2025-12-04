@@ -238,15 +238,16 @@ class MyDatabase {
             System.out.println("Connection to SQLite has been established.");
 
             // if (initscript != null)
-            //     this.loadData(initscript);
+            // this.loadData(initscript);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             System.exit(1);
-        // } catch (IOException fnf) {
-        //     System.out.println(fnf.getMessage());
-        //     System.exit(2);
-        // }
-    }}
+            // } catch (IOException fnf) {
+            // System.out.println(fnf.getMessage());
+            // System.exit(2);
+            // }
+        }
+    }
 
     public static boolean sanitize(String input) {
         String[] validStats = { "pts", "reb", "ast", "blk", "stl", "tov", "min", "fgm", "fga", "3pm", "3pa", "ftm",
@@ -445,7 +446,7 @@ class MyDatabase {
                     "xroster AS (\n" + //
                     "    SELECT DISTINCT st.season, st.teamName, p.playerID\n" + //
                     "    FROM players p JOIN play ON p.playerID = play.playerID JOIN seasonsTeamsPlayed st ON play.season = st.season AND play.teamName = st.teamName)\n"
-                    + 
+                    +
                     "SELECT top (?) xr.season, xr.teamName, p.playerID, p.firstname, p.lastname\n" + //
                     "FROM players p\n" + //
                     "JOIN xroster xr ON p.playerID = xr.playerID\n" + //
@@ -459,7 +460,7 @@ class MyDatabase {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, "%" + first + "%");
             statement.setString(2, "%" + last + "%");
-            statement.setInt(3,num);
+            statement.setInt(3, num);
             statement.setString(4, "%" + first + "%");
             statement.setString(5, "%" + last + "%");
 
@@ -627,13 +628,14 @@ class MyDatabase {
                     + //
                     "\twhere g.gameID not in (select gameID from playoffGames)\n" + //
                     "\tgroup by c.coachID, c.firstname, c.lastname)\n" + //
-                    "select top (?) cgw.firstname, cgw.lastname, 100.0* cgw.gamesWon/cgp.gamesPlayed as winPercentage\n" + //
+                    "select top (?) cgw.firstname, cgw.lastname, 100.0* cgw.gamesWon/cgp.gamesPlayed as winPercentage\n"
+                    + //
                     "from coaches c join coachGamesWon cgw on c.coachID = cgw.coachID join coachGamesPlayed cgp on c.coachID = cgp.coachID\n"
                     + //
                     "order by winPercentage desc;";
 
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1,lim);
+            statement.setInt(1, lim);
             ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing coaches and their win percentages over the regular season:\n");
