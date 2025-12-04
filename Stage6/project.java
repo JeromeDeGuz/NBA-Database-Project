@@ -636,7 +636,6 @@ class MyDatabase {
                 printError();
                 return;
             }
-            int counter = 1;
             String sql = "with coachGamesWon as (\n" + //
                     "\tselect c.coachID, c.firstname, c.lastname, count(distinct g.gameID) as gamesWon \n" + //
                     "\tfrom games g join gameTeamInfo gti on g.gameID = gti.gameID join gameTeamStats gts on g.gameID = gts.gameID join manage m on m.season = g.season and m.teamName = gts.teamName join coaches c on m.coachID = c.coachID\n"
@@ -659,15 +658,16 @@ class MyDatabase {
             ResultSet resultSet = statement.executeQuery(sql);
 
             System.out.println("Showing coaches and their win percentages over the regular season:\n");
-            System.out.printf("| %5s %-28s | %-15s |%n", "", "Coach", "Win Percentage"); // Header
-            System.out.println("+------------------------------------------------------+");
-
+            String format = ("| %-20s | %-20s | %-10s |%n"); // Header
+            System.out.printf("|----------------------|----------------------|------------|%n");
+            System.out.printf(format,"firstName", "lastName", "win%");
+            System.out.printf("|----------------------|----------------------|------------|%n");
+            String floats = ("| %-20s | %-20s | %-10.2f |%n");
             while (resultSet.next()) {
-                String coach = resultSet.getString("firstname") + " " + resultSet.getString("lastname");
-                System.out.printf("| %2d. %-30s | %-15.1f |%n%n", counter, coach, resultSet.getFloat("winPercentage"));
-                counter++;
+                System.out.printf(floats,resultSet.getString("firstname"), resultSet.getString("lastname"),resultSet.getFloat("winPercentage"));
+                System.out.printf("|----------------------|----------------------|------------|%n");
             }
-            System.out.println("+------------------------------------------------------+");
+            
 
             resultSet.close();
             statement.close();
@@ -789,10 +789,10 @@ class MyDatabase {
         try {
             String sql = "select p.playerID, p.firstName, p.lastName, play.teamName, "
                     + "avg(cast(gps.pts as float)) as points, avg(cast(gps.reb as float)) as rebounds, avg(cast(gps.ast as float)) as assists, avg(cast(gps.blk as float)) as blocks, avg(cast(gps.stl as float)) as steals "
-                    + "from Players p join Play on p.playerID = play.playerID "
-                    + "join GamePlayerStats gps on play.playerID = gps.playerID "
+                    + "from Players p join GamePlayerStats gps on p.playerID = gps.playerID "
+                    + "join Play on Play.playerID = gps.playerID "
                     + "join Games on gps.gameID = Games.gameID "
-                    + "where lower(p.firstName) like lower(?) AND lower(p.lastName) like lower(?) "
+                    + "where lower(p.firstName) like lower(?) AND lower(p.lastName) like lower(?) AND Games.season = Play.season "
                     + "group by p.playerID, p.firstName, p.lastName, Play.teamName "
                     + "order by Play.teamName;";
 
