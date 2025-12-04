@@ -23,7 +23,7 @@ public class project {
 
     public static void main(String[] args) {
         MyDatabase db = new MyDatabase("NBAdatabaseServer.sql");
-
+        db.introduction();
         runConsole(db);
         System.out.println("Exiting...");
     }
@@ -239,6 +239,20 @@ class MyDatabase {
             System.out.println("Error loading initial script: " + ioe.getMessage());
             System.exit(1);
         }
+    }
+
+    public void introduction() {
+        System.out.println("****************************************************************************************************************************");
+        System.out.println(
+                "Welcome to the NBA database! This database contains information relating to the National Basketball Association (NBA)");
+        System.out.println(
+                "from the 2016/2017-2022/2023 seasons. It has information on players, teams, coaches, officials, games, statistics, and more!");
+        System.out.println(
+                "Below we have a list of commands you can use that will provide interesting data from the database. This data can be used");
+        System.out.println(
+                "for various types of analysis. This includes things like highest player averages for specific statistics, seeing the spread");
+        System.out.println("of players from different countries, ranking coaches and officials, and more!");
+        System.out.println("****************************************************************************************************************************");
     }
 
     public static boolean sanitize(String input) {
@@ -461,16 +475,19 @@ class MyDatabase {
                 System.out.println("Showing teammates for player with name similar to " + first + " " + last + "\n");
 
                 String formatString = "| %-10s | %-20s | %-20s | %-20s |%n"; // Format Structure
-                System.out.printf("|------------|----------------------|----------------------|----------------------|%n");
+                System.out.printf(
+                        "|------------|----------------------|----------------------|----------------------|%n");
                 System.out.printf(formatString, "Season", "Team", "First Name", "Last Name"); // Column Labels
 
                 do {
-                    System.out.printf("|------------|----------------------|----------------------|----------------------|%n");
+                    System.out.printf(
+                            "|------------|----------------------|----------------------|----------------------|%n");
                     System.out.printf("| %-10s | %-20s | %-20s | %-20s |%n",
                             resultSet.getString("season"), resultSet.getString("teamName"),
                             resultSet.getString("firstname"), resultSet.getString("lastname"));
                 } while (resultSet.next());
-     System.out.printf("|------------|----------------------|----------------------|----------------------|%n");
+                System.out.printf(
+                        "|------------|----------------------|----------------------|----------------------|%n");
             } else
                 System.out.println("Player not found.\n");
 
@@ -613,7 +630,8 @@ class MyDatabase {
                     + //
                     "\twhere g.gameID not in (select gameID from playoffGames)\n" + //
                     "\tgroup by c.coachID, c.firstname, c.lastname)\n" + //
-                    "select top (?) cgw.firstname, cgw.lastname, 100.0* cgw.gamesWon/cgp.gamesPlayed as winPercentage\n" + //
+                    "select top (?) cgw.firstname, cgw.lastname, 100.0* cgw.gamesWon/cgp.gamesPlayed as winPercentage\n"
+                    + //
                     "from coaches c join coachGamesWon cgw on c.coachID = cgw.coachID join coachGamesPlayed cgp on c.coachID = cgp.coachID\n"
                     + //
                     "order by winPercentage desc;";
@@ -889,15 +907,19 @@ class MyDatabase {
                     + " draft:");
 
             String formatString = "| %-20s | %-20s | %-15s | %-15s |%n"; // Format Structure
-            String formatPrint = "| %-20s | %-20s | %-15s | %-15.1f |%n"; // Print Structure w/ avgPer double value rounded to .1
+            String formatPrint = "| %-20s | %-20s | %-15s | %-15.1f |%n"; // Print Structure w/ avgPer double value
+                                                                          // rounded to .1
             System.out.printf("|----------------------|----------------------|-----------------|-----------------|%n");
             System.out.printf(formatString, "First Name", "Last Name", "Season Year", "PER");
-            System.out.printf("|----------------------|----------------------|-----------------|-----------------|%n");;
+            System.out.printf("|----------------------|----------------------|-----------------|-----------------|%n");
+            ;
 
             while (resultSet.next()) {
                 System.out.printf(formatPrint, resultSet.getString("firstname"), resultSet.getString("lastname"),
                         resultSet.getString("season"), resultSet.getDouble("avgPER")); // Column Labels
-                System.out.printf("|----------------------|----------------------|-----------------|-----------------|%n");;
+                System.out.printf(
+                        "|----------------------|----------------------|-----------------|-----------------|%n");
+                ;
             }
 
         } catch (SQLException e) {
@@ -932,7 +954,8 @@ class MyDatabase {
             while (resultSet.next()) {
                 System.out.printf(formatString, resultSet.getString("firstname"), resultSet.getString("lastname"),
                         resultSet.getInt("totalxStatistic"));
-                System.out.printf("|----------------------|----------------------|-----------------|%n");;
+                System.out.printf("|----------------------|----------------------|-----------------|%n");
+                ;
 
             }
 
