@@ -129,7 +129,7 @@ public class project {
 
             } else if (parts[0].equals("repopulate")) {
                 try {
-                    db.loadData("NBAdatabaseServer.sql");
+                    db.loadData2("testdata.sql");
                 } catch (IOException ioe) {
                     System.out.println("Error repopulating database: " + ioe.getMessage());
                 } catch (SQLException sqle) {
