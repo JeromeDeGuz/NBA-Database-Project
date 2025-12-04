@@ -279,8 +279,13 @@ class MyDatabase {
             int count = 0;
             // assumes each query is its own line
             while (line != null) {
+                
                 batch += line + "\n";
+<<<<<<< Updated upstream
                 // System.out.println(line);
+=======
+    
+>>>>>>> Stashed changes
                 if (line.trim().endsWith(";")) {
                     statement.addBatch(batch);
                     batch = "";
@@ -303,6 +308,7 @@ class MyDatabase {
         }
     }
 
+<<<<<<< Updated upstream
     // efficient load data method -> testing for this
     // public void loadData2(String script) throws IOException, SQLException {
     //     try {
@@ -324,6 +330,8 @@ class MyDatabase {
     //     }
     // }
 
+=======
+>>>>>>> Stashed changes
     public void deleteData(String script) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(script));
