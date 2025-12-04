@@ -1002,19 +1002,19 @@ class MyDatabase {
             System.out.println("Showing the player efficiency rating for players drafted in round " + r + " of the " + y
                     + " draft:");
 
-            String formatString = "| %-20s | %-20s | %-15s | %-15s |%n"; // Format Structure
-            String formatPrint = "| %-20s | %-20s | %-15s | %-15.1f |%n"; // Print Structure w/ avgPer double value
+            String formatString = "| %-20s | %-20s | %-10s | %-15s | %-15s |%n"; // Format Structure
+            String formatPrint = "| %-20s | %-20s | %-10s | %-15s | %-15.1f |%n"; // Print Structure w/ avgPer double value
                                                                           // rounded to .1
-            System.out.printf("|----------------------|----------------------|-----------------|-----------------|%n");
-            System.out.printf(formatString, "First Name", "Last Name", "Season Year", "PER");
-            System.out.printf("|----------------------|----------------------|-----------------|-----------------|%n");
+            System.out.printf("|----------------------|----------------------|------------|-----------------|-----------------|%n");
+            System.out.printf(formatString, "First Name", "Last Name","Pick", "Season Year", "PER");
+            System.out.printf("|----------------------|----------------------|------------|-----------------|-----------------|%n");
             ;
 
             while (resultSet.next()) {
-                System.out.printf(formatPrint, resultSet.getString("firstname"), resultSet.getString("lastname"),
+                System.out.printf(formatPrint, resultSet.getString("firstname"), resultSet.getString("lastname"), resultSet.getString("pick"),
                         resultSet.getString("season"), resultSet.getDouble("avgPER")); // Column Labels
                 System.out.printf(
-                        "|----------------------|----------------------|-----------------|-----------------|%n");
+                        "|----------------------|----------------------|------------|-----------------|-----------------|%n");
                 ;
             }
 
