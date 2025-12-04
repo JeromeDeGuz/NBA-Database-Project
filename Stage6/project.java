@@ -501,7 +501,6 @@ class MyDatabase {
     }
 
     // 4 THIS IS DONE
-    // NO USER INPUT NEEDED
     public void rankOfficials(String lim) {
         try {
             int num = Integer.parseInt(lim);
@@ -511,9 +510,7 @@ class MyDatabase {
             }
             String sql = "select top (?) o.officialID, o.firstName, o.lastName, count(officiate.gameID) as numGames from officials o join officiate on o.officialID = officiate.officialID group by o.officialID, o.firstName, o.lastName order by numGames desc, o.lastname asc;";
 
-            // Statement statement = connection.createStatement();
             PreparedStatement statement = connection.prepareStatement(sql);
-            // ResultSet resultSet = statement.executeQuery(sql);
             statement.setInt(1, num);
             ResultSet resultSet = statement.executeQuery();
 
