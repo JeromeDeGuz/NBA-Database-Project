@@ -685,7 +685,7 @@ class MyDatabase {
             String sql;
 
             if (sanitize(stat)) {
-                sql = "select top (?) p.firstname,p.lastName, avg(gps." + stat + ") as avgStat "
+                sql = "select top (?) p.firstname,p.lastName, avg(cast(gps.[" + stat + "] as float)) as avgStat "
                         + "from GamePlayerStats gps join players p on gps.playerID = p.playerID "
                         + "join games g on gps.gameID = g.gameID "
                         + "where g.season like (?) group by p.firstname,p.lastName order by avgStat desc;";
@@ -728,15 +728,15 @@ class MyDatabase {
 
             if (sanitize(stat)) {
                 sql = "with reg as "
-                        + "(SELECT players.playerID, players.firstname, players.lastname, avg(gps." + stat
-                        + ") as regAvg "
+                        + "(SELECT players.playerID, players.firstname, players.lastname, avg(cast(gps.'" + stat
+                        + "' as float)) as regAvg "
                         + "FROM players join gamePlayerStats gps on players.playerID = gps.playerID "
                         + "JOIN games on gps.gameID = games.gameID WHERE games.gameID not in "
                         + "(SELECT gameID from playoffGames) "
                         + "group by players.playerID, players.firstname, players.lastname), "
                         + "playoff as "
-                        + "(SELECT players.playerID, players.firstname, players.lastname, avg(gps." + stat
-                        + ") as pfAvg "
+                        + "(SELECT players.playerID, players.firstname, players.lastname, avg(cast(gps.'" + stat
+                        + "' as float)) as pfAvg "
                         + "FROM players join gamePlayerStats gps on players.playerID = gps.playerID "
                         + "JOIN games on gps.gameID = games.gameID "
                         + "JOIN playoffGames on games.gameID = playoffGames.gameID "
