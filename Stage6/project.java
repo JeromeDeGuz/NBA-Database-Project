@@ -269,6 +269,7 @@ class MyDatabase {
             while (line != null) {
                 batch += line + "\n";
                 // System.out.println(line);
+                this.connection.createStatement().execute(line);
                 if (line.trim().endsWith(";")) {
                     statement.addBatch(batch);
                     batch = "";
