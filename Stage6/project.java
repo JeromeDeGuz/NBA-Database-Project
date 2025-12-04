@@ -389,6 +389,7 @@ class MyDatabase {
                     "order by appearancePercentage desc, gpp.season desc, gpp.lastname asc;";
 
             PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, num);
             ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing the game appearance percentage for each player for each season:\n");
