@@ -33,9 +33,6 @@ public class project {
         System.out.println("Exiting...");
     }
 
-    // handles connecting to uranium
-
-    // the general console loop
     // the general console loop
     public static void runConsole(MyDatabase db) {
 
