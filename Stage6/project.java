@@ -29,7 +29,7 @@ public class project {
     static Connection connection;
 
     public static void main(String[] args) {
-        // uraniumconnect();
+        //uraniumconnect();
         // MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
         // MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
         // YOU'RE USING MSSQL
