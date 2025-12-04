@@ -31,9 +31,10 @@ public class project {
     public static void main(String[] args) {
         // uraniumconnect();
         // MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
-        MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
+        // MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
         // YOU'RE USING MSSQL
-        //MyDatabase db = new MyDatabase("NBAdatabaseServer.sql"); // COMMENT THIS OUT
+
+        MyDatabase db = new MyDatabase("NBAdatabaseServer.sql"); // COMMENT THIS OUT
         // IF YOU'RE USING SQLITE
 
         runConsole(db);
@@ -41,7 +42,6 @@ public class project {
     }
 
     // handles connecting to uranium
-
 
     // the general console loop
     // the general console loop
@@ -231,12 +231,12 @@ class MyDatabase {
 
             // COMMENT THIS OUT IF YOU'RE USING SQLITE
             String connectionUrl = "jdbc:sqlserver://uranium.cs.umanitoba.ca:1433;"
-            + "database=cs3380;"
-            + "user=" + username + ";"
-            + "password=" + password + ";"
-            + "encrypt=false;"
-            + "trustServerCertificate=false;"
-            + "loginTimeout=30;";
+                    + "database=cs3380;"
+                    + "user=" + username + ";"
+                    + "password=" + password + ";"
+                    + "encrypt=false;"
+                    + "trustServerCertificate=false;"
+                    + "loginTimeout=30;";
 
             connection = DriverManager.getConnection(connectionUrl);
 
@@ -465,7 +465,7 @@ class MyDatabase {
             statement.setString(2, "%" + last + "%");
             statement.setString(3, "%" + first + "%");
             statement.setString(4, "%" + last + "%");
-            statement.setInt(5,num);
+            statement.setInt(5, num);
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -684,17 +684,17 @@ class MyDatabase {
             System.out.println("Showing top " + lim + " players based on regular season averages for " + stat
                     + " for the " + season + " season: ");
 
-            String formatString = "%n| %-15s | %-15s | %-15s |%n"; // Format Structure
+            String formatString = "%n| %-30s | %-30s | %-15s |%n"; // Format Structure
+            System.out.printf("|----------------------------------|----------------------------------|-----------------|%n");
             System.out.printf(formatString, "FirstName", "LastName", "AVG " + stat); // Column Labels
-            System.out.printf("+-----------------+-----------------+-----------------+%n"); // Top Bar
+            System.out.printf("|----------------------------------|----------------------------------|-----------------|%n"); // Top Bar
             String avgs = "%n| %-15s | %-15s | %-15.1f |%n";
 
             while (resultSet.next()) {
                 System.out.printf(avgs, resultSet.getString("firstname"), resultSet.getString("lastName"),
                         resultSet.getDouble("avgStat"));
+                System.out.printf("|----------------------------------|----------------------------------|-----------------|%n");
             }
-
-            System.out.printf("+-----------------+-----------------+-----------------+%n");
 
             resultSet.close();
             statement.close();
@@ -707,7 +707,7 @@ class MyDatabase {
     public void compareAvg(String stat, String first, String last) {
         try {
             String sql;
-            
+
             if (sanitize(stat)) {
                 sql = "with reg as "
                         + "(SELECT players.playerID, players.firstname, players.lastname, avg(gps." + stat
@@ -738,16 +738,18 @@ class MyDatabase {
 
             System.out.println("Showing a comparison of player: " + first + " " + last + " and his " + stat
                     + " in the regular season vs playoffs: ");
-            String formatString = "%n| %-15s | %-15s | %-15s | %-15s |%n"; // Format Structure
+            String formatString = "%n| %-30s | %-30s | %-15s | %-15s |%n"; // Format Structure
+            System.out.printf("|----------------------------------|----------------------------------|-----------------|-----------------|%n");
             System.out.printf(formatString, "FirstName", "LastName", "REG AVG" + stat, "PF AVG" + stat); // Column
                                                                                                          // Labels
-            System.out.printf("+-----------------+-----------------+-----------------+-----------------+%n"); // Top Bar
+            System.out.printf("|----------------------------------|----------------------------------|-----------------|-----------------|%n"); // Top Bar
             String avgs = "%n| %-15s | %-15s | %-15.1f | %-15.1f |%n";
             while (resultSet.next()) {
                 System.out.printf(avgs, resultSet.getString("firstname"), resultSet.getString("lastName"),
                         resultSet.getDouble("regAvg"), resultSet.getDouble("pfAvg"));
+                System.out.printf("|-----------------|-----------------|-----------------|-----------------|%n");
             }
-            System.out.printf("+-----------------+-----------------+-----------------+-----------------+%n");
+
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
@@ -776,12 +778,15 @@ class MyDatabase {
             System.out.println("Showing Major stat averages for player: " + first + " " + last
                     + " for all teams they have played for: ");
 
-            String formatString = "%n| %-15s | %-15s | %-15s | %-15s | %-15s | %-15s | %-15s | %-15s |%n"; // Format
+            String formatString = "%n| %-30s | %-30s | %-15s | %-15s | %-15s | %-15s | %-15s | %-15s |%n"; // Format
                                                                                                            // Structure
+
+            System.out.printf(
+                    "|----------------------------------|----------------------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|%n");
             System.out.printf(formatString, "FirstName", "LastName", "Team", "Points", "Rebounds", "Assists", "Blocks",
                     "Steals"); // Column Labels
             System.out.printf(
-                    "+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+%n"); // Top
+                    "|----------------------------------|----------------------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|%n"); // Top
                                                                                                                                                                             // Bar
             String avgs = "%n| %-15s | %-15s | %-15s | %-15.1f | %-15.1f | %-15.1f | %-15.1f | %-15.1f |%n";
 
@@ -790,10 +795,10 @@ class MyDatabase {
                         resultSet.getString("teamName"), resultSet.getDouble("points"),
                         resultSet.getDouble("rebounds"), resultSet.getDouble("assists"),
                         resultSet.getDouble("blocks"), resultSet.getDouble("steals"));
+                System.out.printf(
+                        "|----------------------------------|----------------------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|%n");
             }
 
-            System.out.printf(
-                    "+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+%n");
         } catch (SQLException e) {
             System.out.println("You have entered unexpected parameters. Type h for help!");
             e.printStackTrace(System.out);
@@ -812,14 +817,15 @@ class MyDatabase {
             System.out.println("Showing the Champions in chronological order: ");
 
             String formatString = "%n| %-15s | %-15s |%n"; // Format Structure
+            System.out.printf("|-----------------|-----------------|%n");
             System.out.printf(formatString, "Season Year", "Champion"); // Column Labels
-            System.out.printf("+-----------------+-----------------+%n"); // Top Bar
+            System.out.printf("|-----------------|-----------------|%n"); // Top Bar
 
             while (resultSet.next()) {
                 System.out.printf(formatString, resultSet.getString("years"), resultSet.getString("teamName"));
+                System.out.printf("|-----------------|-----------------|%n");
             }
 
-            System.out.printf("+-----------------+-----------------+%n"); // Lower Bar
         } catch (SQLException e) {
             System.out.println("You have entered unexpected parameters. Type h for help!");
         }
