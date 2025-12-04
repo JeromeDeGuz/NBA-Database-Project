@@ -33,7 +33,7 @@ public class project {
         // MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
         MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
         // YOU'RE USING MSSQL
-        MyDatabase db = new MyDatabase("NBAdatabaseServer.sql"); // COMMENT THIS OUT
+        //MyDatabase db = new MyDatabase("NBAdatabaseServer.sql"); // COMMENT THIS OUT
         // IF YOU'RE USING SQLITE
 
         runConsole(db);
@@ -199,7 +199,7 @@ public class project {
         System.out.println("-----------------End of Help-----------------");
     }
 
-}`
+}
 
 class MyDatabase {
     private Connection connection;
@@ -665,19 +665,8 @@ class MyDatabase {
         try {
             int lim = Integer.parseInt(limit);
             String sql;
-            String[] validStats = { "pts", "rbs", "ast", "blk",
-                    "stl", "tov", "mins", "fgm",
-                    "fga", "3pm", "3pa", "ftm",
-                    "fta", "oreb", "dreb", "pf" };
 
-            boolean check = false;
-            for (String x : validStats) {
-                if (stat.equals(x)) {
-                    check = true;
-                }
-            }
-
-            if (check) {
+            if (sanitize(stat)) {
                 sql = "select top ? p.firstname,p.lastName, avg(gps." + stat + ") as avgStat "
                         + "from GamePlayerStats gps join players p on gps.playerID = p.playerID "
                         + "join games g on gps.gameID = g.gameID "
@@ -718,33 +707,24 @@ class MyDatabase {
     public void compareAvg(String stat, String first, String last) {
         try {
             String sql;
-            String[] validStats = { "pts", "rbs", "ast", "blk",
-                    "stl", "tov", "mins", "fgm",
-                    "fga", "3pm", "3pa", "ftm",
-                    "fta", "oreb", "dreb", "pf" };
-            boolean check = false;
-            for (String x : validStats) {
-                if (stat.equals(x)) {
-                    check = true;
-                }
-            }
-            if (check) {
+            
+            if (sanitize(stat)) {
                 sql = "with reg as "
                         + "(SELECT players.playerID, players.firstname, players.lastname, avg(gps." + stat
                         + ") as regAvg "
-                        + "FROM players natural join gamePlayerStats gps "
-                        + "NATURAL JOIN games WHERE games.gameID not in "
+                        + "FROM players join gamePlayerStats gps on players.playerID = gps.playerID "
+                        + "JOIN games on gps.gameID = games.gameID WHERE games.gameID not in "
                         + "(SELECT gameID from playoffGames) "
                         + "group by players.playerID, players.firstname, players.lastname), "
                         + "playoff as "
                         + "(SELECT players.playerID, players.firstname, players.lastname, avg(gps." + stat
                         + ") as pfAvg "
-                        + "FROM players natural join gamePlayerStats gps "
-                        + "NATURAL JOIN games "
-                        + "NATURAL JOIN playoffGames "
+                        + "FROM players join gamePlayerStats gps on players.playerID = gps.playerID "
+                        + "JOIN games on gps.gameID = games.gameID "
+                        + "JOIN playoffGames on games.gameID = playoffGames.gameID "
                         + "group by players.playerID, players.firstname, players.lastname) "
                         + "SELECT playerID, firstname, lastname, reg.regAvg, playoff.pfAvg "
-                        + "FROM reg NATURAL join playoff "
+                        + "FROM reg join playoff on reg.playerID = pfAvg.playerID AND reg.firstname = pfAvg.firstname AND reg.lastname = pfAvg.lastname"
                         + "WHERE lower(firstname) like lower(?) and lower(lastname) like lower(?);";
             } else {
                 System.out.println("You have entered unexpected paramters. Type h for help");
@@ -781,9 +761,9 @@ class MyDatabase {
         try {
             String sql = "select p.playerID, p.firstName, p.lastName, play.teamName, "
                     + "avg(gps.pts) as points, avg(gps.reb) as rebounds, avg(gps.ast) as assists, avg(gps.blk) as blocks, avg(gps.stl) as steals "
-                    + "from Players p natural join Play "
+                    + "from Players p join Play on p.playerID = play.playerID "
                     + "join GamePlayerStats gps on play.playerID = gps.playerID "
-                    + "natural join Games "
+                    + "join Games on gps.gameID = Games.gameID"
                     + "where lower(p.firstName) like lower(?) AND lower(p.lastName) like lower(?) "
                     + "group by p.playerID, p.firstName, p.lastName, Play.teamName "
                     + "order by Play.teamName;";
