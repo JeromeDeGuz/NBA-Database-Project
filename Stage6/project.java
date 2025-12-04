@@ -40,10 +40,7 @@ public class project {
         runConsole(db);
         System.out.println("Exiting...");
     }
-
-    // handles connecting to uranium
-
-    // the general console loop
+  
     // the general console loop
     public static void runConsole(MyDatabase db) {
 
@@ -242,14 +239,15 @@ class MyDatabase {
 
             System.out.println("Connection to SQLite has been established.");
 
-            if (initscript != null)
-                this.loadData(initscript);
+            // if (initscript != null)
+            // this.loadData(initscript);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             System.exit(1);
-        } catch (IOException fnf) {
-            System.out.println(fnf.getMessage());
-            System.exit(2);
+            // } catch (IOException fnf) {
+            // System.out.println(fnf.getMessage());
+            // System.exit(2);
+            // }
         }
     }
 
@@ -309,14 +307,15 @@ class MyDatabase {
             BufferedReader reader = new BufferedReader(new FileReader(script));
             String line = reader.readLine();
             String query = "";
-            // assumes each query is its own line
+
             while (line != null) {
-                String parts[] = line.split("\\s+");
-                if (parts[0].equals("BEGIN") || parts[0].equals("CREATE")) {
+                if (line.charAt(line.length() - 1) == ';') { // checks if we're at the end of query by looking for. If we are, execute the query
                     this.connection.createStatement().execute(line);
+                } else {
+                    query += line + " ";
                 }
-                query += line + " ";
                 line = reader.readLine();
+
             }
             reader.close();
         } catch (SQLException e) {
@@ -356,7 +355,7 @@ class MyDatabase {
         System.out.println("You have entered unexpected paramters. Type h for help");
     }
 
-    // 1 DONE
+   // 1 DONE
     public void roster(String teamName, String season) {
         try {
             String sql = "select firstname, lastname,  jersey\n" + //
@@ -415,15 +414,15 @@ class MyDatabase {
                     "\tselect gts.teamName, g.season, count(gts.gameID) as teamGP\n" + //
                     "\tfrom gameTeamStats gts join games g on gts.gameID = g.gameID\n" + //
                     "\tgroup by gts.teamName, g.season)\n" + //
-                    "select top " + num
-                    + " gpp.season, gpt.teamName, gpp.firstname, gpp.lastname, ((1.0*gpp.playerGP)/gpt.teamGP)*100.0 as appearancePercentage\n"
+                    "select top (?) gpp.season, gpt.teamName, gpp.firstname, gpp.lastname, ((1.0*gpp.playerGP)/gpt.teamGP)*100.0 as appearancePercentage\n"
                     + //
                     "from gamesPlayedPlayer gpp join play on gpp.season = play.season and gpp.playerID = play.playerID join gamesPlayedTeam gpt on play.teamName = gpt.teamName and gpt.season = play.season\n"
                     + //
                     "order by appearancePercentage desc, gpp.season desc, gpp.lastname asc;";
 
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, num);
+            ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing the game appearance percentage for each player for each season:\n");
             String formatString = "| %-10s | %-15s | %-30s | %-40s | %-30s |%n"; // Format Structure
@@ -467,7 +466,7 @@ class MyDatabase {
                     "xroster AS (\n" + //
                     "    SELECT DISTINCT st.season, st.teamName, p.playerID\n" + //
                     "    FROM players p JOIN play ON p.playerID = play.playerID JOIN seasonsTeamsPlayed st ON play.season = st.season AND play.teamName = st.teamName)\n"
-                    + //
+                    + 
                     "SELECT top (?) xr.season, xr.teamName, p.playerID, p.firstname, p.lastname\n" + //
                     "FROM players p\n" + //
                     "JOIN xroster xr ON p.playerID = xr.playerID\n" + //
@@ -481,9 +480,9 @@ class MyDatabase {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, "%" + first + "%");
             statement.setString(2, "%" + last + "%");
-            statement.setString(3, "%" + first + "%");
-            statement.setString(4, "%" + last + "%");
-            statement.setInt(5, num);
+            statement.setInt(3,num);
+            statement.setString(4, "%" + first + "%");
+            statement.setString(5, "%" + last + "%");
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -604,14 +603,14 @@ class MyDatabase {
             if (initial) {
                 System.out.println("Showing number of players from each country for the " + season + " season:\n");
 
-                String formatString = "| %-30s | %-20s |%n%n"; // Format Structure
+                String formatString = "| %-30s | %-20s |%n"; // Format Structure
                 System.out.printf(formatString, "Country", "Number of Players"); // Column Labels
                 System.out.printf(
                         "+-------------------------------------------------------+%n"); // Top
                 // Bar
 
                 do {
-                    System.out.printf("| %-30s | %-20s |%n",
+                    System.out.printf("| %-30s | %-20s |%n%n",
                             resultSet.getString("country"), resultSet.getInt("numPlayers"));
                 } while (resultSet.next());
                 System.out.printf(
@@ -648,14 +647,14 @@ class MyDatabase {
                     + //
                     "\twhere g.gameID not in (select gameID from playoffGames)\n" + //
                     "\tgroup by c.coachID, c.firstname, c.lastname)\n" + //
-                    "select top " + lim
-                    + " cgw.firstname, cgw.lastname, 100.0* cgw.gamesWon/cgp.gamesPlayed as winPercentage\n" + //
+                    "select top (?) cgw.firstname, cgw.lastname, 100.0* cgw.gamesWon/cgp.gamesPlayed as winPercentage\n" + //
                     "from coaches c join coachGamesWon cgw on c.coachID = cgw.coachID join coachGamesPlayed cgp on c.coachID = cgp.coachID\n"
                     + //
                     "order by winPercentage desc;";
 
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1,lim);
+            ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing coaches and their win percentages over the regular season:\n");
             String format = ("| %-20s | %-20s | %-10s |%n"); // Header
