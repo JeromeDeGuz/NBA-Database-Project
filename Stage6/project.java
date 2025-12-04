@@ -113,6 +113,7 @@ public class project {
                     break;
                 case "repopulate":
                     try {
+                        System.out.println("Repopulating database with initial data...");
                         db.loadData("NBAdatabaseServer.sql");;
                     } catch (IOException ioe) {
                         System.out.println("Error repopulating database: " + ioe.getMessage());
@@ -121,6 +122,7 @@ public class project {
                     }
                     break;
                 case "deleteall":
+                    System.out.println("Deleting all data from the database...");
                     db.deleteData("deleteData.sql");
                     break;
                 default:
