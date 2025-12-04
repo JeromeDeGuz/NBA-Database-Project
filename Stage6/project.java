@@ -16,7 +16,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
-import java.io.File;
 import java.util.Properties;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,10 +28,6 @@ public class project {
     static Connection connection;
 
     public static void main(String[] args) {
-        // uraniumconnect();
-        // MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
-        MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
-        // YOU'RE USING MSSQL
         MyDatabase db = new MyDatabase("NBAdatabaseServer.sql"); // COMMENT THIS OUT
         // IF YOU'RE USING SQLITE
 
@@ -40,10 +35,6 @@ public class project {
         System.out.println("Exiting...");
     }
 
-    // handles connecting to uranium
-
-
-    // the general console loop
     // the general console loop
     public static void runConsole(MyDatabase db) {
 
