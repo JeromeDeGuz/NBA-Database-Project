@@ -1,14 +1,8 @@
 /* TO RUN CODE:
-FOR SQLITE:
-javac -cp sqlite-jdbc.jar project.java
-java -cp .:sqlite-jdbc.jar project 
-
 FOR MSSQL:  
 javac -cp mssql-jdbc-11.2.0.jre18.jar project.java
 java -cp .:mssql-jdbc-11.2.0.jre18.jar project
 */
-
-//
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
-import java.io.File;
 import java.util.Properties;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,22 +22,12 @@ public class project {
     static Connection connection;
 
     public static void main(String[] args) {
-        // uraniumconnect();
-        // MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
-        // MyDatabase db = new MyDatabase("NBAdatabase.db.sql"); // COMMENT THIS OUT IF
-        // YOU'RE USING MSSQL
-
-        MyDatabase db = new MyDatabase("NBAdatabaseServer.sql"); // COMMENT THIS OUT
-        // IF YOU'RE USING SQLITE
+        MyDatabase db = new MyDatabase("NBAdatabaseServer.sql");
 
         runConsole(db);
         System.out.println("Exiting...");
     }
 
-    // handles connecting to uranium
-
-    // the general console loop
-    // the general console loop
     public static void runConsole(MyDatabase db) {
 
         Scanner console = new Scanner(System.in);
@@ -194,7 +177,14 @@ public class project {
         // 14
         System.out.println(
                 "ts <statType> - Get the career totals for a specific stat for all players\n                NOTE: <statType> must be from the following:\n                pts, reb, ast, blk, stl, tov, mins, fgm, fga, 3pm, 3pa, ftm, fta, oreb, dreb, pf\n");
-        System.out.println("quit - To exit program");
+
+        // 15
+        System.out.println("deleteAll - Deletes all data from the database\n");
+
+        // 16
+        System.out.println("repopulate - Repopulates the database with initial data\n");
+
+        System.out.println("quit - To exit program\n");
 
         System.out.println("-----------------End of Help-----------------");
     }
@@ -206,8 +196,6 @@ class MyDatabase {
 
     public MyDatabase(String initscript) {
         try {
-            // String connectionUrl = "jdbc:sqlite::memory:"; // COMMENT THIS OUT IF YOU'RE
-            // USING MSSQL
             Properties prop = new Properties();
             String fileName = "auth.cfg";
             try {
@@ -229,7 +217,6 @@ class MyDatabase {
                 System.exit(1);
             }
 
-            // COMMENT THIS OUT IF YOU'RE USING SQLITE
             String connectionUrl = "jdbc:sqlserver://uranium.cs.umanitoba.ca:1433;"
                     + "database=cs3380;"
                     + "user=" + username + ";"
@@ -242,14 +229,15 @@ class MyDatabase {
 
             System.out.println("Connection to SQLite has been established.");
 
-            if (initscript != null)
+            if (initscript != null) {
                 this.loadData(initscript);
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             System.exit(1);
-        } catch (IOException fnf) {
-            System.out.println(fnf.getMessage());
-            System.exit(2);
+        } catch (IOException ioe) {
+            System.out.println("Error loading initial script: " + ioe.getMessage());
+            System.exit(1);
         }
     }
 
@@ -279,13 +267,9 @@ class MyDatabase {
             int count = 0;
             // assumes each query is its own line
             while (line != null) {
-                
+
                 batch += line + "\n";
-<<<<<<< Updated upstream
-                // System.out.println(line);
-=======
-    
->>>>>>> Stashed changes
+
                 if (line.trim().endsWith(";")) {
                     statement.addBatch(batch);
                     batch = "";
@@ -308,37 +292,12 @@ class MyDatabase {
         }
     }
 
-<<<<<<< Updated upstream
-    // efficient load data method -> testing for this
-    // public void loadData2(String script) throws IOException, SQLException {
-    //     try {
-    //         BufferedReader reader = new BufferedReader(new FileReader(script));
-    //         String line = reader.readLine();
-    //         String query = "";
-    //         // assumes each query is its own line
-    //         while (line != null) {
-    //             String parts[] = line.split("\\s+");
-    //             if (parts[0].equals("BEGIN") || parts[0].equals("CREATE")) {
-    //                 this.connection.createStatement().execute(line);
-    //             }
-    //             query += line + " ";
-    //             line = reader.readLine();
-    //         }
-    //         reader.close();
-    //     } catch (SQLException e) {
-    //         e.printStackTrace(); // commented since loading database without deleting first wil throw exceptions
-    //     }
-    // }
-
-=======
->>>>>>> Stashed changes
     public void deleteData(String script) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(script));
             String line = reader.readLine();
             // assumes each query is its own line
             while (line != null) {
-                // System.out.println(line);
                 this.connection.createStatement().execute(line);
                 line = reader.readLine();
             }
@@ -383,19 +342,19 @@ class MyDatabase {
             if (initial) {
                 System.out.println("Showing Roster for " + teamName + " for the " + season + " season:\n");
 
-                String formatString = "| %-30s | %-40s | %-20s |%n"; // Format Structure
+                String formatString = "| %-20s | %-20s | %-20s |%n"; // Format Structure
+                System.out.printf("|----------------------|----------------------|----------------------|%n"); // Top
                 System.out.printf(formatString, "First Name", "Last Name", "Jersey Number"); // Column Labels
-                System.out.printf(
-                        "+--------------------------------------------------------------------------------------------------+%n"); // Top
                 // Bar
 
                 do {
-                    System.out.printf("| %-30s | %-40s | %-20s |%n%n",
+                    System.out.println("|----------------------|----------------------|----------------------|");
+                    System.out.printf("| %-20s | %-20s | %-20s |%n",
                             resultSet.getString("firstName"), resultSet.getString("lastName"),
                             resultSet.getInt("jersey"));
                 } while (resultSet.next());
                 System.out.printf(
-                        "+--------------------------------------------------------------------------------------------------+%n"); // Lower
+                        "|----------------------|----------------------|----------------------|%n"); // Lower
                 // Bar
             } else
                 System.out.println("No roster found for " + teamName + " for the " + season + " season.");
@@ -423,32 +382,32 @@ class MyDatabase {
                     "\tselect gts.teamName, g.season, count(gts.gameID) as teamGP\n" + //
                     "\tfrom gameTeamStats gts join games g on gts.gameID = g.gameID\n" + //
                     "\tgroup by gts.teamName, g.season)\n" + //
-                    "select top " + num
-                    + " gpp.season, gpt.teamName, gpp.firstname, gpp.lastname, ((1.0*gpp.playerGP)/gpt.teamGP)*100.0 as appearancePercentage\n"
+                    "select top (?) gpp.season, gpt.teamName, gpp.firstname, gpp.lastname, ((1.0*gpp.playerGP)/gpt.teamGP)*100.0 as appearancePercentage\n"
                     + //
                     "from gamesPlayedPlayer gpp join play on gpp.season = play.season and gpp.playerID = play.playerID join gamesPlayedTeam gpt on play.teamName = gpt.teamName and gpt.season = play.season\n"
                     + //
                     "order by appearancePercentage desc, gpp.season desc, gpp.lastname asc;";
 
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing the game appearance percentage for each player for each season:\n");
-            String formatString = "| %-10s | %-15s | %-30s | %-40s | %-30s |%n"; // Format Structure
+            String formatString = "| %-10s | %-15s | %-20s | %-20s | %-30s |%n"; // Format Structure
+            System.out.printf(
+                    "|------------|-----------------|----------------------|----------------------|--------------------------------|%n"); // Top
             System.out.printf(formatString, "Season", "Team", "First Name", "Last Name",
                     "Game Appearance Percentage (%)"); // Column Labels
-            System.out.printf(
-                    "+-------------------------------------------------------------------------------------------------------------------------------------------+%n"); // Top
             // Bar
             while (resultSet.next()) {
-                System.out.printf("| %-10s | %-15s | %-30s | %-40s | %-30.1f |%n%n", resultSet.getString("season"),
+                System.out.printf(
+                        "|------------|-----------------|----------------------|----------------------|--------------------------------|%n");
+                System.out.printf("| %-10s | %-15s | %-20s | %-20s | %-30.1f |%n", resultSet.getString("season"),
                         resultSet.getString("teamName"),
                         resultSet.getString("firstName"), resultSet.getString("lastName"),
                         resultSet.getFloat("appearancePercentage"));
             }
             System.out.printf(
-                    "+-------------------------------------------------------------------------------------------------------------------------------------------+%n"); // Lower
-            // Bar
+                    "|------------|-----------------|----------------------|----------------------|--------------------------------|%n");
 
             resultSet.close();
             statement.close();
@@ -489,9 +448,9 @@ class MyDatabase {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, "%" + first + "%");
             statement.setString(2, "%" + last + "%");
-            statement.setString(3, "%" + first + "%");
-            statement.setString(4, "%" + last + "%");
-            statement.setInt(5, num);
+            statement.setInt(3, num);
+            statement.setString(4, "%" + first + "%");
+            statement.setString(5, "%" + last + "%");
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -500,20 +459,17 @@ class MyDatabase {
             if (initial) {
                 System.out.println("Showing teammates for player with name similar to " + first + " " + last + "\n");
 
-                String formatString = "| %-10s | %-20s | %-30s | %-40s |%n"; // Format Structure
+                String formatString = "| %-10s | %-20s | %-20s | %-20s |%n"; // Format Structure
+                System.out.printf("|------------|----------------------|----------------------|----------------------|%n");
                 System.out.printf(formatString, "Season", "Team", "First Name", "Last Name"); // Column Labels
-                System.out.printf(
-                        "+---------------------------------------------------------------------------------------------------------------+%n"); // Top
-                // Bar
 
                 do {
-                    System.out.printf("| %-10s | %-20s | %-30s | %-40s |%n%n",
+                    System.out.printf("|------------|----------------------|----------------------|----------------------|%n");
+                    System.out.printf("| %-10s | %-20s | %-20s | %-20s |%n",
                             resultSet.getString("season"), resultSet.getString("teamName"),
                             resultSet.getString("firstname"), resultSet.getString("lastname"));
                 } while (resultSet.next());
-                System.out.printf(
-                        "+---------------------------------------------------------------------------------------------------------------+%n"); // Lower
-                // Bar
+     System.out.printf("|------------|----------------------|----------------------|----------------------|%n");
             } else
                 System.out.println("Player not found.\n");
 
@@ -566,7 +522,6 @@ class MyDatabase {
     }
 
     // 5
-    // NO USER INPUT NEEDED
     // DONE
     public void stadiumInfo() {
         try {
@@ -626,7 +581,7 @@ class MyDatabase {
                         "+-------------------------------------------------------+%n"); // Lower
                 // Bar
             } else
-                System.out.println("Invalid season entered\n");
+                System.out.println("Invalid season entered.\n");
 
             resultSet.close();
             statement.close();
@@ -657,14 +612,14 @@ class MyDatabase {
                     + //
                     "\twhere g.gameID not in (select gameID from playoffGames)\n" + //
                     "\tgroup by c.coachID, c.firstname, c.lastname)\n" + //
-                    "select top " + lim
-                    + " cgw.firstname, cgw.lastname, 100.0* cgw.gamesWon/cgp.gamesPlayed as winPercentage\n" + //
+                    "select top (?) cgw.firstname, cgw.lastname, 100.0* cgw.gamesWon/cgp.gamesPlayed as winPercentage\n" + //
                     "from coaches c join coachGamesWon cgw on c.coachID = cgw.coachID join coachGamesPlayed cgp on c.coachID = cgp.coachID\n"
                     + //
                     "order by winPercentage desc;";
 
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, lim);
+            ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing coaches and their win percentages over the regular season:\n");
             System.out.printf("| %5s %-28s | %-15s |%n", "", "Coach", "Win Percentage"); // Header
@@ -813,7 +768,7 @@ class MyDatabase {
                     + " for all teams they have played for: ");
 
             String formatString = "| %-20s | %-20s | %-15s | %-10s | %-10s | %-10s | %-10s | %-10s |%n"; // Format
-                                                                                                           // Structure
+                                                                                                         // Structure
 
             System.out.printf(
                     "|----------------------|----------------------|-----------------|------------|------------|------------|------------|------------|%n");
