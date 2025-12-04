@@ -303,7 +303,6 @@ class MyDatabase {
         }
     }
 
-
     public void deleteData(String script) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(script));
@@ -516,18 +515,17 @@ class MyDatabase {
             ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing the officials who have officiated the most games:\n");
-            System.out.printf("| %-10s | %-20s | %-30s | %-15s |%n", "officialID", "First Name", "Last Name",
-                    "Number of Games"); // Header
-            System.out.println(
-                    "+--------------------------------------------------------------------------------------+");
+            String format = ("| %-10s | %-20s | %-20s | %-10s |%n");
+            System.out.printf("|------------|----------------------|----------------------|------------|%n");
+            System.out.printf(format, "ID", "FirstName", "LastName", "Games");
+            System.out.printf("|------------|----------------------|----------------------|------------|%n");
+            String floats = ("| %-10d | %-20s | %-20s | %-10d |%n");
             while (resultSet.next()) {
-                System.out.printf("| %-10d | %-20s | %-30s | %-15d |%n%n", resultSet.getInt("officialID"),
-                        resultSet.getString("firstname"),
-                        resultSet.getString("lastname"), resultSet.getInt("numGames"));
+                System.out.printf(floats, resultSet.getInt("officialID"), resultSet.getString("firstname"),
+                        resultSet.getString("lastname"),
+                        resultSet.getInt("numGames"));
+                System.out.printf("|------------|----------------------|----------------------|------------|%n");
             }
-            System.out.println(
-                    "+--------------------------------------------------------------------------------------+");
-
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
@@ -548,17 +546,19 @@ class MyDatabase {
             ResultSet resultSet = statement.executeQuery(sql);
 
             System.out.println("Showing all the teams and their stadium info:\n");
-            System.out.printf("| %-40s | %-30s | %-10s |%n", "Team", "Stadium", "Capacity"); // Header
-            System.out.println(
-                    "+----------------------------------------------------------------------------------------+");
-
+            String format = ("| %-35s | %-30s | %-10s |%n"); // Header
+            System.out
+                    .printf("|-------------------------------------|--------------------------------|------------|%n");
+            System.out.printf(format, "Team", "Stadium", "Capacity");
+            System.out
+                    .printf("|-------------------------------------|--------------------------------|------------|%n");
+            String floats = ("| %-35s | %-30s | %-10d |%n");
             while (resultSet.next()) {
                 String team = resultSet.getString("basedIn") + " " + resultSet.getString("teamName");
-                System.out.printf("| %-40s | %-30s | %-10d |%n%n", team, resultSet.getString("stadiumName"),
-                        resultSet.getInt("capacity"));
+                System.out.printf(floats, team, resultSet.getString("stadiumName"), resultSet.getInt("capacity"));
+                System.out.printf(
+                        "|-------------------------------------|--------------------------------|------------|%n");
             }
-            System.out.println(
-                    "+----------------------------------------------------------------------------------------+");
 
             resultSet.close();
             statement.close();
@@ -584,18 +584,17 @@ class MyDatabase {
             if (initial) {
                 System.out.println("Showing number of players from each country for the " + season + " season:\n");
 
-                String formatString = "| %-30s | %-20s |%n%n"; // Format Structure
-                System.out.printf(formatString, "Country", "Number of Players"); // Column Labels
-                System.out.printf(
-                        "+-------------------------------------------------------+%n"); // Top
-                // Bar
-
+                String format = ("| %-30s | %-15s |%n");
+                System.out.printf("|--------------------------------|-----------------|%n");
+                System.out.printf(format, "Country", "NumPlayers");
+                System.out.printf("|--------------------------------|-----------------|%n");
+                String floats = ("| %-30s | %-15d |%n");
                 do {
-                    System.out.printf("| %-30s | %-20s |%n",
+                    System.out.printf(floats,
                             resultSet.getString("country"), resultSet.getInt("numPlayers"));
+                    System.out.printf("|--------------------------------|-----------------|%n");
                 } while (resultSet.next());
-                System.out.printf(
-                        "+-------------------------------------------------------+%n"); // Lower
+
                 // Bar
             } else
                 System.out.println("Invalid season entered\n");
@@ -616,7 +615,7 @@ class MyDatabase {
                 printError();
                 return;
             }
-            int counter = 1;
+
             String sql = "with coachGamesWon as (\n" + //
                     "\tselect c.coachID, c.firstname, c.lastname, count(distinct g.gameID) as gamesWon \n" + //
                     "\tfrom games g join gameTeamInfo gti on g.gameID = gti.gameID join gameTeamStats gts on g.gameID = gts.gameID join manage m on m.season = g.season and m.teamName = gts.teamName join coaches c on m.coachID = c.coachID\n"
@@ -639,15 +638,16 @@ class MyDatabase {
             ResultSet resultSet = statement.executeQuery(sql);
 
             System.out.println("Showing coaches and their win percentages over the regular season:\n");
-            System.out.printf("| %5s %-28s | %-15s |%n", "", "Coach", "Win Percentage"); // Header
-            System.out.println("+------------------------------------------------------+");
-
+            String format = ("| %-20s | %-20s | %-10s |%n");
+            System.out.printf("|----------------------|----------------------|------------|%n");
+            System.out.printf(format, "FirstName", "LastName", "Win%");
+            System.out.printf("|----------------------|----------------------|------------|%n");
+            String floats = ("| %-20s | %-20s | %-10.1f |%n");
             while (resultSet.next()) {
-                String coach = resultSet.getString("firstname") + " " + resultSet.getString("lastname");
-                System.out.printf("| %2d. %-30s | %-15.1f |%n%n", counter, coach, resultSet.getFloat("winPercentage"));
-                counter++;
+                System.out.printf(floats, resultSet.getString("firstname"), resultSet.getString("lastname"),
+                        resultSet.getFloat("winPercentage"));
+                System.out.printf("|----------------------|----------------------|------------|%n");
             }
-            System.out.println("+------------------------------------------------------+");
 
             resultSet.close();
             statement.close();
@@ -785,7 +785,7 @@ class MyDatabase {
                     + " for all teams they have played for: ");
 
             String formatString = "| %-20s | %-20s | %-15s | %-10s | %-10s | %-10s | %-10s | %-10s |%n"; // Format
-                                                                                                           // Structure
+                                                                                                         // Structure
 
             System.out.printf(
                     "|----------------------|----------------------|-----------------|------------|------------|------------|------------|------------|%n");
@@ -822,7 +822,7 @@ class MyDatabase {
 
             System.out.println("Showing the Champions in chronological order: ");
 
-            String formatString = "%n| %-15s | %-15s |%n"; // Format Structure
+            String formatString = "| %-15s | %-15s |%n"; // Format Structure
             System.out.printf("|-----------------|-----------------|%n");
             System.out.printf(formatString, "Season Year", "Champion"); // Column Labels
             System.out.printf("|-----------------|-----------------|%n"); // Top Bar
