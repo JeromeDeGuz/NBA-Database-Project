@@ -173,7 +173,7 @@ public class project {
                 "per <team> <season> - Highest player efficiency rating (PER) on a team in a particular season\n                      NOTE: <season> must be of the form YYYY/YYYY\n");
         // 13
         System.out.println(
-                "mr <year> <round> - Given a specific draft round of players, measure their performance through their careeer\n                    NOTE: <year> must be of the form YYYY/YYYY\n                    NOTE: <round> must be either 1 or 2\n");
+                "mr <year> <round> - Given a specific draft round of players, measure their performance through their careeer\n                    NOTE: <year> must be of the form YYYY\n                    NOTE: <round> must be either 1 or 2\n");
         // 14
         System.out.println(
                 "ts <statType> - Get the career totals for a specific stat for all players\n                NOTE: <statType> must be from the following:\n                pts, reb, ast, blk, stl, tov, mins, fgm, fga, 3pm, 3pa, ftm, fta, oreb, dreb, pf\n");
@@ -500,18 +500,17 @@ class MyDatabase {
             ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing the officials who have officiated the most games:\n");
-            System.out.printf("| %-10s | %-20s | %-30s | %-15s |%n", "officialID", "First Name", "Last Name",
-                    "Number of Games"); // Header
-            System.out.println(
-                    "+--------------------------------------------------------------------------------------+");
+            String format = ("| %-10s | %-20s | %-20s | %-10s |%n");
+            System.out.printf("|------------|----------------------|----------------------|------------|%n");
+            System.out.printf(format, "ID", "FirstName", "LastName", "Games");
+            System.out.printf("|------------|----------------------|----------------------|------------|%n");
+            String floats = ("| %-10d | %-20s | %-20s | %-10d |%n");
             while (resultSet.next()) {
-                System.out.printf("| %-10d | %-20s | %-30s | %-15d |%n%n", resultSet.getInt("officialID"),
-                        resultSet.getString("firstname"),
-                        resultSet.getString("lastname"), resultSet.getInt("numGames"));
+                System.out.printf(floats, resultSet.getInt("officialID"), resultSet.getString("firstname"),
+                        resultSet.getString("lastname"),
+                        resultSet.getInt("numGames"));
+                System.out.printf("|------------|----------------------|----------------------|------------|%n");
             }
-            System.out.println(
-                    "+--------------------------------------------------------------------------------------+");
-
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
@@ -531,17 +530,19 @@ class MyDatabase {
             ResultSet resultSet = statement.executeQuery(sql);
 
             System.out.println("Showing all the teams and their stadium info:\n");
-            System.out.printf("| %-40s | %-30s | %-10s |%n", "Team", "Stadium", "Capacity"); // Header
-            System.out.println(
-                    "+----------------------------------------------------------------------------------------+");
-
+            String format = ("| %-35s | %-30s | %-10s |%n"); // Header
+            System.out
+                    .printf("|-------------------------------------|--------------------------------|------------|%n");
+            System.out.printf(format, "Team", "Stadium", "Capacity");
+            System.out
+                    .printf("|-------------------------------------|--------------------------------|------------|%n");
+            String floats = ("| %-35s | %-30s | %-10d |%n");
             while (resultSet.next()) {
                 String team = resultSet.getString("basedIn") + " " + resultSet.getString("teamName");
-                System.out.printf("| %-40s | %-30s | %-10d |%n%n", team, resultSet.getString("stadiumName"),
-                        resultSet.getInt("capacity"));
+                System.out.printf(floats, team, resultSet.getString("stadiumName"), resultSet.getInt("capacity"));
+                System.out.printf(
+                        "|-------------------------------------|--------------------------------|------------|%n");
             }
-            System.out.println(
-                    "+----------------------------------------------------------------------------------------+");
 
             resultSet.close();
             statement.close();
@@ -567,18 +568,17 @@ class MyDatabase {
             if (initial) {
                 System.out.println("Showing number of players from each country for the " + season + " season:\n");
 
-                String formatString = "| %-30s | %-20s |%n%n"; // Format Structure
-                System.out.printf(formatString, "Country", "Number of Players"); // Column Labels
-                System.out.printf(
-                        "+-------------------------------------------------------+%n"); // Top
-                // Bar
-
+                String format = ("| %-30s | %-15s |%n");
+                System.out.printf("|--------------------------------|-----------------|%n");
+                System.out.printf(format, "Country", "NumPlayers");
+                System.out.printf("|--------------------------------|-----------------|%n");
+                String floats = ("| %-30s | %-15d |%n");
                 do {
-                    System.out.printf("| %-30s | %-20s |%n",
+                    System.out.printf(floats,
                             resultSet.getString("country"), resultSet.getInt("numPlayers"));
+                    System.out.printf("|--------------------------------|-----------------|%n");
                 } while (resultSet.next());
-                System.out.printf(
-                        "+-------------------------------------------------------+%n"); // Lower
+
                 // Bar
             } else
                 System.out.println("Invalid season entered.\n");
@@ -599,7 +599,7 @@ class MyDatabase {
                 printError();
                 return;
             }
-            int counter = 1;
+
             String sql = "with coachGamesWon as (\n" + //
                     "\tselect c.coachID, c.firstname, c.lastname, count(distinct g.gameID) as gamesWon \n" + //
                     "\tfrom games g join gameTeamInfo gti on g.gameID = gti.gameID join gameTeamStats gts on g.gameID = gts.gameID join manage m on m.season = g.season and m.teamName = gts.teamName join coaches c on m.coachID = c.coachID\n"
@@ -622,15 +622,16 @@ class MyDatabase {
             ResultSet resultSet = statement.executeQuery();
 
             System.out.println("Showing coaches and their win percentages over the regular season:\n");
-            System.out.printf("| %5s %-28s | %-15s |%n", "", "Coach", "Win Percentage"); // Header
-            System.out.println("+------------------------------------------------------+");
-
+            String format = ("| %-20s | %-20s | %-10s |%n");
+            System.out.printf("|----------------------|----------------------|------------|%n");
+            System.out.printf(format, "FirstName", "LastName", "Win%");
+            System.out.printf("|----------------------|----------------------|------------|%n");
+            String floats = ("| %-20s | %-20s | %-10.1f |%n");
             while (resultSet.next()) {
-                String coach = resultSet.getString("firstname") + " " + resultSet.getString("lastname");
-                System.out.printf("| %2d. %-30s | %-15.1f |%n%n", counter, coach, resultSet.getFloat("winPercentage"));
-                counter++;
+                System.out.printf(floats, resultSet.getString("firstname"), resultSet.getString("lastname"),
+                        resultSet.getFloat("winPercentage"));
+                System.out.printf("|----------------------|----------------------|------------|%n");
             }
-            System.out.println("+------------------------------------------------------+");
 
             resultSet.close();
             statement.close();
@@ -805,7 +806,7 @@ class MyDatabase {
 
             System.out.println("Showing the Champions in chronological order: ");
 
-            String formatString = "%n| %-15s | %-15s |%n"; // Format Structure
+            String formatString = "| %-15s | %-15s |%n"; // Format Structure
             System.out.printf("|-----------------|-----------------|%n");
             System.out.printf(formatString, "Season Year", "Champion"); // Column Labels
             System.out.printf("|-----------------|-----------------|%n"); // Top Bar
@@ -843,16 +844,16 @@ class MyDatabase {
             System.out.println(
                     "Showing the highest player efficiency rating from " + team + " for the " + season + " season: /n");
 
-            String formatString = "%n| %-15s | %-15s | %-15s |%n"; // Format Structure
-            String printFormat = "%n| %-15s | %-15s | %-15.1f |%n";
-            System.out.printf("|-----------------|-----------------|-----------------|%n");
+            String formatString = "| %-20s | %-20s | %-15s |%n"; // Format Structure
+            String printFormat = "| %-20s | %-20s | %-15.1f |%n";
+            System.out.printf("|----------------------|----------------------|-----------------|%n");
             System.out.printf(formatString, "First Name", "Last Name", "PER"); // Column Labels
-            System.out.printf("|-----------------|-----------------|-----------------|%n"); // Top Bar
+            System.out.printf("|----------------------|----------------------|-----------------|%n"); // Top Bar
 
             while (resultSet.next()) {
                 System.out.printf(printFormat, resultSet.getString("firstname"), resultSet.getString("lastname"),
                         resultSet.getDouble("avgPer"));
-                System.out.printf("|-----------------|-----------------|-----------------|%n");
+                System.out.printf("|----------------------|----------------------|-----------------|%n");
             }
 
         } catch (SQLException e) {
@@ -885,17 +886,17 @@ class MyDatabase {
 
             System.out.println("Showing the player efficiency rating for players drafted in round " + r + " of the " + y
                     + " draft:");
-            String formatString = "| %-15s | %-15s | %-15s | %-15s |%n"; // Format Structure
-            String formatPrint = "%n| %-15s | %-15s | %-15s | %-15.1f |%n"; // Print Structure w/ avgPer double value
-                                                                            // rounded to .1
-            System.out.printf("|-----------------|-----------------|-----------------|-----------------|%n");
+
+            String formatString = "| %-20s | %-20s | %-15s | %-15s |%n"; // Format Structure
+            String formatPrint = "| %-20s | %-20s | %-15s | %-15.1f |%n"; // Print Structure w/ avgPer double value rounded to .1
+            System.out.printf("|----------------------|----------------------|-----------------|-----------------|%n");
             System.out.printf(formatString, "First Name", "Last Name", "Season Year", "PER");
-            System.out.printf("|-----------------|-----------------|-----------------|-----------------|%n");
+            System.out.printf("|----------------------|----------------------|-----------------|-----------------|%n");;
 
             while (resultSet.next()) {
                 System.out.printf(formatPrint, resultSet.getString("firstname"), resultSet.getString("lastname"),
                         resultSet.getString("season"), resultSet.getDouble("avgPER")); // Column Labels
-                System.out.printf("|-----------------|-----------------|-----------------|-----------------|%n");
+                System.out.printf("|----------------------|----------------------|-----------------|-----------------|%n");;
             }
 
         } catch (SQLException e) {
@@ -923,20 +924,14 @@ class MyDatabase {
 
             System.out.println("Showing the total " + stat + " of all players all time");
 
-            String formatString = "| %-15s | %-15s | %-15s |%n";
-            System.out.printf("|-----------------|-----------------|-----------------|%n");
+            String formatString = "| %-20s | %-20s | %-15s |%n";
+            System.out.printf("|----------------------|----------------------|-----------------|%n");
             System.out.printf(formatString, "First Name", "Last Name", "Total " + stat);
-            System.out.printf("|-----------------|-----------------|-----------------|%n");
+            System.out.printf("|----------------------|----------------------|-----------------|%n");
             while (resultSet.next()) {
-                // System.out.println(resultSet.getInt("draftYear") + " " +
-                // resultSet.getInt("draftRound") + " "
-                // + resultSet.getInt("draftPick") + " " + resultSet.getInt("seasonID") + " "
-                // + resultSet.getString("firstName") + " " + resultSet.getString("lastName") +
-                // " "
-                // + resultSet.getInt("avgPer"));
                 System.out.printf(formatString, resultSet.getString("firstname"), resultSet.getString("lastname"),
                         resultSet.getInt("totalxStatistic"));
-                System.out.printf("|-----------------|-----------------|-----------------|%n");
+                System.out.printf("|----------------------|----------------------|-----------------|%n");;
 
             }
 
@@ -945,249 +940,3 @@ class MyDatabase {
         }
     }
 }
-
-/* Might not need these create table statements since we have the sql files */
-// private void createTables(){
-// String conf = "create table conference( "+
-// " confName text, "+
-// " primary key(confName));";
-// try {
-// connection.createStatement().executeUpdate(conf);
-
-// String div = "create table Division( "+
-// "divName text, "+
-// "confName text, "+
-// "primary key(divName) "+
-// "foreign key(confName) references conference);";
-
-// connection.createStatement().executeUpdate(div);
-
-// String coach = "create table Coach( "+
-// " coachID integer, "+
-// " coachName text, "+
-// "primary key(coachID);";
-
-// connection.createStatement().executeUpdate(coach);
-
-// String team = "create table Team( "+
-// " teamName text, "+
-// " yearFounded integer, "+
-// " divName text, "+
-// " stadiumName text, "+
-// " primary key(teamName), "+
-// " foreign key(divName) references Division, "+
-// " foreign key(stadiumName) references Stadium);";
-
-// connection.createStatement().executeUpdate(team);
-
-// String stad = "create table Stadium( "+
-// " stadiumName text, "+
-// " capacity integer, "+
-// " locationID integer, "+
-// " primary key(stadiumName), "+
-// " foreign key(locationID) references Location);";
-
-// connection.createStatement().executeUpdate(stad);
-
-// String loc = "create table Location( "+
-// " locationID integer, "+
-// " city text, "+
-// " country text, "+
-// " primary key(locationID));";
-
-// connection.createStatement().executeUpdate(loc);
-
-// String Game = "create table Game( "+
-// " gameID integer, "+
-// " date text, "+
-// " seasonYear integer, "+
-// " stadiumName text, "+
-// " primary key(gameID), "+
-// " foreign key(seasonYear) references Season, "+
-// " foreign key(stadiumName) references Stadium);";
-
-// connection.createStatement().executeUpdate(Game);
-
-// String pGame = "create table PlayoffGame( "+
-// " gameID integer, "+
-// " round text, "+
-// " primary key(gameID));";
-
-// connection.createStatement().executeUpdate(pGame);
-
-// String seas = "create table Season( "+
-// " seasonYear integer, "+
-// " champion text, "+
-// " primary key(seasonYear), "+
-// " foreign key(champion) references Team(teamName));";
-
-// connection.createStatement().executeUpdate(seas);
-
-// String off = "create table Officials( "+
-// " officialID integer, "+
-// " name text, "+
-// " jerseyNumber integer, "+
-// " primary key(officialID));";
-
-// connection.createStatement().executeUpdate(off);
-
-// String man = "create table Manage( "+
-// " coachID integer, "+
-// " teamName text, "+
-// " seasonYear integer, "+
-// " primary key(coachID, teamName, seasonYear), "+
-// " foreign key(teamName) references Team, "+
-// " foreign key(coachID) references Coach, "+
-// " foreign key(seasonYear) references Season);";
-
-// connection.createStatement().executeUpdate(man);
-
-// String teach = "create table Teach( "+
-// " coachID integer, "+
-// " playerID integer, "+
-// " primary key(coachID, playerID), "+
-// " foreign key(coachID) references Coach, "+
-// " foreign key(playerID) references Player);";
-
-// connection.createStatement().executeUpdate(teach);
-
-// // We didnt have a Game relation in our normalization word doc. Only
-// PlayoffGame/RegularGame
-// // How do we go about this?
-// // Also, couldnt homeTeam, awayTeam and winner reference Team?
-// String GTI = "create table GameTeamInfo( "+
-// " gameID integer, "+
-// " homeTeam text, "+
-// " awayTeam text, "+
-// " winner text, "+
-// " primary key(gameID), "+
-// " foreign key(gameID) references Game(gameID));";
-
-// connection.createStatement().executeUpdate(GTI);
-
-// String GPS = "create table GamePlayerStats( "+
-// " playerID integer, "+
-// " gameID integer, "+
-// " mins integer, "+
-// " pts integer, "+
-// " fgm integer, "+
-// " fga integer, "+
-// " fg% real, "+
-// " 3pm integer, "+
-// " 3pa integer, "+
-// " 3p% real, "+
-// " ftm integer, "+
-// " fta integer, "+
-// " ft% real, "+
-// " oreb integer, "+
-// " dreb integer, "+
-// " reb integer, "+
-// " ast integer, "+
-// " stl integer, "+
-// " blk integer, "+
-// " tov integer, "+
-// " pf integer, "+
-// " +/- integer, "+
-// " primary key(gameID, playerID), "+
-// " foreign key(gameID) referenes Game(gameID), "+
-// " foreign key(playerID) references Player);";
-
-// connection.createStatement().executeUpdate(GPS);
-
-// String gti = "create table GameTeamInfo( "+
-// " gameID integer, "+
-// " homeTeam text, "+
-// " awayTeam text, "+
-// " winner text, "+
-// " primary key(gameID), "+
-// " foreign key(gameID) reference Game(gameID));";
-
-// connection.createStatement().executeUpdate(gti);
-
-// String gts = "create table GameTeamStats( "+
-// " teamName text, "+
-// " gameID integer, "+
-// " mins integer, "+
-// " pts integer, "+
-// " fgm integer, "+
-// " fga integer, "+
-// " fg% real, "+
-// " 3pm integer, "+
-// " 3pa integer, "+
-// " 3p% real, "+
-// " ftm integer, "+
-// " fta integer, "+
-// " ft% real, "+
-// " oreb integer, "+
-// " dreb integer, "+
-// " reb integer, "+
-// " ast integer, "+
-// " stl integer, "+
-// " blk integer, "+
-// " tov integer, "+
-// " pf integer, "+
-// " +/- integer, "+
-// " primary key(teamName, gameID), "+
-// " foreign key(teamName) references Team, "+
-// " foreign key(gameID) references Game(gameID));";
-
-// connection.createStatement().executeUpdate(gts);
-
-// String play = "create table Play( "+
-// " seasonID integer, "+
-// " playerID integer, "+
-// " teamName text, "+
-// " jersey integer, "+
-// " primary key(seasonID, playerID), "+
-// " foreign key(seasonID) references Season(seasonYear), "+
-// " foreign key(playerID) references Player, "+
-// " foreign key(teamName) references Team);";
-
-// connection.createStatement().executeUpdate(play);
-
-// // The foreign key reference to the Game table is an issue here too
-// String officiate = "create table Officiate( "+
-// " gameID integer, "+
-// " officialID integer, "+
-// " primary key(gameID, officialID), "+
-// " foreign key(gameID) references Game(gameID), "+
-// " foreign key(officialID) references Officials);";
-
-// connection.createStatement().executeUpdate(officiate);
-
-// //In the normalization doc, we have a set B that is other attributes in the
-// Player table. What are those attributes?
-// //
-// String player = "create table Player( "+
-// " playerID integer, "+
-// " firstName text, "+
-// " lastName text, "+
-// " birthdate text, "+
-// " height real, "+
-// " weight real, "+
-// " position text, "+
-// " fromYear integer, "+
-// " toYear integer, "+
-// " birthLocation integer, "+
-// " primary key(playerID), "+
-// " foreign key(birthLocation) references Location(locationID));";
-
-// connection.createStatement().executeUpdate(player);
-
-// String draftInfo = "create table DraftInfo( "+
-// " draftYear integer, "+
-// " draftRound integer, "+
-// " draftPick integer, "+
-// " playerID integer, "+
-// " teamDrafted text, "+
-// " primary key(draftYear, draftRound, draftPick), "+
-// " foreign key(playerID) referenes Player, "+
-// " foreign key(teamDrafted) references Team(teamName));";
-
-// connection.createStatement().executeUpdate(draftInfo);
-
-// } catch (SQLException e) {
-// e.printStackTrace(System.out);
-// }
-// }
-// }
