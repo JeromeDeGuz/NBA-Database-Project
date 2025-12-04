@@ -126,7 +126,7 @@ public class project {
 
             } else if (parts[0].equals("repopulate")) {
                 try {
-                    db.loadData2("testdata.sql");
+                    db.loadData2("NBAdatabaseServer.sql");
                 } catch (IOException ioe) {
                     System.out.println("Error repopulating database: " + ioe.getMessage());
                 } catch (SQLException sqle) {
@@ -185,12 +185,12 @@ public class project {
                 "ts <statType> - Get the career totals for a specific stat for all players\n                NOTE: <statType> must be from the following:\n                pts, reb, ast, blk, stl, tov, mins, fgm, fga, 3pm, 3pa, ftm, fta, oreb, dreb, pf\n");
 
         // 15
-        System.out.println("deleteAll - Deletes all data from the database");
+        System.out.println("deleteAll - Deletes all data from the database\n");
 
         // 16
-        System.out.println("repopulate - Repopulates the database with test data");
+        System.out.println("repopulate - Repopulates the database with test data\n");
 
-        System.out.println("quit - To exit program");
+        System.out.println("quit - To exit program\n");
 
         System.out.println("-----------------End of Help-----------------");
     }
@@ -202,8 +202,6 @@ class MyDatabase {
 
     public MyDatabase(String initscript) {
         try {
-            // String connectionUrl = "jdbc:sqlite::memory:"; // COMMENT THIS OUT IF YOU'RE
-            // USING MSSQL
             Properties prop = new Properties();
             String fileName = "auth.cfg";
             try {
@@ -225,7 +223,6 @@ class MyDatabase {
                 System.exit(1);
             }
 
-            // COMMENT THIS OUT IF YOU'RE USING SQLITE
             String connectionUrl = "jdbc:sqlserver://uranium.cs.umanitoba.ca:1433;"
                     + "database=cs3380;"
                     + "user=" + username + ";"
@@ -237,16 +234,10 @@ class MyDatabase {
             connection = DriverManager.getConnection(connectionUrl);
 
             System.out.println("Connection to SQLite has been established.");
-
-            // if (initscript != null)
-            // this.loadData(initscript);
+            
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             System.exit(1);
-            // } catch (IOException fnf) {
-            // System.out.println(fnf.getMessage());
-            // System.exit(2);
-            // }
         }
     }
 
