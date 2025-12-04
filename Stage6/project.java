@@ -8,15 +8,12 @@ javac -cp mssql-jdbc-11.2.0.jre18.jar project.java
 java -cp .:mssql-jdbc-11.2.0.jre18.jar project
 */
 
-//
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
-import java.io.File;
 import java.util.Properties;
 import java.io.FileReader;
 import java.io.IOException;
@@ -35,7 +32,7 @@ public class project {
         runConsole(db);
         System.out.println("Exiting...");
     }
-  
+
     // the general console loop
     public static void runConsole(MyDatabase db) {
 
