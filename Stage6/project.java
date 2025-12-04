@@ -304,25 +304,25 @@ class MyDatabase {
     }
 
     // efficient load data method -> testing for this
-    public void loadData2(String script) throws IOException, SQLException {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(script));
-            String line = reader.readLine();
-            String query = "";
-            // assumes each query is its own line
-            while (line != null) {
-                String parts[] = line.split("\\s+");
-                if (parts[0].equals("BEGIN") || parts[0].equals("CREATE")) {
-                    this.connection.createStatement().execute(line);
-                }
-                query += line + " ";
-                line = reader.readLine();
-            }
-            reader.close();
-        } catch (SQLException e) {
-            e.printStackTrace(); // commented since loading database without deleting first wil throw exceptions
-        }
-    }
+    // public void loadData2(String script) throws IOException, SQLException {
+    //     try {
+    //         BufferedReader reader = new BufferedReader(new FileReader(script));
+    //         String line = reader.readLine();
+    //         String query = "";
+    //         // assumes each query is its own line
+    //         while (line != null) {
+    //             String parts[] = line.split("\\s+");
+    //             if (parts[0].equals("BEGIN") || parts[0].equals("CREATE")) {
+    //                 this.connection.createStatement().execute(line);
+    //             }
+    //             query += line + " ";
+    //             line = reader.readLine();
+    //         }
+    //         reader.close();
+    //     } catch (SQLException e) {
+    //         e.printStackTrace(); // commented since loading database without deleting first wil throw exceptions
+    //     }
+    // }
 
     public void deleteData(String script) {
         try {
@@ -732,15 +732,15 @@ class MyDatabase {
 
             if (sanitize(stat)) {
                 sql = "with reg as "
-                        + "(SELECT players.playerID, players.firstname, players.lastname, avg(cast(gps.'" + stat
-                        + "' as float)) as regAvg "
+                        + "(SELECT players.playerID, players.firstname, players.lastname, avg(cast(gps.[" + stat
+                        + "] as float)) as regAvg "
                         + "FROM players join gamePlayerStats gps on players.playerID = gps.playerID "
                         + "JOIN games on gps.gameID = games.gameID WHERE games.gameID not in "
                         + "(SELECT gameID from playoffGames) "
                         + "group by players.playerID, players.firstname, players.lastname), "
                         + "playoff as "
-                        + "(SELECT players.playerID, players.firstname, players.lastname, avg(cast(gps.'" + stat
-                        + "' as float)) as pfAvg "
+                        + "(SELECT players.playerID, players.firstname, players.lastname, avg(cast(gps.[" + stat
+                        + "] as float)) as pfAvg "
                         + "FROM players join gamePlayerStats gps on players.playerID = gps.playerID "
                         + "JOIN games on gps.gameID = games.gameID "
                         + "JOIN playoffGames on games.gameID = playoffGames.gameID "
@@ -792,7 +792,7 @@ class MyDatabase {
                     + "from Players p join Play on p.playerID = play.playerID "
                     + "join GamePlayerStats gps on play.playerID = gps.playerID "
                     + "join Games on gps.gameID = Games.gameID "
-                    + "where lower(p.firstName) like lower(?) AND lower(p.lastName) like lower(?) "
+                    + "where lower(p.firstName) like lower(?) AND lower(p.lastName) like lower(?) AND Play.season = Games.season "
                     + "group by p.playerID, p.firstName, p.lastName, Play.teamName "
                     + "order by Play.teamName;";
 
