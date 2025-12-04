@@ -858,7 +858,7 @@ class MyDatabase {
     public void per(String team, String season) {
         try {
             String sql = "SELECT  p.firstname, p.lastname,"
-                    + " SUM(gps.fgm * 85.910 + gps.stl * 53.897 + gps.'3pm' * 51.757 + gps.ftm * 46.845 + gps.blk * 39.190 + gps.oreb * 39.190 + gps.ast * 34.677 + gps.dreb * 14.707"
+                    + " SUM(gps.fgm * 85.910 + gps.stl * 53.897 + gps.[3pm] * 51.757 + gps.ftm * 46.845 + gps.blk * 39.190 + gps.oreb * 39.190 + gps.ast * 34.677 + gps.dreb * 14.707"
                     + " - gps.pf * 17.174 - (gps.fta - gps.ftm) * 20.091 - (gps.fga - gps.fgm) *39.190 - gps.tov * 53.897)/SUM(gps.min) AS avgPER "
                     + " FROM Players p "
                     + " LEFT JOIN Play szn ON p.playerID = szn.playerID"
@@ -866,9 +866,8 @@ class MyDatabase {
                     + " LEFT JOIN games rg ON gps.gameID = rg.gameID AND rg.season = szn.season"
                     + " WHERE lower(szn.teamName) LIKE lower(?)"
                     + " AND lower(szn.season) LIKE lower(?)"
-                    + " GROUP BY p.firstname, p.lastname"
-                    + " ORDER BY avgPER DESC "
-                    + " LIMIT 10";
+                    + " GROUP BY p.firstname, p.lastname";
+
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, "%" + team + "%");
             statement.setString(2, "%" + season + "%");
@@ -894,13 +893,13 @@ class MyDatabase {
         }
     }
 
-    // 13 DONE REMOVE LIMIT!!!!!!!!!!!!!!
+    // 13 DONE
     public void draftComm(String year, String round) {
         try {
             int y = Integer.parseInt(year);
             int r = Integer.parseInt(round);
             String sql = "SELECT dyr.draftYear, dyr.round, dyr.pick, p.firstname, p.lastname, szn.season, "
-                    + " SUM(gps.fgm * 85.910 + gps.stl * 53.897 + gps.'3pm' * 51.757 + gps.ftm * 46.845"
+                    + " SUM(gps.fgm * 85.910 + gps.stl * 53.897 + gps.[3pm] * 51.757 + gps.ftm * 46.845"
                     + " + gps.blk * 39.190 + gps.oreb * 39.190 + gps.ast * 34.677 + gps.dreb * 14.707"
                     + " - gps.pf * 17.174 - (gps.fta - gps.ftm) * 20.091 - (gps.fga - gps.fgm) *39.190 - gps.tov * 53.897)/SUM(gps.min) AS avgPER "
                     + " FROM DraftInfo dyr "
@@ -908,10 +907,10 @@ class MyDatabase {
                     + " JOIN Players p ON p.playerID = szn.playerID "
                     + " JOIN GamePlayerStats gps ON gps.playerID = p.playerID "
                     + " JOIN Games rg ON rg.gameID = gps.gameID AND rg.season = szn.season "
-                    + " WHERE szn.season >= dyr.draftYear AND dyr.draftYear = ? AND dyr.round = ?"
+                    + " WHERE CAST(LEFT(szn.season, 4) AS int) >= dyr.draftYear AND dyr.draftYear = ? AND dyr.round = ?"
                     + " GROUP BY dyr.draftYear, dyr.round, dyr.pick, p.firstname, p.lastname, szn.season"
-                    + " ORDER BY dyr.pick, szn.season"
-                    + " LIMIT 10";
+                    + " ORDER BY dyr.pick, szn.season";
+
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, y);
             statement.setInt(2, r);
