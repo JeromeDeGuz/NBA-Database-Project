@@ -822,7 +822,7 @@ class MyDatabase {
 
             System.out.println("Showing the Champions in chronological order: ");
 
-            String formatString = "%n| %-15s | %-15s |%n"; // Format Structure
+            String formatString = "| %-15s | %-15s |%n"; // Format Structure
             System.out.printf("|-----------------|-----------------|%n");
             System.out.printf(formatString, "Season Year", "Champion"); // Column Labels
             System.out.printf("|-----------------|-----------------|%n"); // Top Bar
