@@ -471,6 +471,32 @@ class MyDatabase {
         System.out.println("Invalid command inputs or database isn't loaded to run query. Please type h for help!");
     }
 
+    public boolean checkTeam(String teamName){
+        boolean valid = false;
+
+        String[] validTeams = {"76ers","Bucks",
+                "Bulls", "Cavaliers",
+                "Celtics", "Clippers",
+                "Grizzlies", "Hawks",
+                "Heat", "Hornets",
+                "Jazz", "Kings",
+                "Knicks", "Lakers",
+                "Magic","Mavericks",
+                "Nets", "Nuggets",
+                "Pacers", "Pelicans", "Pistons",
+                "Raptors", "Rockets", "Spurs", "Suns", "Thunder",
+                "Timberwolves", "Trail Blazers", "Warriors", "Wizards" };
+
+
+        for(String x : validTeams){
+            if(teamName.toLowerCase().equals(x.toLowerCase())){
+                valid = true;
+            }
+        }
+
+        return valid;
+    }
+
     // 1 DONE
     public void roster(String teamName, String season) {
         try {
@@ -985,7 +1011,14 @@ class MyDatabase {
     // 12 DONE
 
     public void per(String team, String season) {
-        int year = Integer.parseInt(season);
+        int year = -1;
+        try {
+            year = Integer.parseInt(season);
+            
+        } catch (Exception e) {
+            // TODO: handle exception
+            printError();
+        }
         if(year < 2016){
             System.out.println("Invalid season year input. Please input a valid season year ex. [2016/2017]");
             return;
@@ -1032,8 +1065,17 @@ class MyDatabase {
     // 13 DONE
     public void draftComm(String year, String round) {
         try {
-            int y = Integer.parseInt(year);
-            int r = Integer.parseInt(round);
+            int y = -1;
+            int r = -1;
+            try {
+                y = Integer.parseInt(year);
+                r = Integer.parseInt(round);
+                
+            } catch (NumberFormatException e) {
+                // TODO: handle exception
+                printError();
+
+            }
             if(y < 1998){
                 System.out.println("Invalid draft year, not in database. Please enter a draft year between [1998 - 2021]");
                 return;
