@@ -263,50 +263,50 @@ public class project {
                 | NBA Database for the 2016/2017 - 2022/2023 Seasons                                                                        |
                 | Commands:                                                                                                                 |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | r [team] [season]                -Output roster for a team (Season Format: YYYY/YYYY)                                     |
+                | r [team] [season]                - Output roster for a team (Season Format: YYYY/YYYY)                                     |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | gap [first] [last]               -Get game appearance percentage for a particular player for every season                 |
+                | gap [first] [last]               - Get game appearance percentage for a particular player for every season                 |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | mates [first] [last] [limit]     -Show all the teammates for a particular player                                          |
+                | mates [first] [last] [limit]     - Show all the teammates for a particular player                                          |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | ro [limit]                       -Rank the officials based on number of games officiated                                  |
+                | ro [limit]                       - Rank the officials based on number of games officiated                                  |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | si                               -how all the teams and their arena name and capacity                                     |
+                | si                               - how all the teams and their arena name and capacity                                     |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | pc [season]                      -Number of players by country (Season Format: YYYY/YYYY)                                 |
+                | pc [season]                      - Number of players by country (Season Format: YYYY/YYYY)                                 |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | rc [limit]                       -Top coaches by win percentage in Regular Season (limit = # of records)                  |
+                | rc [limit]                       - Top coaches by win percentage in Regular Season (limit = # of records)                  |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | ll [statType] [season] [limit]   -League Leaders per season (by avg) (Season Format: YYYY/YYYY) (limit = # of records)    |
+                | ll [statType] [season] [limit]   - League Leaders per season (by avg) (Season Format: YYYY/YYYY) (limit = # of records)    |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | crp [statType] [first] [last].   -Compare Regular Season vs Playoff career averages                                       |
+                | crp [statType] [first] [last].   - Compare Regular Season vs Playoff career averages                                       |
                 | *                                 statType] must be one of the following:                                                 |
                 | *                                 pts, rbs, ast, blk,                                                                     |
                 | *                                 stl, tov, mins, fgm,                                                                    |
                 | *                                 fga, 3pm, 3pa, ftm,                                                                     |
                 | *                                 fta, oreb, dreb, pf                                                                     |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | spt [first] [last]               -Major stat averages for a player per team                                               |
+                | spt [first] [last]               - Major stat averages for a player per team                                               |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | cc                               -List all championship winning teams in chronological order                              |
+                | cc                               - List all championship winning teams in chronological order                              |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | per [team] [season]              -Highest player efficiency rating (PER) on a team (Season Format: YYYY/YYYY)             |
+                | per [team] [season]              - Highest player efficiency rating (PER) on a team (Season Format: YYYY/YYYY)             |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | mr [year] [round]                -Given a specific draft round of players, measure their performance through their career |
+                | mr [year] [round]                - Given a specific draft round of players, measure their performance through their career |
                 | *                                 (Year Format: YYYY)                                                                     |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | ts [statType]                    -Get the career totals for a specific stat for all players                               |
+                | ts [statType]                    - Get the career totals for a specific stat for all players                               |
                 | *                                 [statType] must be one of the following:                                                |
                 | *                                 pts, rbs, ast, blk,                                                                     |
                 | *                                 stl, tov, mins, fgm,                                                                    |
                 | *                                 fga, 3pm, 3pa, ftm,                                                                     |
                 | *                                 fta, oreb, dreb, pf                                                                     |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | deleteAll                        -Deletes all data from the database                                                      |
+                | deleteAll                        - Deletes all data from the database                                                      |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | repopulate                       -Repopulates the database with initial data                                              |
+                | repopulate                       - Repopulates the database with initial data                                              |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | quit                             -To exit program                                                                         |
+                | quit                             - To exit program                                                                         |
                 ---------------------------------------------------------End of Help--------------------------------------------------------
                 """;
         System.out.println(help);
@@ -506,6 +506,7 @@ class MyDatabase {
                 // Bar
             } else
                 System.out.println("Either invalid team name or season entered.\n");
+                
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
@@ -560,6 +561,7 @@ class MyDatabase {
                     "|------------|-----------------|----------------------|----------------------|--------------------------------|%n%n");
             } else
                 System.out.println("Player not found.\n");
+
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
