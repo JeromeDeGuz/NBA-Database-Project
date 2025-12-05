@@ -326,7 +326,7 @@ class MyDatabase {
 
             connection = DriverManager.getConnection(connectionUrl);
 
-            System.out.println("Connection to SQLite has been established.");
+            System.out.println("\nConnection to SQLite has been established.");
 
             if (initscript != null) {
                 this.loadData(initscript);
@@ -341,7 +341,7 @@ class MyDatabase {
     }
 
     public void introduction() {
-        System.out.println("****************************************************************************************************************************");
+        System.out.println("\n****************************************************************************************************************************");
         System.out.println(
                 "Welcome to the NBA database! This database contains information relating to the National Basketball Association (NBA)");
         System.out.println(
@@ -401,7 +401,8 @@ class MyDatabase {
 
             reader.close();
         } catch (SQLException e) {
-            e.printStackTrace(); // Don't swallow DB errors
+            // e.printStackTrace(); // Don't swallow DB errors
+            System.out.println("Populating Database on Initialization");
         }
     }
 
