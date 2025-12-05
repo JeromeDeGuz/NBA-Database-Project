@@ -235,57 +235,60 @@ public class project {
     }
 
     private static void printHelp() {
-        System.out.println("NBA Database");
-        System.out.println("Commands:");
 
-        // 1
-        System.out.println(
-                "r <team> <season> - Output roster for a team in a particular season\n                    NOTE: <season> must be of the form YYYY/YYYY\n");
-        // 2
-        System.out.println(
-                "gap <limit> - Get game appearance percentage of each player in each season\n              NOTE: <limit> must be a positive integer which represents how many records you want to see\n");
-        // 3
-        System.out.println("mates <first> <last> <limit> - Show all the teammates for a particular player\n");
-        // 4
-        System.out.println("ro <limit> - Rank the officials based on number of games officiated\n");
-        // 5
-        System.out.println("si - Show all the teams and their arena name and capacity\n");
-        // 6
-        System.out.println(
-                "pc <season> - Show the total number of players from each country in a particular season\n              NOTE: <season> must be of the form YYYY/YYYY");
-        // 7
-        System.out.println(
-                "rc <limit> - Rank coaches with highest win percentage in the regular season\n             NOTE: <limit> must be a positive integer which represents how many records you want to see");
-        // 8
-        System.out.println(
-                "ll <statType> <season> <limit> - League leaders in a major stat category based on averages for players in a particular season\n                                 NOTE: <season> must be of the form YYYY\n                                 NOTE: <limit> must be a positive integer which represents the limit\n                                 NOTE: <statType> must be from the following:\n                                 pts, rbs, ast, blk, stl, tov, mins, fgm, fga, 3pm, 3pa, ftm, fta, oreb, dreb, pf\n");
-        // 9
-        System.out.println(
-                "crp <statType> <first> <last> - Compare a player's regular season career averages against their playoff averages\n                                NOTE: <statType> must be from the following:\n                                pts, rbs, ast, blk, stl, tov, mins, fgm, fga, 3pm, 3pa, ftm, fta, oreb, dreb, pf\n");
-        // 10
-        System.out.println(
-                "spt <first> <last> - Major stat averages for a player for all the teams he played for in his career\n");
-        // 11
-        System.out.println("cc - List all championship winning teams in chronological order\n");
-        // 12
-        System.out.println(
-                "per <team> <season> - Highest player efficiency rating (PER) on a team in a particular season\n                      NOTE: <season> must be of the form YYYY/YYYY\n");
-        // 13
-        System.out.println(
-                "mr <year> <round> - Given a specific draft round of players, measure their performance through their careeer\n                    NOTE: <year> must be of the form YYYY\n                    NOTE: <round> must be either 1 or 2\n");
-        // 14
-        System.out.println(
-                "ts <statType> - Get the career totals for a specific stat for all players\n                NOTE: <statType> must be from the following:\n                pts, reb, ast, blk, stl, tov, mins, fgm, fga, 3pm, 3pa, ftm, fta, oreb, dreb, pf\n");
-
-        // 15
-        System.out.println("deleteAll - Deletes all data from the database\n");
-
-        // 16
-        System.out.println("repopulate - Repopulates the database with initial data\n");
-
-        System.out.println("quit - To exit program\n");
-
-        System.out.println("-----------------End of Help-----------------");
+                    String help = """
+                                --------------------------------------------------------Start of Help-------------------------------------------------------
+                                | NBA DataBase                                                                                                              |
+                                | Commands:                                                                                                                 |
+                                ----------------------------------------------------------------------------------------------------------------------------
+                                | r [team] [season]                -Output roster for a team (Season Format: YYYY/YYYY)                                     |
+                                ----------------------------------------------------------------------------------------------------------------------------
+                                | gap [limit]                      -Get game appearance percentage of each player in each season (limit = # of records)     |
+                                ----------------------------------------------------------------------------------------------------------------------------
+                                | mates [first] [last] [limit]     -Show all the teammates for a particular player                                          |
+                                ----------------------------------------------------------------------------------------------------------------------------
+                                | ro [limit]                       -Rank the officials based on number of games officiated                                  |
+                                ----------------------------------------------------------------------------------------------------------------------------
+                                | si                               -how all the teams and their arena name and capacity                                     |
+                                ----------------------------------------------------------------------------------------------------------------------------     
+                                | pc [season]                      -Number of players by country (Season Format: YYYY/YYYY)                                 |
+                                ----------------------------------------------------------------------------------------------------------------------------     
+                                | rc [limit]                       -Top coaches by win percentage in Regular Season (limit = # of records)                  |
+                                ----------------------------------------------------------------------------------------------------------------------------     
+                                | ll [statType] [season] [limit]   -League Leaders per season (by avg) (Season Format: YYYY/YYYY) (limit = # of records)    |
+                                ----------------------------------------------------------------------------------------------------------------------------     
+                                | crp [statType] [first] [last]*****Compare Regular Season vs Playoff career averages                                       |
+                                | *                                 statType] must be one of the following:                                                 |
+                                | *                                 pts, rbs, ast, blk,                                                                     |
+                                | *                                 stl, tov, mins, fgm,                                                                    |
+                                | *                                 fga, 3pm, 3pa, ftm,                                                                     |
+                                | *                                 fta, oreb, dreb, pf                                                                     |
+                                ----------------------------------------------------------------------------------------------------------------------------     
+                                | spt [first] [last]               -Major stat averages for a player per team                                               |
+                                ----------------------------------------------------------------------------------------------------------------------------     
+                                | cc                               -List all championship winning teams in chronological order                              |
+                                ----------------------------------------------------------------------------------------------------------------------------     
+                                | per [team] [season]              -Highest player efficiency rating (PER) on a team (Season Format: YYYY/YYYY)             |
+                                ----------------------------------------------------------------------------------------------------------------------------    
+                                | mr [year] [round]                -Given a specific draft round of players, measure their performance through their career |
+                                | *                                 (Year Format: YYYY)                                                                     |
+                                ----------------------------------------------------------------------------------------------------------------------------
+                                | ts [statType]                    -Get the career totals for a specific stat for all players                               |
+                                | *                                 [statType] must be one of the following:                                                |
+                                | *                                 pts, rbs, ast, blk,                                                                     |
+                                | *                                 stl, tov, mins, fgm,                                                                    |
+                                | *                                 fga, 3pm, 3pa, ftm,                                                                     |
+                                | *                                 fta, oreb, dreb, pf                                                                     |
+                                ----------------------------------------------------------------------------------------------------------------------------
+                                | deleteAll                        -Deletes all data from the database                                                      |
+                                ----------------------------------------------------------------------------------------------------------------------------
+                                | repopulate                       -Repopulates the database with initial data                                              |
+                                ----------------------------------------------------------------------------------------------------------------------------
+                                | quit                             -To exit program                                                                         |
+                                ---------------------------------------------------------End of Help--------------------------------------------------------                 
+                                """;
+        System.out.println(help);
+        
     }
 
 }
