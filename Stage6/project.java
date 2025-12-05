@@ -34,11 +34,19 @@ public class project {
 
         Scanner console = new Scanner(System.in);
         System.out.print("db > ");
-        String line = console.nextLine();
+        String line = console.nextLine().trim();
         String[] parts;
         String command = "";
 
         while (line != null && !line.equals("quit")) {
+            // checking for just white space as input. If there is, move onto the next iteration of while loop. 
+            // I was getting array out of bounds exception without this check when entering a space and then enter
+            if(line.isBlank() || line.isEmpty()) { 
+                db.printError();
+                System.out.print("db > ");
+                line = console.nextLine();;
+                continue;
+            }
             parts = line.split("\\s+");
             command = parts[0].toLowerCase();
 
@@ -50,30 +58,22 @@ public class project {
                 case "r":
                     if (parts.length == 3) {
                         db.roster(parts[1], parts[2]);
-                    } else {
-                        printParameterError();
-                    }
+                    } else {db.printError();}
                     break;
                 case "gap":
-                    if (parts.length == 2) {
-                        db.gameAppear(parts[1]);
-                    } else {
-                        printParameterError();
-                    }
+                    if (parts.length == 3) {
+                        db.gameAppear(parts[1],parts[2]);
+                    } else {db.printError();}
                     break;
                 case "mates":
                     if (parts.length == 4) {
                         db.teammates(parts[1], parts[2], parts[3]);
-                    } else {
-                        printParameterError();
-                    }
+                    } else {db.printError();}
                     break;
                 case "ro":
-                    if (parts.length == 2){
+                    if (parts.length == 2) {
                         db.rankOfficials(parts[1]);
-                    } else {
-                        printParameterError();
-                    }
+                    } else {db.printError();}
                     break;
                 case "si":
                     db.stadiumInfo();
@@ -81,37 +81,27 @@ public class project {
                 case "pc":
                     if (parts.length == 2) {
                         db.playerCountry(parts[1]);
-                    } else {
-                        printParameterError();
-                    } 
+                    } else {db.printError();}
                     break;
                 case "rc":
                     if (parts.length == 2) {
                         db.rankCoaches(parts[1]);
-                    } else {
-                        printParameterError();
-                    }
+                    } else {db.printError();}
                     break;
                 case "ll":
                     if (parts.length == 4) {
                         db.leagueAvg(parts[1], parts[2], parts[3]);
-                    } else {
-                        printParameterError();
-                    }
+                    } else {db.printError();}
                     break;
                 case "crp":
                     if (parts.length == 4) {
                         db.compareAvg(parts[1], parts[2], parts[3]);
-                    } else {
-                        printParameterError();
-                    }
+                    } else {db.printError();}
                     break;
                 case "spt":
                     if (parts.length == 3) {
                         db.playerStatsPerTeam(parts[1], parts[2]);
-                    } else {
-                        printParameterError();
-                    }
+                    } else {db.printError();}
                     break;
                 case "cc":
                     db.champs();
@@ -119,28 +109,22 @@ public class project {
                 case "per":
                     if (parts.length == 3) {
                         db.per(parts[1], parts[2]);
-                    } else {
-                        printParameterError();
-                    }
+                    } else {db.printError();}
                     break;
                 case "mr":
                     if (parts.length == 3) {
                         db.draftComm(parts[1], parts[2]);
-                    } else {
-                        printParameterError();
-                    }
+                    } else {db.printError();}
                     break;
                 case "ts":
                     if (parts.length == 2) {
                         db.totalStat(parts[1]);
-                    } else {
-                        printParameterError();
-                    }
+                    } else {db.printError();}
                     break;
                 case "repopulate":
                     try {
-                        System.out.println("Repopulating the database");
-                        db.loadData("NBAdatabaseServer.sql");
+                        System.out.println("Repopulating database with initial data...");
+                        db.loadData("NBAdatabaseServer.sql");;
                     } catch (IOException ioe) {
                         System.out.println("Error repopulating database: " + ioe.getMessage());
                     } catch (SQLException sqle) {
@@ -148,117 +132,121 @@ public class project {
                     }
                     break;
                 case "deleteall":
-                    System.out.println("Deleting the database");
+                    System.out.println("Deleting all data from the database...");
                     db.deleteData("deleteData.sql");
                     break;
                 default:
                     System.out.println("Invalid command inputs. Please type h for help!");
-                    
             }
 
-
-
-
-
-
             // if (parts[0].equals("h")) {
-            //     printHelp();
+            // printHelp();
             // } else if (parts[0].equals("r")) {
-            //     if (parts.length == 3) {
-            //         db.roster(parts[1], parts[2]);
-            //     } else {
-            //         System.out.println("This command requires appropriate arguments. Please type h for help!");
-            //     }
+            // if (parts.length == 3) {
+            // db.roster(parts[1], parts[2]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
             // } else if (parts[0].equals("gap")) {
-            //     if (parts.length == 2) {
-            //         db.gameAppear(parts[1]);
-            //     } else {
-            //         System.out.println("This command requires appropriate arguments. Please type h for help!");
-            //     }
+            // if (parts.length == 2) {
+            // db.gameAppear(parts[1]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
             // } else if (parts[0].equals("mates")) {
-            //     if (parts.length == 4) {
-            //         db.teammates(parts[1], parts[2], parts[3]);
-            //     } else {
-            //         System.out.println("This command requires appropriate arguments. Please type h for help!");
-            //     }
+            // if (parts.length == 4) {
+            // db.teammates(parts[1], parts[2], parts[3]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
             // } else if (parts[0].equals("ro")) {
-            //     if (parts.length == 2)
-            //         db.rankOfficials(parts[1]);
-            //     else {
-            //         System.out.println("This command requires appropriate arguments. Please type h for help!");
-            //     }
+            // if (parts.length == 2)
+            // db.rankOfficials(parts[1]);
+            // else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
             // } else if (parts[0].equals("si")) {
-            //     db.stadiumInfo();
+            // db.stadiumInfo();
             // } else if (parts[0].equals("pc")) {
-            //     if (parts.length == 2) {
-            //         db.playerCountry(parts[1]);
-            //     } else {
-            //         System.out.println("This command requires appropriate arguments. Please type h for help!");
-            //     }
+            // if (parts.length == 2) {
+            // db.playerCountry(parts[1]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
             // } else if (parts[0].equals("rc")) {
-            //     if (parts.length == 2) {
-            //         db.rankCoaches(parts[1]);
-            //     } else {
-            //         System.out.println("This command requires appropriate arguments. Please type h for help!");
-            //     }
+            // if (parts.length == 2) {
+            // db.rankCoaches(parts[1]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
             // } else if (parts[0].equals("ll")) {
-            //     if (parts.length == 4) {
-            //         db.leagueAvg(parts[1], parts[2], parts[3]);
-            //     } else {
-            //         System.out.println("This command requires appropriate arguments. Please type h for help!");
-            //     }
+            // if (parts.length == 4) {
+            // db.leagueAvg(parts[1], parts[2], parts[3]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
             // } else if (parts[0].equals("crp")) {
-            //     if (parts.length == 4) {
-            //         db.compareAvg(parts[1], parts[2], parts[3]);
-            //     } else {
-            //         System.out.println("This command requires appropriate arguments. Please type h for help!");
-            //     }
+            // if (parts.length == 4) {
+            // db.compareAvg(parts[1], parts[2], parts[3]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
             // } else if (parts[0].equals("spt")) {
-            //     if (parts.length == 3) {
-            //         db.playerStatsPerTeam(parts[1], parts[2]);
-            //     } else {
-            //         System.out.println("This command requires appropriate arguments. Please type h for help!");
-            //     }
+            // if (parts.length == 3) {
+            // db.playerStatsPerTeam(parts[1], parts[2]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
             // } else if (parts[0].equals("cc")) {
-            //     db.champs();
+            // db.champs();
             // } else if (parts[0].equals("per")) {
-            //     if (parts.length == 3) {
-            //         db.per(parts[1], parts[2]);
-            //     } else {
-            //         System.out.println("This command requires appropriate arguments. Please type h for help!");
-            //     }
+            // if (parts.length == 3) {
+            // db.per(parts[1], parts[2]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
             // } else if (parts[0].equals("mr")) {
-            //     if (parts.length == 3) {
-            //         db.draftComm(parts[1], parts[2]);
-            //     } else {
-            //         System.out.println("This command requires appropriate arguments. Please type h for help!");
-            //     }
+            // if (parts.length == 3) {
+            // db.draftComm(parts[1], parts[2]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
             // } else if (parts[0].equals("ts")) {
-            //     if (parts.length == 2) {
-            //         db.totalStat(parts[1]);
-            //     } else {
-            //         System.out.println("This command requires appropriate arguments. Please type h for help!");
-            //     }
+            // if (parts.length == 2) {
+            // db.totalStat(parts[1]);
+            // } else {
+            // System.out.println("This command requires appropriate arguments. Please type
+            // h for help!");
+            // }
             // } else if (parts[0].equals("deleteAll")) {
-            //     System.out.println("Deleting the database");
-            //     db.deleteData("deleteData.sql");
+            // db.deleteData("deleteData.sql");
 
             // } else if (parts[0].equals("repopulate")) {
-            //     try {
-            //         System.out.println("Repopulating the database");
-            //         db.loadData("NBAdatabaseServer.sql");
-            //     } catch (IOException ioe) {
-            //         System.out.println("Error repopulating database: " + ioe.getMessage());
-            //     } catch (SQLException sqle) {
-            //         System.out.println("SQL Error repopulating database: " + sqle.getMessage());
-            //     }
+            // try {
+            // db.loadData("NBAdatabaseServer.sql");
+            // } catch (IOException ioe) {
+            // System.out.println("Error repopulating database: " + ioe.getMessage());
+            // } catch (SQLException sqle) {
+            // System.out.println("SQL Error repopulating database: " + sqle.getMessage());
+            // }
             // } else {
-            //     System.out.println("The entered command does not exist, please type h for help!");
+            // System.out.println("The entered command does not exist, please type h for
+            // help!");
             // }
 
-
             System.out.print("db > ");
-            line = console.nextLine();
+            line = console.nextLine().trim();
         }
 
         console.close();
@@ -271,59 +259,59 @@ public class project {
 
     private static void printHelp() {
 
-                    String help = """
-                                --------------------------------------------------------Start of Help-------------------------------------------------------
-                                | NBA DataBase                                                                                                              |
-                                | Commands:                                                                                                                 |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | r [team] [season]               - Output roster for a team (Season Format: YYYY/YYYY)                                     |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | gap [limit]                     - Get game appearance percentage of each player in each season (limit = # of records)     |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | mates [first] [last] [limit]    - Show all the teammates for a particular player                                          |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | ro [limit]                      - Rank the officials based on number of games officiated                                  |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | si                              - how all the teams and their arena name and capacity                                     |
-                                ----------------------------------------------------------------------------------------------------------------------------     
-                                | pc [season]                     - Number of players by country (Season Format: YYYY/YYYY)                                 |
-                                ----------------------------------------------------------------------------------------------------------------------------     
-                                | rc [limit]                      - Top coaches by win percentage in Regular Season (limit = # of records)                  |
-                                ----------------------------------------------------------------------------------------------------------------------------     
-                                | ll [statType] [season] [limit]  - League Leaders per season (by avg) (Season Format: YYYY/YYYY) (limit = # of records)    |
-                                ----------------------------------------------------------------------------------------------------------------------------     
-                                | crp [statType] [first] [last]     Compare Regular Season vs Playoff career averages                                       |
-                                | *                                 statType] must be one of the following:                                                 |
-                                | *                                 pts, rbs, ast, blk,                                                                     |
-                                | *                                 stl, tov, mins, fgm,                                                                    |
-                                | *                                 fga, 3pm, 3pa, ftm,                                                                     |
-                                | *                                 fta, oreb, dreb, pf                                                                     |
-                                ----------------------------------------------------------------------------------------------------------------------------     
-                                | spt [first] [last]              - Major stat averages for a player per team                                               |
-                                ----------------------------------------------------------------------------------------------------------------------------     
-                                | cc                              - List all championship winning teams in chronological order                              |
-                                ----------------------------------------------------------------------------------------------------------------------------     
-                                | per [team] [season]             - Highest player efficiency rating (PER) on a team (Season Format: YYYY/YYYY)             |
-                                ----------------------------------------------------------------------------------------------------------------------------    
-                                | mr [year] [round]               - Given a specific draft round of players, measure their performance through their career |
-                                | *                                 (Year Format: YYYY)                                                                     |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | ts [statType]                   - Get the career totals for a specific stat for all players                               |
-                                | *                                 [statType] must be one of the following:                                                |
-                                | *                                 pts, rbs, ast, blk,                                                                     |
-                                | *                                 stl, tov, mins, fgm,                                                                    |
-                                | *                                 fga, 3pm, 3pa, ftm,                                                                     |
-                                | *                                 fta, oreb, dreb, pf                                                                     |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | deleteall                       - Deletes all data from the database                                                      |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | repopulate                      - Repopulates the database with initial data                                              |
-                                ----------------------------------------------------------------------------------------------------------------------------
-                                | quit                            - To exit program                                                                         |
-                                ---------------------------------------------------------End of Help--------------------------------------------------------                 
-                                """;
+        String help = """
+                --------------------------------------------------------Start of Help-------------------------------------------------------
+                | NBA Database for the 2016/2017 - 2022/2023 Seasons                                                                        |
+                | Commands:                                                                                                                 |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | r [team] [season]                -Output roster for a team (Season Format: YYYY/YYYY)                                     |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | gap [first] [last]               -Get game appearance percentage for a particular player for every season                 |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | mates [first] [last] [limit]     -Show all the teammates for a particular player                                          |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | ro [limit]                       -Rank the officials based on number of games officiated                                  |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | si                               -how all the teams and their arena name and capacity                                     |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | pc [season]                      -Number of players by country (Season Format: YYYY/YYYY)                                 |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | rc [limit]                       -Top coaches by win percentage in Regular Season (limit = # of records)                  |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | ll [statType] [season] [limit]   -League Leaders per season (by avg) (Season Format: YYYY/YYYY) (limit = # of records)    |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | crp [statType] [first] [last].   -Compare Regular Season vs Playoff career averages                                       |
+                | *                                 statType] must be one of the following:                                                 |
+                | *                                 pts, rbs, ast, blk,                                                                     |
+                | *                                 stl, tov, mins, fgm,                                                                    |
+                | *                                 fga, 3pm, 3pa, ftm,                                                                     |
+                | *                                 fta, oreb, dreb, pf                                                                     |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | spt [first] [last]               -Major stat averages for a player per team                                               |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | cc                               -List all championship winning teams in chronological order                              |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | per [team] [season]              -Highest player efficiency rating (PER) on a team (Season Format: YYYY/YYYY)             |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | mr [year] [round]                -Given a specific draft round of players, measure their performance through their career |
+                | *                                 (Year Format: YYYY)                                                                     |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | ts [statType]                    -Get the career totals for a specific stat for all players                               |
+                | *                                 [statType] must be one of the following:                                                |
+                | *                                 pts, rbs, ast, blk,                                                                     |
+                | *                                 stl, tov, mins, fgm,                                                                    |
+                | *                                 fga, 3pm, 3pa, ftm,                                                                     |
+                | *                                 fta, oreb, dreb, pf                                                                     |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | deleteAll                        -Deletes all data from the database                                                      |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | repopulate                       -Repopulates the database with initial data                                              |
+                ----------------------------------------------------------------------------------------------------------------------------
+                | quit                             -To exit program                                                                         |
+                ---------------------------------------------------------End of Help--------------------------------------------------------
+                """;
         System.out.println(help);
-        
+
     }
 
 }
@@ -364,7 +352,7 @@ class MyDatabase {
 
             connection = DriverManager.getConnection(connectionUrl);
 
-            System.out.println("\nConnection to SQLite has been established.");
+            System.out.println("Connection to SQL Server has been established.");
 
             if (initscript != null) {
                 this.loadData(initscript);
@@ -383,13 +371,16 @@ class MyDatabase {
         System.out.println(
                 "This database contains information relating to the National Basketball Association (NBA)");
         System.out.println(
-                "from the 2016/2017-2022/2023 seasons. It has information on players, teams, coaches, officials, games, statistics, and more!");
+                "Welcome to the NBA database! This database contains information relating to the National Basketball Association (NBA) from");
+        System.out.println(
+                "the 2016/2017 - 2022/2023 seasons. It has information on players, teams, coaches, officials, games, statistics, and more!");
         System.out.println(
                 "Below we have a list of commands you can use that will provide interesting data from the database. This data can be used");
         System.out.println(
                 "for various types of analysis. This includes things like highest player averages for specific statistics, seeing the spread");
         System.out.println("of players from different countries, ranking coaches and officials, and more!");
-        System.out.println("****************************************************************************************************************************");
+        System.out.println(
+                "****************************************************************************************************************************\n");
     }
 
     public static boolean sanitize(String input) {
@@ -439,8 +430,8 @@ class MyDatabase {
 
             reader.close();
         } catch (SQLException e) {
+            System.out.println("Database may already be populated or error loading database.");
             // e.printStackTrace(); // Don't swallow DB errors
-            System.out.println("Populating Database on Initialization");
         }
     }
 
@@ -471,8 +462,40 @@ class MyDatabase {
         }
     }
 
+    // prints message for invalid parameters
     public void printError() {
-        System.out.println("You have entered unexpected paramters. Type h for help");
+        System.out.println("Invalid command inputs. Please type h for help!");
+    }
+
+    // prints message for invalid query or database isn't loaded to run query
+    public void printInvalidQueryOrDb() {
+        System.out.println("Invalid command inputs or database isn't loaded to run query. Please type h for help!");
+    }
+
+    public boolean checkTeam(String teamName){
+        boolean valid = false;
+
+        String[] validTeams = {"76ers","Bucks",
+                "Bulls", "Cavaliers",
+                "Celtics", "Clippers",
+                "Grizzlies", "Hawks",
+                "Heat", "Hornets",
+                "Jazz", "Kings",
+                "Knicks", "Lakers",
+                "Magic","Mavericks",
+                "Nets", "Nuggets",
+                "Pacers", "Pelicans", "Pistons",
+                "Raptors", "Rockets", "Spurs", "Suns", "Thunder",
+                "Timberwolves", "Trail Blazers", "Warriors", "Wizards" };
+
+
+        for(String x : validTeams){
+            if(teamName.toLowerCase().equals(x.toLowerCase())){
+                valid = true;
+            }
+        }
+
+        return valid;
     }
 
     // 1 DONE
@@ -492,7 +515,7 @@ class MyDatabase {
             boolean initial = resultSet.next();
 
             if (initial) {
-                System.out.println("Showing Roster for " + teamName + " for the " + season + " season:\n");
+                System.out.println("\nShowing Roster for " + teamName + " for the " + season + " season:\n");
 
                 String formatString = "| %-20s | %-20s | %-20s |%n"; // Format Structure
                 System.out.printf("|----------------------|----------------------|----------------------|%n"); // Top
@@ -506,65 +529,68 @@ class MyDatabase {
                             resultSet.getInt("jersey"));
                 } while (resultSet.next());
                 System.out.printf(
-                        "|----------------------|----------------------|----------------------|%n"); // Lower
+                        "|----------------------|----------------------|----------------------|%n%n"); // Lower
                 // Bar
             } else
-                System.out.println("No roster found for " + teamName + " for the " + season + " season.");
+                System.out.println("Either invalid team name or season entered.\n");
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            printInvalidQueryOrDb();
+            // e.printStackTrace(System.out);
         }
     }
 
-    // 2 DONE
-    public void gameAppear(String lim) {
+     // 2 DONE
+    public void gameAppear(String first, String last) {
         try {
-            int num = Integer.parseInt(lim);
-            if (num <= 0) {
-                printError();
-                return;
-            }
             String sql = "with gamesPlayedPlayer as (\n" + //
                     "\tselect p.playerID, p.firstname, p.lastname, g.season, count(distinct gps.gameID) as playerGP\n" + //
-                    "\tfrom players p join gamePlayerStats gps on p.playerID = gps.playerID join games g on gps.gameID = g.gameID join gameTeamStats gts on gts.gameID = gps.gameID\n"
+                    "\tfrom players p join gamePlayerStats gps on p.playerID = gps.playerID join games g on gps.gameID = g.gameID join gameTeamStats gts on gts.gameID = gps.gameID and gts.gameID = g.gameID\n"
                     + //
-                    "\tgroup by p.playerID, p.firstname, p.lastname, g.season, gts.teamName ),\n" + //
+                    "\tgroup by p.playerID, p.firstname, p.lastname, g.season ),\n" + //
                     "gamesPlayedTeam as (\n" + //
-                    "\tselect gts.teamName, g.season, count(gts.gameID) as teamGP\n" + //
+                    "\tselect gts.teamName, g.season, count(distinct gts.gameID) as teamGP\n" + //
                     "\tfrom gameTeamStats gts join games g on gts.gameID = g.gameID\n" + //
                     "\tgroup by gts.teamName, g.season)\n" + //
-                    "select top (?) gpp.season, gpt.teamName, gpp.firstname, gpp.lastname, ((1.0*gpp.playerGP)/gpt.teamGP)*100.0 as appearancePercentage\n"
+                    "select gpp.season, gpt.teamName, gpp.firstname, gpp.lastname, ((1.0*gpp.playerGP)/gpt.teamGP)*100.0 as appearancePercentage\n"
                     + //
                     "from gamesPlayedPlayer gpp join play on gpp.season = play.season and gpp.playerID = play.playerID join gamesPlayedTeam gpt on play.teamName = gpt.teamName and gpt.season = play.season\n"
                     + //
-                    "order by appearancePercentage desc, gpp.season desc, gpp.lastname asc;";
+                    "where gpp.firstname like ? and gpp.lastname like ? order by gpp.season desc, gpp.lastname asc;";
 
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, num);
+            statement.setString(1, "%" + first + "%");
+            statement.setString(2, "%" + last + "%");
+
             ResultSet resultSet = statement.executeQuery();
 
-            System.out.println("Showing the game appearance percentage for each player for each season:\n");
+             boolean initial = resultSet.next();
+
+            if (initial) {
+            System.out.println("\nShowing game appearance percentage for player with name similar to " + first + " " + last + "\n");
             String formatString = "| %-10s | %-15s | %-20s | %-20s | %-30s |%n"; // Format Structure
             System.out.printf(
                     "|------------|-----------------|----------------------|----------------------|--------------------------------|%n"); // Top
             System.out.printf(formatString, "Season", "Team", "First Name", "Last Name",
                     "Game Appearance Percentage (%)"); // Column Labels
             // Bar
-            while (resultSet.next()) {
+            do{
                 System.out.printf(
                         "|------------|-----------------|----------------------|----------------------|--------------------------------|%n");
                 System.out.printf("| %-10s | %-15s | %-20s | %-20s | %-30.1f |%n", resultSet.getString("season"),
                         resultSet.getString("teamName"),
                         resultSet.getString("firstName"), resultSet.getString("lastName"),
                         resultSet.getFloat("appearancePercentage"));
-            }
+            } while (resultSet.next());
             System.out.printf(
-                    "|------------|-----------------|----------------------|----------------------|--------------------------------|%n");
-
+                    "|------------|-----------------|----------------------|----------------------|--------------------------------|%n%n");
+            } else
+                System.out.println("Player not found.\n");
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
+            printInvalidQueryOrDb();
             e.printStackTrace(System.out);
         } catch (NumberFormatException nfe) {
             printError();
@@ -610,7 +636,7 @@ class MyDatabase {
             boolean initial = resultSet.next();
 
             if (initial) {
-                System.out.println("Showing teammates for player with name similar to " + first + " " + last + "\n");
+                System.out.println("\nShowing teammates for player with name similar to " + first + " " + last + "\n");
 
                 String formatString = "| %-10s | %-20s | %-20s | %-20s |%n"; // Format Structure
                 System.out.printf(
@@ -625,14 +651,15 @@ class MyDatabase {
                             resultSet.getString("firstname"), resultSet.getString("lastname"));
                 } while (resultSet.next());
                 System.out.printf(
-                        "|------------|----------------------|----------------------|----------------------|%n");
+                        "|------------|----------------------|----------------------|----------------------|%n%n");
             } else
                 System.out.println("Player not found.\n");
 
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            printInvalidQueryOrDb();
+            // e.printStackTrace(System.out);
         } catch (NumberFormatException nfe) {
             printError();
         }
@@ -652,22 +679,24 @@ class MyDatabase {
             statement.setInt(1, num);
             ResultSet resultSet = statement.executeQuery();
 
-            System.out.println("Showing the officials who have officiated the most games:\n");
+            System.out.println("\nShowing the officials who have officiated the most games:\n");
             String format = ("| %-10s | %-20s | %-20s | %-10s |%n");
             System.out.printf("|------------|----------------------|----------------------|------------|%n");
             System.out.printf(format, "ID", "FirstName", "LastName", "Games");
             System.out.printf("|------------|----------------------|----------------------|------------|%n");
             String floats = ("| %-10d | %-20s | %-20s | %-10d |%n");
+
             while (resultSet.next()) {
                 System.out.printf(floats, resultSet.getInt("officialID"), resultSet.getString("firstname"),
                         resultSet.getString("lastname"),
                         resultSet.getInt("numGames"));
-                System.out.printf("|------------|----------------------|----------------------|------------|%n");
+                System.out.printf("|------------|----------------------|----------------------|------------|%n%n");
             }
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            printInvalidQueryOrDb();
+            // e.printStackTrace(System.out);
         } catch (NumberFormatException nfe) {
             printError();
         }
@@ -677,12 +706,12 @@ class MyDatabase {
     // DONE
     public void stadiumInfo() {
         try {
-            String sql = "select teams.basedIn,teams.teamName, stadiums.stadiumName, stadiums.capacity from teams join stadiums on teams.stadiumName = stadiums.stadiumName order by teams.teamName;";
+            String sql = "select teams.basedIn,teams.teamName, stadiums.stadiumName, stadiums.capacity from teams join stadiums on teams.stadiumName = stadiums.stadiumName order by teams.basedIn;";
 
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
 
-            System.out.println("Showing all the teams and their stadium info:\n");
+            System.out.println("\nShowing all the teams and their stadium info:\n");
             String format = ("| %-35s | %-30s | %-10s |%n"); // Header
             System.out
                     .printf("|-------------------------------------|--------------------------------|------------|%n");
@@ -690,17 +719,19 @@ class MyDatabase {
             System.out
                     .printf("|-------------------------------------|--------------------------------|------------|%n");
             String floats = ("| %-35s | %-30s | %-10d |%n");
+
             while (resultSet.next()) {
                 String team = resultSet.getString("basedIn") + " " + resultSet.getString("teamName");
                 System.out.printf(floats, team, resultSet.getString("stadiumName"), resultSet.getInt("capacity"));
                 System.out.printf(
-                        "|-------------------------------------|--------------------------------|------------|%n");
+                        "|-------------------------------------|--------------------------------|------------|%n%n");
             }
 
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            printInvalidQueryOrDb();
+            // e.printStackTrace(System.out);
         }
     }
 
@@ -719,17 +750,18 @@ class MyDatabase {
             boolean initial = resultSet.next();
 
             if (initial) {
-                System.out.println("Showing number of players from each country for the " + season + " season:\n");
+                System.out.println("\nShowing number of players from each country for the " + season + " season:\n");
 
                 String format = ("| %-30s | %-15s |%n");
                 System.out.printf("|--------------------------------|-----------------|%n");
                 System.out.printf(format, "Country", "NumPlayers");
                 System.out.printf("|--------------------------------|-----------------|%n");
                 String floats = ("| %-30s | %-15d |%n");
+
                 do {
                     System.out.printf(floats,
                             resultSet.getString("country"), resultSet.getInt("numPlayers"));
-                    System.out.printf("|--------------------------------|-----------------|%n");
+                    System.out.printf("|--------------------------------|-----------------|%n%n");
                 } while (resultSet.next());
 
                 // Bar
@@ -739,7 +771,8 @@ class MyDatabase {
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            printInvalidQueryOrDb();
+            // e.printStackTrace(System.out);
         }
     }
 
@@ -775,7 +808,7 @@ class MyDatabase {
             statement.setInt(1, lim);
             ResultSet resultSet = statement.executeQuery();
 
-            System.out.println("Showing coaches and their win percentages over the regular season:\n");
+            System.out.println("\nShowing coaches and their win percentages over the regular season:\n");
             String format = ("| %-20s | %-20s | %-10s |%n");
             System.out.printf("|----------------------|----------------------|------------|%n");
             System.out.printf(format, "FirstName", "LastName", "Win%");
@@ -784,13 +817,14 @@ class MyDatabase {
             while (resultSet.next()) {
                 System.out.printf(floats, resultSet.getString("firstname"), resultSet.getString("lastname"),
                         resultSet.getFloat("winPercentage"));
-                System.out.printf("|----------------------|----------------------|------------|%n");
+                System.out.printf("|----------------------|----------------------|------------|%n%n");
             }
 
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            printInvalidQueryOrDb();
+            // e.printStackTrace(System.out);
         } catch (NumberFormatException nfe) {
             printError();
         }
@@ -898,7 +932,7 @@ class MyDatabase {
             statement.close();
         } catch (SQLException e) {
             System.out.println("You have entered unexpected parameters. Type h for help!");
-            e.printStackTrace(System.out);
+            // e.printStackTrace(System.out);
         }
     }
 
@@ -945,7 +979,7 @@ class MyDatabase {
 
         } catch (SQLException e) {
             System.out.println("You have entered unexpected parameters. Type h for help!");
-            e.printStackTrace(System.out);
+            // e.printStackTrace(System.out);
         }
     }
 
@@ -978,7 +1012,14 @@ class MyDatabase {
     // 12 DONE
 
     public void per(String team, String season) {
-        int year = Integer.parseInt(season);
+        int year = -1;
+        try {
+            year = Integer.parseInt(season);
+            
+        } catch (Exception e) {
+            // TODO: handle exception
+            printError();
+        }
         if(year < 2016){
             System.out.println("Invalid season year input. Please input a valid season year ex. [2016/2017]");
             return;
@@ -1017,15 +1058,25 @@ class MyDatabase {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            printInvalidQueryOrDb();
+            // e.printStackTrace(System.out);
         }
     }
 
     // 13 DONE
     public void draftComm(String year, String round) {
         try {
-            int y = Integer.parseInt(year);
-            int r = Integer.parseInt(round);
+            int y = -1;
+            int r = -1;
+            try {
+                y = Integer.parseInt(year);
+                r = Integer.parseInt(round);
+                
+            } catch (NumberFormatException e) {
+                // TODO: handle exception
+                printError();
+
+            }
             if(y < 1998){
                 System.out.println("Invalid draft year, not in database. Please enter a draft year between [1998 - 2021]");
                 return;
@@ -1107,7 +1158,8 @@ class MyDatabase {
 
 
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            printInvalidQueryOrDb();
+            // e.printStackTrace(System.out);
         }
     }
 
@@ -1144,7 +1196,8 @@ class MyDatabase {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            printInvalidQueryOrDb();
+            // e.printStackTrace(System.out);
         }
     }
 
