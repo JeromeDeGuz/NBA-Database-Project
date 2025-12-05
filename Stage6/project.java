@@ -24,6 +24,7 @@ public class project {
     public static void main(String[] args) {
         MyDatabase db = new MyDatabase("NBAdatabaseServer.sql");
         db.introduction();
+        System.out.println("\n***** Begin with entering 'h' to display the list of commands *****");
         runConsole(db);
         System.out.println("Exiting...");
     }
@@ -250,6 +251,11 @@ public class project {
         console.close();
     }
 
+    private static void printParameterError(){
+        System.out.println("You have entered unexpected paramters. Type h for help");
+        return;
+    }
+
     private static void printHelp() {
 
         String help = """
@@ -360,8 +366,9 @@ class MyDatabase {
     }
 
     public void introduction() {
+        System.out.println("\n*********************************************** Welcome to the NBA database! ***********************************************");
         System.out.println(
-                "\n****************************************************************************************************************************");
+                "This database contains information relating to the National Basketball Association (NBA)");
         System.out.println(
                 "Welcome to the NBA database! This database contains information relating to the National Basketball Association (NBA) from");
         System.out.println(
@@ -978,6 +985,11 @@ class MyDatabase {
     // 12 DONE
 
     public void per(String team, String season) {
+        int year = Integer.parseInt(season);
+        if(year < 2016){
+            System.out.println("Invalid season year input. Please input a valid season year ex. [2016/2017]");
+            return;
+        }
         try {
             String sql = "SELECT  p.firstname, p.lastname,"
                     + " SUM(gps.fgm * 85.910 + gps.stl * 53.897 + gps.[3pm] * 51.757 + gps.ftm * 46.845 + gps.blk * 39.190 + gps.oreb * 39.190 + gps.ast * 34.677 + gps.dreb * 14.707"
@@ -988,7 +1000,8 @@ class MyDatabase {
                     + " LEFT JOIN games rg ON gps.gameID = rg.gameID AND rg.season = szn.season"
                     + " WHERE lower(szn.teamName) LIKE lower(?)"
                     + " AND lower(szn.season) LIKE lower(?)"
-                    + " GROUP BY p.firstname, p.lastname";
+                    + " GROUP BY p.firstname, p.lastname"
+                    + " ORDER BY avgPer DESC";
 
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, "%" + team + "%");
@@ -1021,6 +1034,14 @@ class MyDatabase {
         try {
             int y = Integer.parseInt(year);
             int r = Integer.parseInt(round);
+            if(y < 1998){
+                System.out.println("Invalid draft year, not in database. Please enter a draft year between [1998 - 2021]");
+                return;
+            } 
+            if(r < 1){
+                System.out.println("Invalid draft round. Please enter a valid draft round [1 - 2]");
+                return;
+            }
             String sql = "SELECT dyr.draftYear, dyr.round, dyr.pick, p.firstname, p.lastname, szn.season, "
                     + " SUM(gps.fgm * 85.910 + gps.stl * 53.897 + gps.[3pm] * 51.757 + gps.ftm * 46.845"
                     + " + gps.blk * 39.190 + gps.oreb * 39.190 + gps.ast * 34.677 + gps.dreb * 14.707"
