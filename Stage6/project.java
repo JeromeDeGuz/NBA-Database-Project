@@ -252,11 +252,6 @@ public class project {
         console.close();
     }
 
-    private static void printParameterError(){
-        System.out.println("You have entered unexpected paramters. Type h for help");
-        return;
-    }
-
     private static void printHelp() {
 
         String help = """
@@ -1109,13 +1104,12 @@ class MyDatabase {
                     String formatPrint = "| %-20s | %-20s | %-10s | %-15s | %-15.1f |%n"; // Print Structure w/ avgPer double value
 
             pagination myPages = new pagination();
-            String line = "";
 
             while (resultSet.next()) {
-                line += String.format(formatPrint, resultSet.getString("firstname"), resultSet.getString("lastname"), resultSet.getString("pick"),
+                String line = String.format(formatPrint, resultSet.getString("firstname"), resultSet.getString("lastname"), resultSet.getString("pick"),
                         resultSet.getString("season"), resultSet.getDouble("avgPER")); // Column Labels
                 line += String.format(
-                        "|----------------------|----------------------|------------|-----------------|-----------------|%n");
+                        "|----------------------|----------------------|------------|-----------------|-----------------|");
                 myPages.add(line);
             }
 
@@ -1155,8 +1149,6 @@ class MyDatabase {
                 input = kb.nextLine().toLowerCase().trim();
             }
             System.out.println("Returning back to main menu. Type h for help!");
-
-
         } catch (SQLException e) {
             printInvalidQueryOrDb();
             // e.printStackTrace(System.out);
@@ -1200,30 +1192,19 @@ class MyDatabase {
             // e.printStackTrace(System.out);
         }
     }
-
-    public void pagintation(String item){
-        int numPages = 0;
-        ArrayList<String>[] pages = new ArrayList[100];  //each index is a page, each page has an arraylist of items
-
-        do{
-            pages[numPages].add(item);
-
-        } while (numPages % 30 != 0);   //keep adding until we reach 30 items per page
-
-
-        
-    }
 }
 
 class pagination {
-    int numPages;
-    int numItems;
-    ArrayList<String>[] pages;  //each index is a page, each page has an arraylist of items
+    private int numPages;
+    private int numItems;
+    private ArrayList<String>[] pages;  //each index is a page, each page has an arraylist of items
+    
+    @SuppressWarnings("unchecked")
 
     public pagination(){
         this.numPages = 0;
         this.numItems = 0;
-        pages  = new ArrayList[100];
+        pages = (ArrayList<String>[]) new ArrayList<?>[100];
     }
 
     public void add(String item) {
@@ -1242,16 +1223,21 @@ class pagination {
     }
 
     public void printPage(int pageNum){
-        if(pages[pageNum] != null){
+        if(pages[pageNum] == null){
+            System.out.println("Invalid input, no more pages left.");
+            return;
+        }
+
             String formatString = "| %-20s | %-20s | %-10s | %-15s | %-15s |%n"; // Format Structure
                                                                           // rounded to .1
             System.out.printf("|----------------------|----------------------|------------|-----------------|-----------------|%n");
             System.out.printf(formatString, "First Name", "Last Name","Pick", "Season Year", "PER");
             System.out.printf("|----------------------|----------------------|------------|-----------------|-----------------|%n");
-            System.out.println(pages[pageNum].get(0));
-        } else {
-            System.out.println("Invalid input, no more pages left.");
-        }
+            
+
+            for(String item : pages[pageNum]){
+                System.out.println(item);
+            }
     }
 
     
