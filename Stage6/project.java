@@ -257,7 +257,7 @@ public class project {
                                 ----------------------------------------------------------------------------------------------------------------------------     
                                 | ll [statType] [season] [limit]   -League Leaders per season (by avg) (Season Format: YYYY/YYYY) (limit = # of records)    |
                                 ----------------------------------------------------------------------------------------------------------------------------     
-                                | crp [statType] [first] [last]*****Compare Regular Season vs Playoff career averages                                       |
+                                | crp [statType] [first] [last]    -Compare Regular Season vs Playoff career averages                                       |
                                 | *                                 statType] must be one of the following:                                                 |
                                 | *                                 pts, rbs, ast, blk,                                                                     |
                                 | *                                 stl, tov, mins, fgm,                                                                    |
@@ -354,6 +354,7 @@ class MyDatabase {
         System.out.println(
                 "for various types of analysis. This includes things like highest player averages for specific statistics, seeing the spread");
         System.out.println("of players from different countries, ranking coaches and officials, and more!");
+        System.out.println("Type h for documentation!");
         System.out.println("****************************************************************************************************************************");
     }
 
