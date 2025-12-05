@@ -24,6 +24,7 @@ public class project {
     public static void main(String[] args) {
         MyDatabase db = new MyDatabase("NBAdatabaseServer.sql");
         db.introduction();
+        System.out.println("\n***** Begin with entering 'h' to display the list of commands *****");
         runConsole(db);
         System.out.println("Exiting...");
     }
@@ -344,9 +345,9 @@ class MyDatabase {
     }
 
     public void introduction() {
-        System.out.println("\n****************************************************************************************************************************");
+        System.out.println("\n*********************************************** Welcome to the NBA database! ***********************************************");
         System.out.println(
-                "Welcome to the NBA database! This database contains information relating to the National Basketball Association (NBA)");
+                "This database contains information relating to the National Basketball Association (NBA)");
         System.out.println(
                 "from the 2016/2017-2022/2023 seasons. It has information on players, teams, coaches, officials, games, statistics, and more!");
         System.out.println(
