@@ -9,3 +9,4 @@ msql:
 clean: 
 	rm project.class
 	rm MyDatabase.class
+	rm pagination.class
