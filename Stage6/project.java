@@ -291,9 +291,9 @@ public class project {
                 ----------------------------------------------------------------------------------------------------------------------------
                 | gap [first] [last]               - Get game appearance percentage for a particular player for every season               |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | mates [first] [last] [limit]     - Show all the teammates for a particular player                                        |
+                | mates [first] [last] [limit]     - Show all the teammates for a particular player (limit = # of records)                 |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | ro [limit]                       - Rank the officials based on number of games officiated                                |
+                | ro [limit]                       - Rank the officials based on number of games officiated (limit = # of records)         |
                 ----------------------------------------------------------------------------------------------------------------------------
                 | si                               - how all the teams and their arena name and capacity                                   |
                 ----------------------------------------------------------------------------------------------------------------------------
