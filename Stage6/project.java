@@ -1004,8 +1004,13 @@ class MyDatabase {
     */
     public void per(String team, String season) {
         int year = -1;
+        int year2 = -1;
+        String[] parts = season.split("/");
+        String szn = "";
+
         try {
-            year = Integer.parseInt(season);
+            year = Integer.parseInt(parts[0]);
+            year2 = Integer.parseInt(parts[1]);
 
         } catch (Exception e) {
             // TODO: handle exception
@@ -1015,7 +1020,15 @@ class MyDatabase {
             System.out.println("Invalid season year input. Please input a valid season year ex. [2016/2017]");
             return;
         }
+
+        if(year +1 != year2){
+            System.out.println("Invalid season year input. Please input a valid season year ex. [2016/2017]");
+            return;
+        }
+
         try {
+
+            szn = year + "/" + year2;
             String sql = "SELECT  p.firstname, p.lastname,"
                     + " SUM(gps.fgm * 85.910 + gps.stl * 53.897 + gps.[3pm] * 51.757 + gps.ftm * 46.845 + gps.blk * 39.190 + gps.oreb * 39.190 + gps.ast * 34.677 + gps.dreb * 14.707"
                     + " - gps.pf * 17.174 - (gps.fta - gps.ftm) * 20.091 - (gps.fga - gps.fgm) *39.190 - gps.tov * 53.897)/SUM(gps.min) AS avgPER "
@@ -1024,13 +1037,13 @@ class MyDatabase {
                     + " LEFT JOIN gamePlayerStats gps ON szn.playerID = gps.playerID"
                     + " LEFT JOIN games rg ON gps.gameID = rg.gameID AND rg.season = szn.season"
                     + " WHERE lower(szn.teamName) LIKE lower(?)"
-                    + " AND lower(szn.season) LIKE lower(?)"
+                    + " AND szn.season LIKE lower(?)"
                     + " GROUP BY p.firstname, p.lastname"
                     + " ORDER BY avgPer DESC";
 
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, "%" + team + "%");
-            statement.setString(2, "%" + season + "%");
+            statement.setString(2, "%" + szn + "%");
             ResultSet resultSet = statement.executeQuery();
 
             System.out.println(
