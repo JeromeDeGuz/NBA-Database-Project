@@ -1165,6 +1165,8 @@ class MyDatabase {
     }
 }
 
+// class that handles paging of query results when it is too long to fit
+// cleanly on the screen
 class pagination {
     private int numPages;
     private int numItems;
