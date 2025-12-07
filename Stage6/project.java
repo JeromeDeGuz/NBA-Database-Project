@@ -166,113 +166,6 @@ public class project {
                 default:
                     System.out.println("Invalid command inputs. Please type h for help!");
             }
-
-            // if (parts[0].equals("h")) {
-            // printHelp();
-            // } else if (parts[0].equals("r")) {
-            // if (parts.length == 3) {
-            // db.roster(parts[1], parts[2]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("gap")) {
-            // if (parts.length == 2) {
-            // db.gameAppear(parts[1]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("mates")) {
-            // if (parts.length == 4) {
-            // db.teammates(parts[1], parts[2], parts[3]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("ro")) {
-            // if (parts.length == 2)
-            // db.rankOfficials(parts[1]);
-            // else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("si")) {
-            // db.stadiumInfo();
-            // } else if (parts[0].equals("pc")) {
-            // if (parts.length == 2) {
-            // db.playerCountry(parts[1]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("rc")) {
-            // if (parts.length == 2) {
-            // db.rankCoaches(parts[1]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("ll")) {
-            // if (parts.length == 4) {
-            // db.leagueAvg(parts[1], parts[2], parts[3]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("crp")) {
-            // if (parts.length == 4) {
-            // db.compareAvg(parts[1], parts[2], parts[3]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("spt")) {
-            // if (parts.length == 3) {
-            // db.playerStatsPerTeam(parts[1], parts[2]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("cc")) {
-            // db.champs();
-            // } else if (parts[0].equals("per")) {
-            // if (parts.length == 3) {
-            // db.per(parts[1], parts[2]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("mr")) {
-            // if (parts.length == 3) {
-            // db.draftComm(parts[1], parts[2]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("ts")) {
-            // if (parts.length == 2) {
-            // db.totalStat(parts[1]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("deleteAll")) {
-            // db.deleteData("deleteData.sql");
-
-            // } else if (parts[0].equals("repopulate")) {
-            // try {
-            // db.loadData("NBAdatabaseServer.sql");
-            // } catch (IOException ioe) {
-            // System.out.println("Error repopulating database: " + ioe.getMessage());
-            // } catch (SQLException sqle) {
-            // System.out.println("SQL Error repopulating database: " + sqle.getMessage());
-            // }
-            // } else {
-            // System.out.println("The entered command does not exist, please type h for
-            // help!");
-            // }
-
             System.out.print("db > ");
             line = console.nextLine().trim();
         }
@@ -280,6 +173,7 @@ public class project {
         console.close();
     }
 
+    // prints the help menu with all commands and their descriptions
     private static void printHelp() {
 
         String help = """
@@ -342,6 +236,7 @@ public class project {
 class MyDatabase {
     private Connection connection;
 
+    // constructor that connects to the database
     public MyDatabase(String initscript) {
         try {
             Properties prop = new Properties();
