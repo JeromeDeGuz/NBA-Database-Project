@@ -142,8 +142,8 @@ public class project {
                     }
                     break;
                 case "ts":
-                    if (parts.length == 2) {
-                        db.totalStat(parts[1]);
+                    if (parts.length == 3) {
+                        db.totalStat(parts[1], parts[2]);
                     } else {
                         db.printError();
                     }
@@ -166,112 +166,6 @@ public class project {
                 default:
                     System.out.println("Invalid command inputs. Please type h for help!");
             }
-
-            // if (parts[0].equals("h")) {
-            // printHelp();
-            // } else if (parts[0].equals("r")) {
-            // if (parts.length == 3) {
-            // db.roster(parts[1], parts[2]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("gap")) {
-            // if (parts.length == 2) {
-            // db.gameAppear(parts[1]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("mates")) {
-            // if (parts.length == 4) {
-            // db.teammates(parts[1], parts[2], parts[3]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("ro")) {
-            // if (parts.length == 2)
-            // db.rankOfficials(parts[1]);
-            // else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("si")) {
-            // db.stadiumInfo();
-            // } else if (parts[0].equals("pc")) {
-            // if (parts.length == 2) {
-            // db.playerCountry(parts[1]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("rc")) {
-            // if (parts.length == 2) {
-            // db.rankCoaches(parts[1]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("ll")) {
-            // if (parts.length == 4) {
-            // db.leagueAvg(parts[1], parts[2], parts[3]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("crp")) {
-            // if (parts.length == 4) {
-            // db.compareAvg(parts[1], parts[2], parts[3]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("spt")) {
-            // if (parts.length == 3) {
-            // db.playerStatsPerTeam(parts[1], parts[2]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("cc")) {
-            // db.champs();
-            // } else if (parts[0].equals("per")) {
-            // if (parts.length == 3) {
-            // db.per(parts[1], parts[2]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("mr")) {
-            // if (parts.length == 3) {
-            // db.draftComm(parts[1], parts[2]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("ts")) {
-            // if (parts.length == 2) {
-            // db.totalStat(parts[1]);
-            // } else {
-            // System.out.println("This command requires appropriate arguments. Please type
-            // h for help!");
-            // }
-            // } else if (parts[0].equals("deleteAll")) {
-            // db.deleteData("deleteData.sql");
-
-            // } else if (parts[0].equals("repopulate")) {
-            // try {
-            // db.loadData("NBAdatabaseServer.sql");
-            // } catch (IOException ioe) {
-            // System.out.println("Error repopulating database: " + ioe.getMessage());
-            // } catch (SQLException sqle) {
-            // System.out.println("SQL Error repopulating database: " + sqle.getMessage());
-            // }
-            // } else {
-            // System.out.println("The entered command does not exist, please type h for
-            // help!");
-            // }
 
             System.out.print("db > ");
             line = console.nextLine().trim();
@@ -319,7 +213,8 @@ public class project {
                 | mr [year] [round]                - Given a specific draft round of players, measure their performance through their      |
                 | *                                  career (Year Format: YYYY)                                                            |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | ts [statType]                    - Get the career totals for a specific stat for all players                             |
+                | ts [statType] [limit]            - Get the career totals for a specific stat for all players                             |
+                | *                                 [limit] = # of records                                                                 |
                 | *                                 [statType] must be one of the following:                                               |
                 | *                                 pts, rbs, ast, blk,                                                                    |
                 | *                                 stl, tov, mins, fgm,                                                                   |
@@ -1100,7 +995,11 @@ class MyDatabase {
     }
 
     // 12 DONE
-
+    /*
+    This method runs the query that prints the player efficieny rating of a signel team
+    for a single season, ordered by highest to lowest.
+    Input: team, season
+    */
     public void per(String team, String season) {
         int year = -1;
         try {
@@ -1156,6 +1055,11 @@ class MyDatabase {
     }
 
     // 13 DONE
+    /*
+    This method will print out the player efficiency rating (PER) for each player
+    for a given draft year and draft round. Ordered by their draft pick.
+    This query has pagination to allow for cleaner result output display.
+    */
     public void draftComm(String year, String round) {
         try {
             int y = -1;
@@ -1256,12 +1160,33 @@ class MyDatabase {
     }
 
     // 14 DONE
-    public void totalStat(String stat) {
+    /*
+    This method will print out the list of the top number of players
+    for a given statistical measure
+    Input: 
+        stat - pts, ast, reb, etc...
+        limit - how many records to display
+    */
+    public void totalStat(String stat, String limit) {
+        int lim = -1;
+        try {
+            lim = Integer.parseInt(limit);
+        } catch (NumberFormatException e) {
+            // TODO: handle exception
+            System.out.println("Invalid top input. Please enter a positive number");
+        }
+
+        if(lim < 1){
+            System.out.println("Invalid top input. Please enter a positive number");
+            return;
+        }
+
+
         try {
             String sql;
 
             if (sanitize(stat)) {
-                sql = "SELECT TOP 10 p.firstname, p.lastname, sum(gps.[" + stat
+                sql = "SELECT TOP (?) p.firstname, p.lastname, sum(gps.[" + stat
                         + "]) AS totalxStatistic FROM Players p JOIN GamePlayerStats gps ON p.playerID = gps.playerID JOIN games g ON gps.gameID = g.gameID GROUP BY p.firstname, p.lastname ORDER BY totalxStatistic DESC;";
 
             } else {
@@ -1271,9 +1196,10 @@ class MyDatabase {
 
             PreparedStatement statement = connection.prepareStatement(sql);
             // statement.setString(1, stat); //Not needed, not setting anything
+            statement.setInt(1, lim);
             ResultSet resultSet = statement.executeQuery();
 
-            System.out.println("Showing the total " + stat + " of all players all time");
+            System.out.println("Showing the top " + lim + " total " + stat + " of all players all time");
 
             String formatString = "| %-20s | %-20s | %-15s |%n";
             System.out.printf("|----------------------|----------------------|-----------------|%n");
@@ -1324,6 +1250,7 @@ class pagination {
         }
     }
 
+    // for jerome's mr query
     public void printPage(int pageNum) {
         int page = pageNum - 1;
         if (pages[page] == null) {
