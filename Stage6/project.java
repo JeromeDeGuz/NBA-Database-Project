@@ -1223,7 +1223,8 @@ class pagination {
     }
 
     public void printPage(int pageNum){
-        if(pages[pageNum] == null){
+        int page = pageNum-1;
+        if(pages[page] == null){
             System.out.println("Invalid input, no more pages left.");
             return;
         }
@@ -1235,7 +1236,7 @@ class pagination {
             System.out.printf("|----------------------|----------------------|------------|-----------------|-----------------|%n");
             
 
-            for(String item : pages[pageNum]){
+            for(String item : pages[page]){
                 System.out.println(item);
             }
     }
