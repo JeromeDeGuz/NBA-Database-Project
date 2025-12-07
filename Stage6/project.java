@@ -419,7 +419,8 @@ class MyDatabase {
         return valid;
     }
 
-    // outputs a roster for a given team and season
+    // Explanation: outputs a roster for a given team and season
+    // input: team name and season in YYYY/YYYY format
     public void roster(String teamName, String season) {
         try {
             String sql = "select firstname, lastname,  jersey\n" + //
@@ -463,7 +464,8 @@ class MyDatabase {
         }
     }
 
-    // gets game appearance percentage for a particular player for every season they played in
+    // Explanation: gets game appearance percentage for a particular player for every season they played in
+    // Input, the firstname and last name of the player
     public void gameAppear(String first, String last) {
         try {
             String sql = "with gamesPlayedPlayer as (\n" + //
@@ -521,7 +523,8 @@ class MyDatabase {
         }
     }
 
-    // gets all the teammates for a particular player across seasons our database covers
+    // Explanation: gets all the teammates for a particular player across seasons our database covers
+    // Input: firstname and last name of the player, and an integer representing how many records the user wants to see
     public void teammates(String first, String last, String lim) {
         try {
             int num = Integer.parseInt(lim);
@@ -589,7 +592,8 @@ class MyDatabase {
         }
     }
 
-    // ranks the officials based on number of games officiated
+    // Explanation: ranks the officials based on number of games officiated
+    // Input: an integer representing how many records the user wants to see
     public void rankOfficials(String lim) {
         try {
             int num = Integer.parseInt(lim);
@@ -626,7 +630,8 @@ class MyDatabase {
         }
     }
 
-    // lists all the stadiums that every team in the NBA plays in along with their capacities
+    // Explanation: lists all the stadiums that every team in the NBA plays in along with their capacities
+    // Input: none
     public void stadiumInfo() {
         try {
             String sql = "select teams.basedIn,teams.teamName, stadiums.stadiumName, stadiums.capacity from teams join stadiums on teams.stadiumName = stadiums.stadiumName order by teams.basedIn;";
@@ -658,7 +663,8 @@ class MyDatabase {
         }
     }
 
-    // for a given season, lists the number of players from each country
+    // Explanation: for a given season, lists the number of players from each country
+    // Input: the season in YYYY/YYYY format that the user wants to see the country distribution for
     public void playerCountry(String season) {
         try {
             String sql = "select l.country, count(distinct p.playerID) as numPlayers\n" + //
@@ -720,7 +726,8 @@ class MyDatabase {
         }
     }
 
-    // ranks the top coaches by win percentage in all the games they have coached
+    // Explanation: ranks the top coaches by win percentage in all the games they have coached
+    // Input: an integer representing how many records the user wants to see
     public void rankCoaches(String limit) {
         try {
             int lim = Integer.parseInt(limit);
