@@ -284,53 +284,53 @@ public class project {
 
         String help = """
                 --------------------------------------------------------Start of Help-------------------------------------------------------
-                | NBA Database for the 2016/2017 - 2022/2023 Seasons                                                                        |
-                | Commands:                                                                                                                 |
+                | NBA Database for the 2016/2017 - 2022/2023 Seasons                                                                       |
+                | Commands:                                                                                                                |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | r [team] [season]                - Output roster for a team (Season Format: YYYY/YYYY)                                     |
+                | r [team] [season]                - Output roster for a team (Season Format: YYYY/YYYY)                                   |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | gap [first] [last]               - Get game appearance percentage for a particular player for every season                 |
+                | gap [first] [last]               - Get game appearance percentage for a particular player for every season               |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | mates [first] [last] [limit]     - Show all the teammates for a particular player                                          |
+                | mates [first] [last] [limit]     - Show all the teammates for a particular player                                        |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | ro [limit]                       - Rank the officials based on number of games officiated                                  |
+                | ro [limit]                       - Rank the officials based on number of games officiated                                |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | si                               - how all the teams and their arena name and capacity                                     |
+                | si                               - how all the teams and their arena name and capacity                                   |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | pc [season]                      - Number of players by country (Season Format: YYYY/YYYY)                                 |
+                | pc [season]                      - Number of players by country (Season Format: YYYY/YYYY)                               |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | rc [limit]                       - Top coaches by win percentage in Regular Season (limit = # of records)                  |
+                | rc [limit]                       - Top coaches by win percentage in Regular Season (limit = # of records)                |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | ll [statType] [season] [limit]   - League Leaders per season (by avg) (Season Format: YYYY/YYYY) (limit = # of records)    |
+                | ll [statType] [season] [limit]   - League Leaders per season (by avg) (Season Format: YYYY/YYYY) (limit = # of records)  |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | crp [statType] [first] [last].   - Compare Regular Season vs Playoff career averages                                       |
-                | *                                 statType] must be one of the following:                                                 |
-                | *                                 pts, rbs, ast, blk,                                                                     |
-                | *                                 stl, tov, mins, fgm,                                                                    |
-                | *                                 fga, 3pm, 3pa, ftm,                                                                     |
-                | *                                 fta, oreb, dreb, pf                                                                     |
+                | crp [statType] [first] [last]   - Compare Regular Season vs Playoff career averages                                      |
+                | *                                 statType] must be one of the following:                                                |
+                | *                                 pts, rbs, ast, blk,                                                                    |
+                | *                                 stl, tov, mins, fgm,                                                                   |
+                | *                                 fga, 3pm, 3pa, ftm,                                                                    |
+                | *                                 fta, oreb, dreb, pf                                                                    |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | spt [first] [last]               - Major stat averages for a player per team                                               |
+                | spt [first] [last]               - Major stat averages for a player per team                                             |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | cc                               - List all championship winning teams in chronological order                              |
+                | cc                               - List all championship winning teams in chronological order                            |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | per [team] [season]              - Highest player efficiency rating (PER) on a team (Season Format: YYYY/YYYY)             |
+                | per [team] [season]              - Highest player efficiency rating (PER) on a team (Season Format: YYYY/YYYY)           |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | mr [year] [round]                - Given a specific draft round of players, measure their performance through their career |
-                | *                                 (Year Format: YYYY)                                                                     |
+                | mr [year] [round]                - Given a specific draft round of players, measure their performance through their      |
+                | *                                  career (Year Format: YYYY)                                                            |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | ts [statType]                    - Get the career totals for a specific stat for all players                               |
-                | *                                 [statType] must be one of the following:                                                |
-                | *                                 pts, rbs, ast, blk,                                                                     |
-                | *                                 stl, tov, mins, fgm,                                                                    |
-                | *                                 fga, 3pm, 3pa, ftm,                                                                     |
-                | *                                 fta, oreb, dreb, pf                                                                     |
+                | ts [statType]                    - Get the career totals for a specific stat for all players                             |
+                | *                                 [statType] must be one of the following:                                               |
+                | *                                 pts, rbs, ast, blk,                                                                    |
+                | *                                 stl, tov, mins, fgm,                                                                   |
+                | *                                 fga, 3pm, 3pa, ftm,                                                                    |
+                | *                                 fta, oreb, dreb, pf                                                                    |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | deleteAll                        - Deletes all data from the database                                                      |
+                | deleteAll                        - Deletes all data from the database                                                    |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | repopulate                       - Repopulates the database with initial data                                              |
+                | repopulate                       - Repopulates the database with initial data                                            |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | quit                             - To exit program                                                                         |
+                | quit                             - To exit program                                                                       |
                 ---------------------------------------------------------End of Help--------------------------------------------------------
                 """;
         System.out.println(help);
@@ -556,7 +556,7 @@ class MyDatabase {
                         "|----------------------|----------------------|----------------------|%n%n"); // Lower
                 // Bar
             } else
-                System.out.println("Either invalid team name or season entered.\n");
+                System.out.println("Either invalid team name or season entered. Please type h for help!.\n");
                 
             resultSet.close();
             statement.close();
@@ -717,7 +717,7 @@ class MyDatabase {
                 System.out.printf(floats, resultSet.getInt("officialID"), resultSet.getString("firstname"),
                         resultSet.getString("lastname"),
                         resultSet.getInt("numGames"));
-                System.out.printf("|------------|----------------------|----------------------|------------|%n%n");
+                System.out.printf("|------------|----------------------|----------------------|------------|%n");
             }
             resultSet.close();
             statement.close();
@@ -751,7 +751,7 @@ class MyDatabase {
                 String team = resultSet.getString("basedIn") + " " + resultSet.getString("teamName");
                 System.out.printf(floats, team, resultSet.getString("stadiumName"), resultSet.getInt("capacity"));
                 System.out.printf(
-                        "|-------------------------------------|--------------------------------|------------|%n%n");
+                        "|-------------------------------------|--------------------------------|------------|%n");
             }
 
             resultSet.close();
@@ -775,10 +775,11 @@ class MyDatabase {
             statement.setString(1, season);
             ResultSet resultSet = statement.executeQuery();
             boolean initial = resultSet.next();
+            pagination myPages = new pagination();
 
             if (initial) {
+                // for formatting
                 System.out.println("\nShowing number of players from each country for the " + season + " season:\n");
-
                 String format = ("| %-30s | %-15s |%n");
                 System.out.printf("|--------------------------------|-----------------|%n");
                 System.out.printf(format, "Country", "NumPlayers");
@@ -786,12 +787,36 @@ class MyDatabase {
                 String floats = ("| %-30s | %-15d |%n");
 
                 do {
-                    System.out.printf(floats,
-                            resultSet.getString("country"), resultSet.getInt("numPlayers"));
-                    System.out.printf("|--------------------------------|-----------------|%n%n");
+                    // putting results into pages
+                    String line = String.format(floats, resultSet.getString("country"), resultSet.getInt("numPlayers")); 
+                    line += String.format("|--------------------------------|-----------------|%n");
+                    myPages.add(line);
                 } while (resultSet.next());
 
-                // Bar
+                System.out.println("Enter page number to display that page. Enter 'back' to end query display");
+                System.out.print("\ndb > ");
+                Scanner kb = new Scanner(System.in);
+                String input = kb.nextLine().toLowerCase().trim();
+                int pageNum = -1;
+                while (input != null & !input.equals("back")) {
+                    if (input == "\n" || input == "\r" || input.isEmpty() || input.isBlank()) {
+                        System.out.println("Invalid page number input. Please enter between [1 - 100], or 'back' to end query display");
+                    } else {
+                        try {
+                            pageNum = Integer.parseInt(input);
+                            if (pageNum >= 1 && pageNum <= 100) {
+                                myPages.printPage2(pageNum);
+                                pageNum = -1;
+                            } else{
+                                System.out.println("Invalid page number input. Please enter between [1 - 100], or 'back' to end query display");
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Invalid page number input. Please enter between [1 - 100], or 'back' to end query display");
+                        }
+                    }
+                    System.out.print("db > ");
+                    input = kb.nextLine().toLowerCase().trim();
+                }
             } else
                 System.out.println("Invalid season entered.\n");
 
@@ -844,7 +869,7 @@ class MyDatabase {
             while (resultSet.next()) {
                 System.out.printf(floats, resultSet.getString("firstname"), resultSet.getString("lastname"),
                         resultSet.getFloat("winPercentage"));
-                System.out.printf("|----------------------|----------------------|------------|%n%n");
+                System.out.printf("|----------------------|----------------------|------------|%n");
             }
 
             resultSet.close();
@@ -1282,6 +1307,23 @@ class pagination {
             System.out.printf(formatString, "First Name", "Last Name","Pick", "Season Year", "PER");
             System.out.printf("|----------------------|----------------------|------------|-----------------|-----------------|%n");
             
+
+            for(String item : pages[page]){
+                System.out.println(item);
+            }
+    }
+
+     public void printPage2(int pageNum){
+        int page = pageNum-1;
+        if(pages[page] == null){
+            System.out.println("Invalid input, no more pages left.");
+            return;
+        }
+
+             String format = ("| %-30s | %-15s |%n");
+            System.out.printf("|--------------------------------|-----------------|%n");
+            System.out.printf(format, "Country", "NumPlayers");
+            System.out.printf("|--------------------------------|-----------------|%n");
 
             for(String item : pages[page]){
                 System.out.println(item);
