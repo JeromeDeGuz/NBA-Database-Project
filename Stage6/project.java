@@ -780,16 +780,12 @@ class MyDatabase {
             if (initial) {
                 // for formatting
                 System.out.println("\nShowing number of players from each country for the " + season + " season:\n");
-                String format = ("| %-30s | %-15s |%n");
-                System.out.printf("|--------------------------------|-----------------|%n");
-                System.out.printf(format, "Country", "NumPlayers");
-                System.out.printf("|--------------------------------|-----------------|%n");
                 String floats = ("| %-30s | %-15d |%n");
 
                 do {
                     // putting results into pages
                     String line = String.format(floats, resultSet.getString("country"), resultSet.getInt("numPlayers")); 
-                    line += String.format("|--------------------------------|-----------------|%n");
+                    line += String.format("|--------------------------------|-----------------|");
                     myPages.add(line);
                 } while (resultSet.next());
 
@@ -1313,6 +1309,7 @@ class pagination {
             }
     }
 
+    // for Aaron's pc query
      public void printPage2(int pageNum){
         int page = pageNum-1;
         if(pages[page] == null){
