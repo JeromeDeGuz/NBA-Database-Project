@@ -389,20 +389,19 @@ class MyDatabase {
         }
     }
 
+    // prints introduction message when program starts
     public void introduction() {
         System.out.println(
                 "\n*********************************************** Welcome to the NBA database! ***********************************************");
         System.out.println(
-                "This database contains information relating to the National Basketball Association (NBA)");
+                "This database contains information relating to the National Basketball Association (NBA) from the 2016/2017 - 2022/2023 ");
         System.out.println(
-                "Welcome to the NBA database! This database contains information relating to the National Basketball Association (NBA) from");
+                "seasons. It has information on players, teams, coaches, officials, games, statistics, and more! Below we have a list ");
         System.out.println(
-                "the 2016/2017 - 2022/2023 seasons. It has information on players, teams, coaches, officials, games, statistics, and more!");
+                "of commands you can use that will provide interesting data from the database. This data can be used for various types ");
         System.out.println(
-                "Below we have a list of commands you can use that will provide interesting data from the database. This data can be used");
-        System.out.println(
-                "for various types of analysis. This includes things like highest player averages for specific statistics, seeing the spread");
-        System.out.println("of players from different countries, ranking coaches and officials, and more!");
+                "of analysis. This includes things like highest player averages for specific statistics, seeing the spread of players ");
+        System.out.println("from different countries, ranking coaches and officials, and more!");
         System.out.println(
                 "****************************************************************************************************************************\n");
     }
@@ -422,6 +421,7 @@ class MyDatabase {
         return check;
     }
 
+    // responsible for loading data from a script into the database
     public void loadData(String script) throws IOException, SQLException {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(script));
@@ -459,6 +459,7 @@ class MyDatabase {
         }
     }
 
+    // deletes all data from the database
     public void deleteData(String script) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(script));
@@ -496,6 +497,7 @@ class MyDatabase {
         System.out.println("Invalid command inputs or database isn't loaded to run query. Please type h for help!");
     }
 
+    // checks if inputted team is valid from teams in the NBA
     public boolean checkTeam(String teamName) {
         boolean valid = false;
 
@@ -521,7 +523,7 @@ class MyDatabase {
         return valid;
     }
 
-    // 1 DONE
+    // outputs a roster for a given team and season
     public void roster(String teamName, String season) {
         try {
             String sql = "select firstname, lastname,  jersey\n" + //
@@ -565,7 +567,7 @@ class MyDatabase {
         }
     }
 
-    // 2 DONE
+    // gets game appearance percentage for a particular player for every season they played in
     public void gameAppear(String first, String last) {
         try {
             String sql = "with gamesPlayedPlayer as (\n" + //
@@ -623,7 +625,7 @@ class MyDatabase {
         }
     }
 
-    // 3 DONE
+    // gets all the teammates for a particular player across seasons our database covers
     public void teammates(String first, String last, String lim) {
         try {
             int num = Integer.parseInt(lim);
@@ -691,7 +693,7 @@ class MyDatabase {
         }
     }
 
-    // 4 THIS IS DONE
+    // ranks the officials based on number of games officiated
     public void rankOfficials(String lim) {
         try {
             int num = Integer.parseInt(lim);
@@ -728,8 +730,7 @@ class MyDatabase {
         }
     }
 
-    // 5
-    // DONE
+    // lists all the stadiums that every team in the NBA plays in along with their capacities
     public void stadiumInfo() {
         try {
             String sql = "select teams.basedIn,teams.teamName, stadiums.stadiumName, stadiums.capacity from teams join stadiums on teams.stadiumName = stadiums.stadiumName order by teams.basedIn;";
@@ -761,7 +762,7 @@ class MyDatabase {
         }
     }
 
-    // 6 DONE
+    // for a given season, lists the number of players from each country
     public void playerCountry(String season) {
         try {
             String sql = "select l.country, count(distinct p.playerID) as numPlayers\n" + //
@@ -823,7 +824,7 @@ class MyDatabase {
         }
     }
 
-    // 7 DONE
+    // ranks the top coaches by win percentage in all the games they have coached
     public void rankCoaches(String limit) {
         try {
             int lim = Integer.parseInt(limit);
