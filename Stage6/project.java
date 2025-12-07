@@ -142,8 +142,8 @@ public class project {
                     }
                     break;
                 case "ts":
-                    if (parts.length == 2) {
-                        db.totalStat(parts[1]);
+                    if (parts.length == 3) {
+                        db.totalStat(parts[1], parts[2]);
                     } else {
                         db.printError();
                     }
@@ -213,7 +213,8 @@ public class project {
                 | mr [year] [round]                - Given a specific draft round of players, measure their performance through their      |
                 | *                                  career (Year Format: YYYY)                                                            |
                 ----------------------------------------------------------------------------------------------------------------------------
-                | ts [statType]                    - Get the career totals for a specific stat for all players                             |
+                | ts [statType] [limit]            - Get the career totals for a specific stat for all players                             |
+                | *                                 [limit] = # of records                                                                 |
                 | *                                 [statType] must be one of the following:                                               |
                 | *                                 pts, rbs, ast, blk,                                                                    |
                 | *                                 stl, tov, mins, fgm,                                                                   |
@@ -774,6 +775,14 @@ class MyDatabase {
     }
 
     // 8 DONE
+    /*
+    This method runs the query that finds the league leaders of a particular stat category
+    for a particular season.
+    Input: stat type, season, integer representing how many records the user wants to see
+    Output: List of the following format:
+            "FirstName", "LastName", "AVG " + stat
+            where stat is the stat the user wished to see league leaders in
+    */
     public void leagueAvg(String stat, String season, String limit) {
         try {
             int lim = Integer.parseInt(limit);
@@ -821,6 +830,14 @@ class MyDatabase {
     }
 
     // 9 DONE
+    /*
+    This method runs the query that compares a players regular season and playoff stat average for
+    a specific stat.
+    Input: stat type, first name, last name
+    Output: List of the following format:
+            "FirstName", "LastName", "REG AVG" + stat, "PF AVG" + stat
+            where stat is the stat the user wishes to see compared
+    */
     public void compareAvg(String stat, String first, String last) {
         try {
             String sql;
@@ -886,7 +903,14 @@ class MyDatabase {
         }
     }
 
-    // 10 DONE
+    // 10
+    /*
+    This method runs the query that shows the stats for a player for all the teams hes played
+    for in our database.
+    Input: First and Last name of the player in question
+    Output: List of the following format:
+            "FirstName", "LastName", "Team", "Points", "Rebounds", "Assists", "Blocks"
+    */
     public void playerStatsPerTeam(String first, String last) {
         try {
             String sql = "select p.playerID, p.firstName, p.lastName, play.teamName, "
@@ -940,8 +964,12 @@ class MyDatabase {
         }
     }
 
-    // 11 DONE
-    // NO INPUT NEEDED
+    // 11 
+    /* 
+    This method runs the query that prints all the champions in our database in chronological order.
+    Input: N/A
+    Output: List of champions
+    */
     public void champs() {
         try {
             String sql = "SELECT years, champion as teamName FROM seasons ORDER BY years";
@@ -969,7 +997,11 @@ class MyDatabase {
     }
 
     // 12 DONE
-
+    /*
+    This method runs the query that prints the player efficieny rating of a signel team
+    for a single season, ordered by highest to lowest.
+    Input: team, season
+    */
     public void per(String team, String season) {
         int year = -1;
         try {
@@ -1025,6 +1057,11 @@ class MyDatabase {
     }
 
     // 13 DONE
+    /*
+    This method will print out the player efficiency rating (PER) for each player
+    for a given draft year and draft round. Ordered by their draft pick.
+    This query has pagination to allow for cleaner result output display.
+    */
     public void draftComm(String year, String round) {
         try {
             int y = -1;
@@ -1125,12 +1162,33 @@ class MyDatabase {
     }
 
     // 14 DONE
-    public void totalStat(String stat) {
+    /*
+    This method will print out the list of the top number of players
+    for a given statistical measure
+    Input: 
+        stat - pts, ast, reb, etc...
+        limit - how many records to display
+    */
+    public void totalStat(String stat, String limit) {
+        int lim = -1;
+        try {
+            lim = Integer.parseInt(limit);
+        } catch (NumberFormatException e) {
+            // TODO: handle exception
+            System.out.println("Invalid top input. Please enter a positive number");
+        }
+
+        if(lim < 1){
+            System.out.println("Invalid top input. Please enter a positive number");
+            return;
+        }
+
+
         try {
             String sql;
 
             if (sanitize(stat)) {
-                sql = "SELECT TOP 10 p.firstname, p.lastname, sum(gps.[" + stat
+                sql = "SELECT TOP (?) p.firstname, p.lastname, sum(gps.[" + stat
                         + "]) AS totalxStatistic FROM Players p JOIN GamePlayerStats gps ON p.playerID = gps.playerID JOIN games g ON gps.gameID = g.gameID GROUP BY p.firstname, p.lastname ORDER BY totalxStatistic DESC;";
 
             } else {
@@ -1140,9 +1198,10 @@ class MyDatabase {
 
             PreparedStatement statement = connection.prepareStatement(sql);
             // statement.setString(1, stat); //Not needed, not setting anything
+            statement.setInt(1, lim);
             ResultSet resultSet = statement.executeQuery();
 
-            System.out.println("Showing the total " + stat + " of all players all time");
+            System.out.println("Showing the top " + lim + " total " + stat + " of all players all time");
 
             String formatString = "| %-20s | %-20s | %-15s |%n";
             System.out.printf("|----------------------|----------------------|-----------------|%n");
@@ -1195,6 +1254,7 @@ class pagination {
         }
     }
 
+    // for jerome's mr query
     public void printPage(int pageNum) {
         int page = pageNum - 1;
         if (pages[page] == null) {
