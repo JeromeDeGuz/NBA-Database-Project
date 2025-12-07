@@ -496,25 +496,24 @@ class MyDatabase {
         System.out.println("Invalid command inputs or database isn't loaded to run query. Please type h for help!");
     }
 
-    public boolean checkTeam(String teamName){
+    public boolean checkTeam(String teamName) {
         boolean valid = false;
 
-        String[] validTeams = {"76ers","Bucks",
+        String[] validTeams = { "76ers", "Bucks",
                 "Bulls", "Cavaliers",
                 "Celtics", "Clippers",
                 "Grizzlies", "Hawks",
                 "Heat", "Hornets",
                 "Jazz", "Kings",
                 "Knicks", "Lakers",
-                "Magic","Mavericks",
+                "Magic", "Mavericks",
                 "Nets", "Nuggets",
                 "Pacers", "Pelicans", "Pistons",
                 "Raptors", "Rockets", "Spurs", "Suns", "Thunder",
                 "Timberwolves", "Trail Blazers", "Warriors", "Wizards" };
 
-
-        for(String x : validTeams){
-            if(teamName.toLowerCase().equals(x.toLowerCase())){
+        for (String x : validTeams) {
+            if (teamName.toLowerCase().equals(x.toLowerCase())) {
                 valid = true;
             }
         }
@@ -958,8 +957,7 @@ class MyDatabase {
             statement.setString(2, "%" + last + "%");
             ResultSet resultSet = statement.executeQuery();
 
-            Boolean initial = resultSet.next();
-
+            boolean initial = resultSet.next();
             if (initial) {
                 System.out.println("Showing a comparison of player: " + first + " " + last + " and his " + stat
                         + " in the regular season vs playoffs: ");
@@ -978,10 +976,10 @@ class MyDatabase {
                             resultSet.getDouble("regAvg"), resultSet.getDouble("pfAvg"));
                     System.out.printf(
                             "|--------------------------------|--------------------------------|-----------------|-----------------|%n");
-                } while (resultSet.next());
 
+                } while (resultSet.next());
             } else {
-                System.out.println("Player Not Found");
+                System.out.println("Player not found\n");
             }
 
             resultSet.close();
@@ -1009,37 +1007,37 @@ class MyDatabase {
             statement.setString(2, "%" + last + "%");
             ResultSet resultSet = statement.executeQuery();
 
-            Boolean initial = resultSet.next();
-
-            if (initial) {
+            boolean initial = resultSet.next();
+            
+            if(initial){
                 System.out.println("Showing Major stat averages for player: " + first + " " + last
-                        + " for all teams they have played for: ");
+                    + " for all teams they have played for: ");
 
                 String formatString = "| %-20s | %-20s | %-15s | %-10s | %-10s | %-10s | %-10s | %-10s |%n"; // Format
-                                                                                                             // Structure
+                                                                                                            // Structure
 
                 System.out.printf(
                         "|----------------------|----------------------|-----------------|------------|------------|------------|------------|------------|%n");
-                System.out.printf(formatString, "FirstName", "LastName", "Team", "Points", "Rebounds", "Assists",
-                        "Blocks",
+                System.out.printf(formatString, "FirstName", "LastName", "Team", "Points", "Rebounds", "Assists", "Blocks",
                         "Steals"); // Column Labels
                 System.out.printf(
                         "|----------------------|----------------------|-----------------|------------|------------|------------|------------|------------|%n"); // Top
                 // Bar
                 String avgs = "| %-20s | %-20s | %-15s | %-10.1f | %-10.1f | %-10.1f | %-10.1f | %-10.1f |%n";
-                do {
+
+                do{
                     System.out.printf(avgs, resultSet.getString("firstname"), resultSet.getString("lastName"),
-                            resultSet.getString("teamName"), resultSet.getDouble("points"),
-                            resultSet.getDouble("rebounds"), resultSet.getDouble("assists"),
-                            resultSet.getDouble("blocks"), resultSet.getDouble("steals"));
-                    System.out.printf(
-                            "|----------------------|----------------------|-----------------|------------|------------|------------|------------|------------|%n");
-
-                } while (resultSet.next());
-            } else {
-                System.out.println("Player Not Found");
+                        resultSet.getString("teamName"), resultSet.getDouble("points"),
+                        resultSet.getDouble("rebounds"), resultSet.getDouble("assists"),
+                        resultSet.getDouble("blocks"), resultSet.getDouble("steals"));
+                System.out.printf(
+                        "|----------------------|----------------------|-----------------|------------|------------|------------|------------|------------|%n");
+                } while(resultSet.next());
+            } else{
+                System.out.println("Player not found\n");
             }
-
+            resultSet.close();
+            statement.close();
         } catch (SQLException e) {
             System.out.println("You have entered unexpected parameters. Type h for help!");
             // e.printStackTrace(System.out);
@@ -1067,6 +1065,8 @@ class MyDatabase {
                 System.out.printf("|-----------------|-----------------|%n");
             }
 
+            resultSet.close();
+            statement.close();
         } catch (SQLException e) {
             System.out.println("You have entered unexpected parameters. Type h for help!");
         }
@@ -1078,12 +1078,12 @@ class MyDatabase {
         int year = -1;
         try {
             year = Integer.parseInt(season);
-            
+
         } catch (Exception e) {
             // TODO: handle exception
             printError();
         }
-        if(year < 2016){
+        if (year < 2016) {
             System.out.println("Invalid season year input. Please input a valid season year ex. [2016/2017]");
             return;
         }
@@ -1120,6 +1120,8 @@ class MyDatabase {
                 System.out.printf("|----------------------|----------------------|-----------------|%n");
             }
 
+            resultSet.close();
+            statement.close();
         } catch (SQLException e) {
             printInvalidQueryOrDb();
             // e.printStackTrace(System.out);
@@ -1134,14 +1136,15 @@ class MyDatabase {
             try {
                 y = Integer.parseInt(year);
                 r = Integer.parseInt(round);
-                
+
             } catch (NumberFormatException e) {
                 // TODO: handle exception
                 printError();
 
             }
-            if(y < 1998){
-                System.out.println("Invalid draft year, not in database. Please enter a draft year between [1998 - 2021]");
+            if (y < 1998) {
+                System.out.println(
+                        "Invalid draft year, not in database. Please enter a draft year between [1998 - 2021]");
                 return;
             }
             if (r < 1) {
@@ -1169,31 +1172,31 @@ class MyDatabase {
             System.out.println("Showing the player efficiency rating for players drafted in round " + r + " of the " + y
                     + " draft:");
 
-                    String formatPrint = "| %-20s | %-20s | %-10s | %-15s | %-15.1f |%n"; // Print Structure w/ avgPer double value
+            String formatPrint = "| %-20s | %-20s | %-10s | %-15s | %-15.1f |%n"; // Print Structure w/ avgPer double
+                                                                                  // value
 
             pagination myPages = new pagination();
 
             while (resultSet.next()) {
-                String line = String.format(formatPrint, resultSet.getString("firstname"), resultSet.getString("lastname"), resultSet.getString("pick"),
+                String line = String.format(formatPrint, resultSet.getString("firstname"),
+                        resultSet.getString("lastname"), resultSet.getString("pick"),
                         resultSet.getString("season"), resultSet.getDouble("avgPER")); // Column Labels
                 line += String.format(
                         "|----------------------|----------------------|------------|-----------------|-----------------|");
                 myPages.add(line);
             }
 
-            
             System.out.println("Enter page number to display that page. Enter back to end query display");
             System.out.print("\ndb > ");
             Scanner kb = new Scanner(System.in);
             String input = kb.nextLine().toLowerCase().trim();
             int pageNum = -1;
-            
-            
-            
+
             while (input != null & !input.equals("back")) {
-                
+
                 if (input == "\n" || input == "\r" || input.isEmpty() || input.isBlank()) {
-                    System.out.println("Invalid page number input. Please enter between [1 - 100], or back to end query display");
+                    System.out.println(
+                            "Invalid page number input. Please enter between [1 - 100], or back to end query display");
                 } else {
 
                     try {
@@ -1201,22 +1204,24 @@ class MyDatabase {
                         if (pageNum >= 1 && pageNum <= 100) {
                             myPages.printPage(pageNum);
                             pageNum = -1;
-                        } else{
-                            System.out.println("Invalid page number input. Please enter between [1 - 100], or back to end query display");
+                        } else {
+                            System.out.println(
+                                    "Invalid page number input. Please enter between [1 - 100], or back to end query display");
                         }
                     } catch (Exception e) {
                         // TODO: handle exception
-                        System.out.println("Invalid page number input. Please enter between [1 - 100], or back to end query display");
+                        System.out.println(
+                                "Invalid page number input. Please enter between [1 - 100], or back to end query display");
                     }
-
 
                 }
 
-                
                 System.out.print("db > ");
                 input = kb.nextLine().toLowerCase().trim();
             }
             System.out.println("Returning back to main menu. Type h for help!");
+            resultSet.close();
+            statement.close();
         } catch (SQLException e) {
             printInvalidQueryOrDb();
             // e.printStackTrace(System.out);
@@ -1254,6 +1259,8 @@ class MyDatabase {
                 ;
 
             }
+            resultSet.close();
+            statement.close();
 
         } catch (SQLException e) {
             printInvalidQueryOrDb();
@@ -1265,18 +1272,18 @@ class MyDatabase {
 class pagination {
     private int numPages;
     private int numItems;
-    private ArrayList<String>[] pages;  //each index is a page, each page has an arraylist of items
-    
+    private ArrayList<String>[] pages; // each index is a page, each page has an arraylist of items
+
     @SuppressWarnings("unchecked")
 
-    public pagination(){
+    public pagination() {
         this.numPages = 0;
         this.numItems = 0;
         pages = (ArrayList<String>[]) new ArrayList<?>[100];
     }
 
     public void add(String item) {
-        
+
         if (pages[numPages] == null) {
             pages[numPages] = new ArrayList<>();
         }
@@ -1290,23 +1297,24 @@ class pagination {
         }
     }
 
-    public void printPage(int pageNum){
-        int page = pageNum-1;
-        if(pages[page] == null){
+    public void printPage(int pageNum) {
+        int page = pageNum - 1;
+        if (pages[page] == null) {
             System.out.println("Invalid input, no more pages left.");
             return;
         }
 
-            String formatString = "| %-20s | %-20s | %-10s | %-15s | %-15s |%n"; // Format Structure
-                                                                          // rounded to .1
-            System.out.printf("|----------------------|----------------------|------------|-----------------|-----------------|%n");
-            System.out.printf(formatString, "First Name", "Last Name","Pick", "Season Year", "PER");
-            System.out.printf("|----------------------|----------------------|------------|-----------------|-----------------|%n");
-            
+        String formatString = "| %-20s | %-20s | %-10s | %-15s | %-15s |%n"; // Format Structure
+        // rounded to .1
+        System.out.printf(
+                "|----------------------|----------------------|------------|-----------------|-----------------|%n");
+        System.out.printf(formatString, "First Name", "Last Name", "Pick", "Season Year", "PER");
+        System.out.printf(
+                "|----------------------|----------------------|------------|-----------------|-----------------|%n");
 
-            for(String item : pages[page]){
-                System.out.println(item);
-            }
+        for (String item : pages[page]) {
+            System.out.println(item);
+        }
     }
 
     // for Aaron's pc query
