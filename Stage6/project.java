@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.io.FileReader;
 import java.io.IOException;
@@ -279,11 +280,6 @@ public class project {
         console.close();
     }
 
-    private static void printParameterError() {
-        System.out.println("You have entered unexpected paramters. Type h for help");
-        return;
-    }
-
     private static void printHelp() {
 
         String help = """
@@ -498,6 +494,32 @@ class MyDatabase {
     // prints message for invalid query or database isn't loaded to run query
     public void printInvalidQueryOrDb() {
         System.out.println("Invalid command inputs or database isn't loaded to run query. Please type h for help!");
+    }
+
+    public boolean checkTeam(String teamName){
+        boolean valid = false;
+
+        String[] validTeams = {"76ers","Bucks",
+                "Bulls", "Cavaliers",
+                "Celtics", "Clippers",
+                "Grizzlies", "Hawks",
+                "Heat", "Hornets",
+                "Jazz", "Kings",
+                "Knicks", "Lakers",
+                "Magic","Mavericks",
+                "Nets", "Nuggets",
+                "Pacers", "Pelicans", "Pistons",
+                "Raptors", "Rockets", "Spurs", "Suns", "Thunder",
+                "Timberwolves", "Trail Blazers", "Warriors", "Wizards" };
+
+
+        for(String x : validTeams){
+            if(teamName.toLowerCase().equals(x.toLowerCase())){
+                valid = true;
+            }
+        }
+
+        return valid;
     }
 
     // 1 DONE
@@ -1032,8 +1054,15 @@ class MyDatabase {
     // 12 DONE
 
     public void per(String team, String season) {
-        int year = Integer.parseInt(season);
-        if (year < 2016) {
+        int year = -1;
+        try {
+            year = Integer.parseInt(season);
+            
+        } catch (Exception e) {
+            // TODO: handle exception
+            printError();
+        }
+        if(year < 2016){
             System.out.println("Invalid season year input. Please input a valid season year ex. [2016/2017]");
             return;
         }
@@ -1079,11 +1108,19 @@ class MyDatabase {
     // 13 DONE
     public void draftComm(String year, String round) {
         try {
-            int y = Integer.parseInt(year);
-            int r = Integer.parseInt(round);
-            if (y < 1998) {
-                System.out.println(
-                        "Invalid draft year, not in database. Please enter a draft year between [1998 - 2021]");
+            int y = -1;
+            int r = -1;
+            try {
+                y = Integer.parseInt(year);
+                r = Integer.parseInt(round);
+                
+            } catch (NumberFormatException e) {
+                // TODO: handle exception
+                printError();
+
+            }
+            if(y < 1998){
+                System.out.println("Invalid draft year, not in database. Please enter a draft year between [1998 - 2021]");
                 return;
             }
             if (r < 1) {
@@ -1111,26 +1148,54 @@ class MyDatabase {
             System.out.println("Showing the player efficiency rating for players drafted in round " + r + " of the " + y
                     + " draft:");
 
-            String formatString = "| %-20s | %-20s | %-10s | %-15s | %-15s |%n"; // Format Structure
-            String formatPrint = "| %-20s | %-20s | %-10s | %-15s | %-15.1f |%n"; // Print Structure w/ avgPer double
-                                                                                  // value
-            // rounded to .1
-            System.out.printf(
-                    "|----------------------|----------------------|------------|-----------------|-----------------|%n");
-            System.out.printf(formatString, "First Name", "Last Name", "Pick", "Season Year", "PER");
-            System.out.printf(
-                    "|----------------------|----------------------|------------|-----------------|-----------------|%n");
-            ;
+                    String formatPrint = "| %-20s | %-20s | %-10s | %-15s | %-15.1f |%n"; // Print Structure w/ avgPer double value
+
+            pagination myPages = new pagination();
 
             while (resultSet.next()) {
-                System.out.printf(formatPrint, resultSet.getString("firstname"), resultSet.getString("lastname"),
-                        resultSet.getString("pick"),
+                String line = String.format(formatPrint, resultSet.getString("firstname"), resultSet.getString("lastname"), resultSet.getString("pick"),
                         resultSet.getString("season"), resultSet.getDouble("avgPER")); // Column Labels
-                System.out.printf(
-                        "|----------------------|----------------------|------------|-----------------|-----------------|%n");
-                ;
+                line += String.format(
+                        "|----------------------|----------------------|------------|-----------------|-----------------|");
+                myPages.add(line);
             }
 
+            
+            System.out.println("Enter page number to display that page. Enter back to end query display");
+            System.out.print("\ndb > ");
+            Scanner kb = new Scanner(System.in);
+            String input = kb.nextLine().toLowerCase().trim();
+            int pageNum = -1;
+            
+            
+            
+            while (input != null & !input.equals("back")) {
+                
+                if (input == "\n" || input == "\r" || input.isEmpty() || input.isBlank()) {
+                    System.out.println("Invalid page number input. Please enter between [1 - 100], or back to end query display");
+                } else {
+
+                    try {
+                        pageNum = Integer.parseInt(input);
+                        if (pageNum >= 1 && pageNum <= 100) {
+                            myPages.printPage(pageNum);
+                            pageNum = -1;
+                        } else{
+                            System.out.println("Invalid page number input. Please enter between [1 - 100], or back to end query display");
+                        }
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        System.out.println("Invalid page number input. Please enter between [1 - 100], or back to end query display");
+                    }
+
+
+                }
+
+                
+                System.out.print("db > ");
+                input = kb.nextLine().toLowerCase().trim();
+            }
+            System.out.println("Returning back to main menu. Type h for help!");
         } catch (SQLException e) {
             printInvalidQueryOrDb();
             // e.printStackTrace(System.out);
@@ -1174,4 +1239,54 @@ class MyDatabase {
             // e.printStackTrace(System.out);
         }
     }
+}
+
+class pagination {
+    private int numPages;
+    private int numItems;
+    private ArrayList<String>[] pages;  //each index is a page, each page has an arraylist of items
+    
+    @SuppressWarnings("unchecked")
+
+    public pagination(){
+        this.numPages = 0;
+        this.numItems = 0;
+        pages = (ArrayList<String>[]) new ArrayList<?>[100];
+    }
+
+    public void add(String item) {
+        
+        if (pages[numPages] == null) {
+            pages[numPages] = new ArrayList<>();
+        }
+
+        pages[numPages].add(item);
+        numItems++;
+
+        if (numItems % 15 == 0 && numPages < pages.length - 1) {
+            numPages++;
+            pages[numPages] = new ArrayList<>();
+        }
+    }
+
+    public void printPage(int pageNum){
+        int page = pageNum-1;
+        if(pages[page] == null){
+            System.out.println("Invalid input, no more pages left.");
+            return;
+        }
+
+            String formatString = "| %-20s | %-20s | %-10s | %-15s | %-15s |%n"; // Format Structure
+                                                                          // rounded to .1
+            System.out.printf("|----------------------|----------------------|------------|-----------------|-----------------|%n");
+            System.out.printf(formatString, "First Name", "Last Name","Pick", "Season Year", "PER");
+            System.out.printf("|----------------------|----------------------|------------|-----------------|-----------------|%n");
+            
+
+            for(String item : pages[page]){
+                System.out.println(item);
+            }
+    }
+
+    
 }
