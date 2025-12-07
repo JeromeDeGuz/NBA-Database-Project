@@ -878,6 +878,14 @@ class MyDatabase {
     }
 
     // 8 DONE
+    /*
+    This method runs the query that finds the league leaders of a particular stat category
+    for a particular season.
+    Input: stat type, season, integer representing how many records the user wants to see
+    Output: List of the following format:
+            "FirstName", "LastName", "AVG " + stat
+            where stat is the stat the user wished to see league leaders in
+    */
     public void leagueAvg(String stat, String season, String limit) {
         try {
             int lim = Integer.parseInt(limit);
@@ -925,6 +933,14 @@ class MyDatabase {
     }
 
     // 9 DONE
+    /*
+    This method runs the query that compares a players regular season and playoff stat average for
+    a specific stat.
+    Input: stat type, first name, last name
+    Output: List of the following format:
+            "FirstName", "LastName", "REG AVG" + stat, "PF AVG" + stat
+            where stat is the stat the user wishes to see compared
+    */
     public void compareAvg(String stat, String first, String last) {
         try {
             String sql;
@@ -990,7 +1006,14 @@ class MyDatabase {
         }
     }
 
-    // 10 DONE
+    // 10
+    /*
+    This method runs the query that shows the stats for a player for all the teams hes played
+    for in our database.
+    Input: First and Last name of the player in question
+    Output: List of the following format:
+            "FirstName", "LastName", "Team", "Points", "Rebounds", "Assists", "Blocks"
+    */
     public void playerStatsPerTeam(String first, String last) {
         try {
             String sql = "select p.playerID, p.firstName, p.lastName, play.teamName, "
@@ -1044,8 +1067,12 @@ class MyDatabase {
         }
     }
 
-    // 11 DONE
-    // NO INPUT NEEDED
+    // 11 
+    /* 
+    This method runs the query that prints all the champions in our database in chronological order.
+    Input: N/A
+    Output: List of champions
+    */
     public void champs() {
         try {
             String sql = "SELECT years, champion as teamName FROM seasons ORDER BY years";
